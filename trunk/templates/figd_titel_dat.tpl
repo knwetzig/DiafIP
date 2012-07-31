@@ -1,11 +1,17 @@
 {**************************************************************
-* Aufruf von
-*   figd_class.php
-*   class: Titel
-*   proc:  view
-*
-*	param:	Object Titel --> $Titel
-**************************************************************}
+    call: figd_class.php
+    class: Titel
+    proc:  view
+	param:	Object Titel --> $Titel
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+
+***** (c) DIAF e.V. *******************************************}
 
     <table width="100%">
     <colgroup><col width=40><col width=15%><col><col width=40></colgroup>

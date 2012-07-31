@@ -1,11 +1,19 @@
 {**************************************************************
 Template Listendialog
+
 class:  admin
-proc:
+proc:   variabel, abhängig vom geladenen Inhalt
 param:
     $dialog = array( Datenfeldname, inhalt, label, tooltip)
 
-**************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************}
+
 <br />
 <form method='post'>
     <fieldset>

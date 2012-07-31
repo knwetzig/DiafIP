@@ -1,16 +1,17 @@
-<div id='menue'>
 {***********************************************************
-*   Enthält die statische Menüstruktur im linken Bereich
-*   der Seite einschließlich der DB-Statistik
-*   Daten werden an main.php und anschließend an index.php
-*   via POST weitergegeben.
-*
-*   Autor:      Knut Wetzig
-*   Copyright:  DIAF e.V.
-*   Date:       20120711
-*
-*   ToDo:
-***********************************************************}
+    Enthält die statische Menüstruktur im linken Bereich
+    der Seite einschließlich der DB-Statistik
+    Daten werden an main.php und anschließend an index.php
+    via POST weitergegeben.
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+***** (c) DIAF e.V. *******************************************}
+
+<div id='menue'>
     <img src='images/diaf.png' alt='DIAF' />
 
     <form method='post'>

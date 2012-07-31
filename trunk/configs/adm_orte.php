@@ -2,20 +2,22 @@
 /*****************************************************************************
 Eventhandler für Verwaltung von Ortsdaten
 
-Autor:      Knut Wetzig     (knut@knutwetzig.de)
-Copyright:  DIAF e.V.       (kontakt@diaf.de)
-Date:       20120727
-
 section:    admin
 site:       orte
 
 Für diese Seite ist keine Internationalisierung vorgesehen
 
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
 ToDo:
     Für das Menü das Template adm_dialog.tpl und adm_selekt verwenden. Das Programm
     dahin gehend umstellen und anschließend adm_orteselekt.tpl löschen.
     Das gleiche für das Dialog-Template in der Klassendefinition
-******************************************************************************/
+***** (c) DIAF e.V. *******************************************/
+
 if(!$myauth->getAuth()) {
     fehler(108);
     die();           // Fremdaufruf!

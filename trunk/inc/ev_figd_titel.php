@@ -2,13 +2,13 @@
 /**************************************************************
 *   Eventhandler für die Titelverwaltung
 *
-*   Autor:      Knut Wetzig
-*   Copyright:  DIAF e.V.
-*   Date:       11062012
-*
-*   ToDo:
-**************************************************************/
-//_v($_POST, '_POST - Steuerdatei');
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************/
 
 // Überschrift
 $smarty->assign('dialog', getStringList(array(4010,4011)));

@@ -2,17 +2,19 @@
 /*****************************************************************************
 Eventhandler für Verwaltung von Aliasnamen
 
-Autor:      Knut Wetzig     (knut@knutwetzig.de)
-Copyright:  DIAF e.V.       (kontakt@diaf.de)
-Date:       20120728
-
 section:    admin
 site:       alias
 
 Für diese Seite ist keine Internationalisierung vorgesehen
 
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
 ToDo:
-******************************************************************************/
+***** (c) DIAF e.V. *******************************************/
+
 if(!$myauth->getAuth()) {
     fehler(108);
     die();           // Fremdaufruf!
@@ -25,7 +27,7 @@ if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
 // Überschrift
 echo '<div class="bereich">Alias-/K&uuml;nstlernamen</div>';
 $dialog = array(
-        array('alias', null, '&nbsp;neuen&nbsp;Alias&nbsp;erstellen&nbsp;'),
+        array('alias', null, 'neuen&nbsp;Alias&nbsp;erstellen'),
         array(null),            // Auswahlfeld
         array('name', null, 'Aliasname'),
         array(null),            // Text2
@@ -49,6 +51,7 @@ if(isset($_POST['submit'])) {
         $smarty->assign('aktion', 'edAlias');   // Initiator
         $ali = new Alias($_POST['alias']);
         // -> edit-dialog anzeigen
+        $dialog[0][3] = 'Alias&nbsp;bearbeiten';
         $dialog[2][1] = $ali->name;
         $dialog[4][1] = $ali->notiz;
         $dialog[5][1] = $_POST['alias']?'edAlias':'addAlias';

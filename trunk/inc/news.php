@@ -1,14 +1,15 @@
 <?php
 /**************************************************************
-*   Enthält ein internes Board zum Austauschen von Nachrichten.
-*   Nicht für Produktionsumgebung geeignet!
-*
-*   Author:     Knut Wetzig
-*   Copyright:  DIAF e.V.
-*   Date:       062012
-*
-*   ToDo:
-**************************************************************/
+   Enthält ein internes Board zum Austauschen von Nachrichten.
+   Nicht für Produktionsumgebung geeignet!
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************/
 echo '<div class="bereich">Pinwand</div>';
 if (!isset($_POST['aktion'])) {
     // einfügen -> ist Benutzer berechtigt neue Artike zu erstellen

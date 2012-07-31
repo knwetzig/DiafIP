@@ -3,7 +3,14 @@
 class: s_location_class.php
 proc:
 
-**************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:   Überarbeitung und Verwendung von adm_selekt.tpl
+
+***** (c) DIAF e.V. *******************************************}
 <form method='post'>
     <fieldset>
         <legend>&nbsp;Ort&nbsp;ausw&auml;hlen&nbsp;</legend>

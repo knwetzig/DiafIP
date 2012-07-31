@@ -1,11 +1,19 @@
 {******************************************************************************
+Smarty-Template zum bearbeiten der Accounteinstellungen
+
 Aufruf: adm_user.php
 
 section:    admin
 site:       user
 
     Für diesen Bereich ist keine Internationalisierung vorgesehen
-******************************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+***** (c) DIAF e.V. *******************************************/
+
 <br />
 <form method='post'>
     <fieldset>

@@ -1,13 +1,19 @@
 {**************************************************************
+Smarty-Template für Erstellung/Bearbeitung von Ortsnamen
 
 class: s_location_class.php
 proc:  editOrt
-param:
-    array dialog[0] = Datenfeldname
-                [1] = inhalt
-                [2] = label
-                [3] = tooltip
-**************************************************************}
+param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] => tooltip)
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
+
+***** (c) DIAF e.V. *******************************************}
+
 <br />
 <form method='post'>
     <fieldset>

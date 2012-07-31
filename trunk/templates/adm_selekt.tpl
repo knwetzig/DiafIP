@@ -1,10 +1,17 @@
 {**************************************************************
-Smarty-Template -> Auswahlliste
+Smarty-Template -> Standard-Admin-Auswahlliste
+
 class:
 proc:
+param: array(0 => Feldname, 1 => Wert, 2 => Label, 3 => Tooltip)
 
-$dialog = array(0 => Feldname, 1 => Wert, 2 => Label, 3 => Tooltip)
-**************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************}
 <form method="post">
     <fieldset>
         <legend>&nbsp;{$dialog[2]}&nbsp;</legend>
