@@ -8,8 +8,8 @@ site:       orte
 Für diese Seite ist keine Internationalisierung vorgesehen
 
 $Rev::                         $:  Revision der letzten Übertragung
-$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
-$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$Author::                      $:  Autor der letzten Übertragung
+$Date::                        $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:

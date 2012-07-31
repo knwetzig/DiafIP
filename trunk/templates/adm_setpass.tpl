@@ -6,8 +6,8 @@ proc:
 param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] = tooltip)
 
 $Rev::                         $:  Revision der letzten Übertragung
-$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
-$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$Author::                      $:  Autor der letzten Übertragung
+$Date::                        $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:   None
