@@ -1,0 +1,24 @@
+<pre>
+20120731 - dito f&uuml; Aliasnamen
+20120726 - Administration: Nutzer mit besonderen Rechten k&ouml;nnen unter Einstellungen
+           - Presets Vorgabelisten f&uuml;r Ortsdaten erstellen und Korrekturen an bestehenden
+           Namen vornehmen.
+20120719 - Administration: Admin's steht jetzt ein Verwaltungstool zur Verf&uuml;gung
+           mit dem sie Nutzer anlegen und Accountdaten bearbeiten k&ouml;nnen.
+20120717 - Administration: Nutzer k&ouml;nnen jetzt ihr eigenes Passwort &auml;ndern.
+20120711 - Korrekturen Rechteverwaltung
+           Fehlerbehebung in der Anzeige bei fehlendem Inhalt
+20120705 - Design: &Uuml;ber Buttons ver&auml;ndert sich jetzt der Mauszeiger
+         - Umstellung der Datum/Zeitfunktionen auf Landeseinstellungen (de/us/euro/ISO8601)
+20120627 - Umstrukturierung der Ortsverwaltung
+           Fehlerbehebung in der Rechteverwaltung und Anzeige (Personen)
+20120613 - Überarbeitung Titel::getTitel()
+           Serientitel werden jetzt exakt mit Beschreibung und Folgenummer ausgegeben.
+         - Korrekturen an der Verarbeitung von Ortsdaten
+20120612 - Umzug der Testumgebung auf die neue Domain diafip.knutwetzig.de.
+20120611 - In der Titelsuche ist die Beschreibung nicht mehr eingeschlossen. Es wird
+           ausschließlich nach Titeln gesucht.
+         - Serientitel werden jetzt in der Titelsuche mit erfasst und alle verknüpften
+           Titel werden ausgegeben.
+20120609 - Implementierung von Tooltips in die Benutzeroberfläche
+</pre>

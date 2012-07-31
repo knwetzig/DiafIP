@@ -1,0 +1,219 @@
+#menue {
+    position:fixed;
+    width:120px;
+    height:350px;
+    font-size:0.9em;
+}
+
+#main {
+    position:absolute;
+    margin-right:10px;
+    left:150px;
+}
+
+#status {
+    position:fixed;
+    bottom:10px;
+}
+
+#login {
+    background:#f8f7e6;
+    position:absolute;
+    top:300px;
+    left:170px;
+    width:180px;
+    text-align:center;
+    z-index:100;
+}
+
+a:link		{text-decoration:none;color:blue}
+a:visited	{text-decoration:none;color:green}
+a:hover		{text-decoration:underline}
+a:active	{text-decoration:none}
+a.noul      {text-decoration:none;color:black}
+
+body {
+    background:#f8f7e6 url(images/bg.png);
+    font-family: sans-serif;
+}
+
+h2  {color:#0080ff; text-align:center;}
+img {border:none; vertical-align:middle}
+
+ul.noBullet {
+    list-style-type:none;
+    margin-left:-20px;
+}
+
+/************ Tabellenformate *************************************************/
+table {
+    border:none;
+}
+
+td {
+    font-family:sans-serif;
+    vertical-align:top;
+    /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
+    /* border:1px dotted gray;  zu testzwecken */
+}
+
+td.re {
+    text-align:right;
+    padding-right:10px;
+}
+
+td.uline {
+    border-bottom: 1px solid #F1FFC9;
+    padding-bottom:5px
+}
+
+td.buline {
+    border-bottom: 2px ridge #F1FFC9;
+    padding-bottom:5px;
+    font-weight: bold
+}
+
+td.rline {
+    border-right: 1px solid #F1FFC9;
+    padding-right:5px
+}
+
+td.brline {
+    border-right: 2px ridge #F1FFC9;
+    padding-right:5px;
+    font-weight: bold
+}
+
+/************* Formularelemente ***********************************************/
+fieldset {
+  /*  border:solid 1px #800040;*/
+    border:groove 2px #E7E4E0;
+    padding:10px;
+}
+
+fieldset input[type='image'] {
+    border:none;
+/*    background-color:#303000; */
+    vertical-align:middle
+}
+
+legend {
+    font-size:1.0em
+}
+
+input {
+    background-color:#ffffff;
+    color: #000000;
+    border:1px inset #cccc99;
+    margin:2px;
+    vertical-align:middle
+}
+
+textarea {
+    border:inset 1px;
+}
+
+input[type='text'],[type='password'] {
+    width:250px;
+}
+
+input[type='submit'],[type='button'] {
+    background-color:#c0c0c0;
+    color:black;
+    border:1px outset #303000;
+    width:150px;
+    margin:2px
+}
+
+select {
+    background-color:#ffffff;
+    color: #000000;
+    border:1px inset #cccc99;
+    width:250px; margin:2px
+}
+
+button {
+    cursor: pointer;
+    width:120px;
+    margin:2px;
+}
+
+button.small {
+    background:#f8f7e6 url(images/bg.png);
+    border:none;
+    width:20px;
+}
+
+
+/************** Eigene Elemente ***********************************************/
+p.mittig {
+    text-align:justify;
+}
+
+.warn {
+    font-weight: bold;
+    color: red
+}
+
+.fett {
+    font-weight: bold
+}
+
+.re {
+    text-align: right;
+}
+
+.invers {
+    background:#F1FFC9;
+    color:#102000
+}
+
+.note {
+    color: #A0A0A0;
+    font-size: smaller;
+    font-stretch:semi-condensed;
+    white-space:normal
+}
+
+.big {
+    font-size:28px;
+    font-weight:bold;
+    padding-left:50px;
+    padding-top:10px;
+}
+.bereich {
+    font-size:20px;
+    font-weight:bold;
+    color:#0080ff;
+    border:1px solid #0080ff;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.error {
+    font-family:monospace;
+    white-space:pre;
+    color:#C00010;
+    background-color: #FFEfEf;
+    border:1px solid #C00010;
+    font-weight:normal;
+    margin: 5px;
+    padding:5px;
+    /*text-align:center;*/
+}
+
+/*********** Darstellungsfenster **********************************************/
+.visor {
+    position:relative;
+    margin:20px;
+    font-family:monospace;
+    white-space:pre;
+    color:#004000;
+    background-color:#eeffee;
+    border:1px dotted #008000;
+    padding:5px;
+    z-index:99
+}
+
+.row0	{background-color:#102000}
+.row1	{background-color:#173000}
