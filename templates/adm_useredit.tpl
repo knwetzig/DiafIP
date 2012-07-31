@@ -12,7 +12,7 @@ $Author::                      $:  Autor der letzten Übertragung
 $Date::                        $:  Datum der letzten Übertragung
 $URL$
 
-***** (c) DIAF e.V. *******************************************/
+***** (c) DIAF e.V. *******************************************}
 
 <br />
 <form method='post'>
