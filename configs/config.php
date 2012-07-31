@@ -1,4 +1,17 @@
 <?php
+/***************************************************************
+Konfigurationsdatei für Konstantendefinition / Pfade / DSN-Ort
+Die DSN steht in einer separaten Datei ausserhalb DocumentRoot
+Lädt den Header!
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************/
+
 error_reporting(E_ALL);
 set_include_path('/pear/lib:/smarty:inc');
 date_default_timezone_set('Europe/Berlin');

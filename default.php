@@ -1,4 +1,14 @@
 <?php
+/**************************************************************
+    Die Begrüssungseite
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+***** (c) DIAF e.V. *******************************************/
+
 echo <<<INH
 <h2>
     Willkommen auf der Testseite des<br />"Deutschen Instituts f&uuml;r Animationsfilm"
@@ -32,7 +42,4 @@ echo <<<INH
     </ul>
 </p>
 INH;
-/*
-<p class='note'>&copy;&nbsp;2012&nbsp;<a href="http://www.diaf.de">Deutsches Institut f&uuml;r Animationsfilm e.V.</a> und <a href="mailto://diaf@knutwetzig.de">K. Wetzig</a><p>
-*/
 ?>

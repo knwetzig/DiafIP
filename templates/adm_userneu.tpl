@@ -1,11 +1,21 @@
 {******************************************************************************
+Smarty-Template für die Neuanlage von Usern
+Für diesen Bereich ist keine Internationalisierung vorgesehen
+
 Aufruf: adm_user.php
 
 section:    admin
 site:       user
 
-    Für diesen Bereich ist keine Internationalisierung vorgesehen
-******************************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo: Überarbeitung unter Verwendung von adm_dialog.tpl
+
+***** (c) DIAF e.V. *******************************************}
+
 <div class='bereich'>Benutzerverwaltung</div>
 <form method='post'>
     <fieldset>

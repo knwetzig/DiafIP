@@ -1,15 +1,23 @@
 {**************************************************************
-Aufruf von
-  pers_class.php
-  class: Person
-  proc:  view
-	param:
-        dialog[???][0] feldname
-                   [1] inhalt (evt. weitere arrays)
-                   [2] label
-                   [3] Tooltip (soweit vorhanden)
+Smarty-Template für die Ansicht von Personendaten
 
-**************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+    call:   pers_class.php
+    class:  Person
+    proc:   view
+    param:  dialog[???][0] feldname
+                       [1] inhalt (evt. weitere arrays)
+                       [2] label
+                       [3] Tooltip (soweit vorhanden)
+
+ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
+        zeugt fehlerhaftes HTML.
+
+***** (c) DIAF e.V. *******************************************}
 
 {* Kopfzeile *}
 <table width="100%"><tr>

@@ -1,4 +1,10 @@
 <?php
+/**************************************************************
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+***** (c) DIAF e.V. *******************************************/
 require_once	'configs/config.php';
 
 $myauth = new Auth("MDB2", $params, "loginFunction");
@@ -42,7 +48,7 @@ if ($myauth->checkAuth()) {     // erfolgreiche Anmeldung
     require_once 'class.db_statistik.php';
 
 //_________________________________________________________________________
-_v($_POST, 'Zentraler POST-eingang');
+//_v($_POST, 'Zentraler POST-eingang');
 //_________________________________________________________________________
 
     $stat = new db_stat();      // laden Statistikanzeige

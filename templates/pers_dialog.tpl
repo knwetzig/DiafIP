@@ -1,15 +1,18 @@
-<form method='post'>
 {**************************************************************
-Aufruf von pers_class.php
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
 
-class: Person
-proc:  editPerson/
-param:
-    array dialog[0] = Datenfeldname
-                [1] = inhalt
-                [2] = label
-                [3] = tooltip
-**************************************************************}
+call:   pers_class.php
+class:  Person
+proc:   editPerson/
+param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
+
+ToDo:
+***** (c) DIAF e.V. *******************************************}
+
+<form method='post'>
   <fieldset>
     <legend>{$dialog['bereich'][2]}</legend>
       <table><colgroup><col><col><col><col></colgroup>
@@ -167,7 +170,7 @@ param:
     </fieldset>
     <input
       type='hidden'
-      name='section'
+      name='sektion'
       value='person'
     />
     <input

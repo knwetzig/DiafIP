@@ -2,15 +2,17 @@
 /*****************************************************************************
 Eventhandler für Userverwaltung
 
-Autor:      Knut Wetzig     (knut@knutwetzig.de)
-Copyright:  DIAF e.V.       (kontakt@diaf.de)
-Date:       20120719
-
 sektion:    admin
 site:       user
 
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
 ToDo:
-******************************************************************************/
+***** (c) DIAF e.V. *******************************************/
+
 if (!$myauth->getAuth()) {
     fehler(108);
     die();           // Fremdaufruf!

@@ -1,4 +1,14 @@
 <?php
+/**************************************************************
+Lose Sammlung diverser Funktionen
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************/
 
 function loginFunction($username = null, $status = null, $myauth = null) {
 /*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
@@ -126,7 +136,7 @@ _v($arr,'array');
 function _v($text, $titel = null) {
     if($text) {
         echo "<fieldset class='visor'>";
-        if($titel) echo "<legend>".$titel."</legend>";
+        if($titel) echo "<legend>&nbsp;".$titel."&nbsp;</legend>";
         print_r($text);
         echo "</fieldset>\n";
     }

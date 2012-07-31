@@ -3,13 +3,16 @@
 Aufruf: adm_self.php
 class:
 proc:
-param:
-    array dialog[0] = Datenfeldname
-                [1] = inhalt
-                [2] = label
-                [3] = tooltip
+param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] = tooltip)
 
-******************************************************************************}
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:   None
+
+***** (c) DIAF e.V. *******************************************}
 
 <form method='post'>
     <fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>

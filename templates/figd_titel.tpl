@@ -1,14 +1,16 @@
-<div class='bereich'>{$dialog[0]}</div>
 {**********************************************************
-*   Hauptausgabeseite für die Titelverwaltung
-*
-*   Autor:      Knut Wetzig
-*   Copyright:  DIAF e.V.
-*   Date:       11062012
-*
-*   ToDo:
-**********************************************************}
+   Hauptausgabeseite für die Titelverwaltung
 
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:   Aktualisierung auf neues Ausgabesystem erforderlich
+
+***** (c) DIAF e.V. *******************************************}
+
+<div class='bereich'>{$dialog[0]}</div>
 <table width='100%'><tr><td>
     <form method='post'>
         <input type='text' name='sstring' value="{$dialog[1]}" onfocus="if(this.value=='{$dialog[1]}'){literal}{this.value='';}{/literal}" />

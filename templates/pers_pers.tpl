@@ -1,3 +1,13 @@
+{**************************************************************
+Smarty-Template: Bereichsseite Personenverwaltung
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+***** (c) DIAF e.V. *******************************************/
+
 <div class='bereich'>{$dialog['bereich'][1]}</div>
   <table>
     <tr>

@@ -1,13 +1,14 @@
 <div class='bereich'>{$dlg[6]}</div>
 {**********************************************************
-*   Menüseite für die Administration
-*
-*   Autor:      Knut Wetzig
-*   Copyright:  DIAF e.V.
-*   Date:       20120717
-*
-*   ToDo:
-**********************************************************}
+   Menüseite für die Administration
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************}
 
 <form method='post' style='margin-top:50px; margin-left:50px'>
     <p>

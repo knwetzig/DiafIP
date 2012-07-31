@@ -1,10 +1,22 @@
 {config_load file="mc.conf" section="setup"}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{**************************************************************
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:   Freischaltung der JScript-bereich nach Bedarf
+
+***** (c) DIAF e.V. *******************************************}
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>{#title#}</title>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
     <meta http-equiv='Pragma' content='no-cache' />
     <meta http-equiv='Cache-Control' content='post-check=0, pre-check=0, FALSE' />
+    <meta http-equiv='Id' content='$Id$' />
     <link rel='stylesheet' type='text/css' href='style.css' />
     <link rel='shortcut icon' href='favicon.ico' />
 </head>

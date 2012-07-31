@@ -1,5 +1,15 @@
 <div><h4>{$film->titel}</h4>
-	<table style='margin-left:30px'>
+{*****************************************
+
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:   All
+***** (c) DIAF e.V. *******************************************}
+
+    <table style='margin-left:30px'>
 		<colgroup><col width='10%'><col></colgroup>
 		{if $film->utitel}<tr><td>Untertitel:</td><td>{$film->utitel}</td></tr>{/if}
 		{if $film->atitel}<tr><td>Arbeitstitel:</td><td>{$film->atitel}</td></tr>{/if}

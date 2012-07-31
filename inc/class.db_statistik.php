@@ -1,4 +1,13 @@
 <?php
+/**************************************************************
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
+
+ToDo:
+***** (c) DIAF e.V. *******************************************/
+
 class db_stat {
     public
         $statistic  = array();

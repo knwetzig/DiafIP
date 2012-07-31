@@ -1,14 +1,16 @@
 <?php /****************************************************
 Eventhandler für Aktionen der Personenverwaltung
 
-Autor:      Knut Wetzig     (knut@knutwetzig.de)
-Copyright:  DIAF e.V.       (kontakt@diaf.de)
-Date:       20120705
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
 
-ToDo: Die Methode searchPerson in der Klassenbibliothek funktioniert nicht
+ToDo:   Die Methode searchPerson in der Klassenbibliothek funktioniert nicht
         wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
 
-**********************************************************/
+***** (c) DIAF e.V. *******************************************/
+
 if(!$myauth->checkAuth()) {
     fehler(108);
     die();

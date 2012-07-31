@@ -2,12 +2,13 @@
 /**************************************************************
 Enthält alle Klassenbibliotheken zu Personendaten
 
-Autor:      Knut Wetzig     (knut@knutwetzig.de)
-Copyright:  DIAF e.V.       (kontakt@diaf.de)
-Date:       20120717
+$Rev::                         $:  Revision der letzten Übertragung
+$Author:: Knut Wetzig          $:  Autor der letzten Übertragung
+$Date:: 2012-07-31             $:  Datum der letzten Übertragung
+$URL$
 
 ToDo:
-**************************************************************/
+***** (c) DIAF e.V. *******************************************/
 
 
 /** =================================================================
@@ -15,15 +16,16 @@ ToDo:
 ================================================================= **/
 class Alias {
     public
-        $id = null,
-        $name = null,
-        $notiz = null;
+        $id     = null,
+        $name   = null,
+        $notiz  = null;
 
     function __construct($nr = null) {
-            if(isset($nr)) self::getAlias($nr);
+            if(isset($nr)) self::get($nr);
     }
 
-    function getAlias($nr) {
+    protected function get($nr) {
+    // Diese Funktion initilisiert das Objekt
         global $db;
         $this->id = $nr;
         $sql = 'SELECT name,notiz FROM ONLY p_alias WHERE id = ?;';
@@ -31,6 +33,14 @@ class Alias {
         IsDbError($data);
         $this->name = $data['name'];
         $this->notiz = $data['notiz'];
+    }
+
+    function getAlias($nr) {
+    // Diese Funktion gibt den Namen zurück
+        global $db;
+        $sql = 'SELECT name FROM ONLY p_alias WHERE id = ?;';
+        $data = $db->extended->getRow($sql, null, $nr, 'integer');
+        IsDbError($data);
         return $data['name'];
     }
 
@@ -102,7 +112,6 @@ Aufgabe: Datensatz holen, in @self schreiben
     // Ergebnis -> Objekt schreiben
     foreach($this as $key => &$wert) $wert = $data[$key];
     unset($wert);
-
     // -> Bildinitialisierung hinzufügen
 }
 
@@ -324,13 +333,14 @@ Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
 ****************************************************************/
     global $smarty;
     // Zuweisungen und ausgabe an pers_dat.tpl
+
     $data = a_display(array(
     // name,inhalt optional-> $rechte,$label,$tooltip,valString
         new d_feld('id',     $this->id,                 VIEW),          // pid
         new d_feld('vname',  $this->vname,              VIEW),          // vname
         new d_feld('name',   $this->name,               VIEW),          // name
         // alias (Liste)
-        new d_feld('aliases',self::getAlias($this->aliases), VIEW, 515),
+        new d_feld('aliases', parent::getAlias($this->aliases), VIEW, 515),
         new d_feld('gtag',   $this->gtag,               VIEW,   502),   // Geburtstag
         new d_feld('gort',   Ort::getOrt($this->gort),  VIEW,  4014),   // GebOrt
         new d_feld('ttag',   $this->ttag,               VIEW,   509),   // Todestag
