@@ -1,0 +1,21 @@
+#summary One-sentence summary of this page.
+#labels Phase-Requirements
+
+= Einführung =
+
+Die Anwendung dient der Verwaltung filmografischer Daten.
+
+
+= Details =
+Das Programm besteht aus drei Bereichen
+  * Personendaten
+  * Filmografischen Daten
+  * Objektdaten (Archivalien)
+
+== Technische Voraussetzungen ==
+
+  * PHP >= 5.3
+  * PEAR Auth, MDB2
+  * Smarty > 3.0
+  * Postgresql >= 8.4
+  * HTTP-Server
