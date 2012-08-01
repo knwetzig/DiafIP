@@ -7,9 +7,9 @@ Aufruf: adm_user.php
 section:    admin
 site:       user
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo: Überarbeitung unter Verwendung von adm_dialog.tpl
@@ -19,7 +19,7 @@ ToDo: Überarbeitung unter Verwendung von adm_dialog.tpl
 <div class='bereich'>Benutzerverwaltung</div>
 <form method='post'>
     <fieldset>
-        <legend>&nbsp;Neuen User anlegen&nbsp;</legend>
+        <legend>&nbsp;Neuen Nutzer anlegen&nbsp;</legend>
         <table>
             <colgroup><col><col></colgroup>
             <tr>
@@ -46,7 +46,7 @@ ToDo: Überarbeitung unter Verwendung von adm_dialog.tpl
                     </button>
             </tr>
         </table>
-        <input type='hidden' name='section' value='admin' />
+        <input type='hidden' name='sektion' value='admin' />
         <input type='hidden' name='site' value='user' />
     </fieldset>
 </form>

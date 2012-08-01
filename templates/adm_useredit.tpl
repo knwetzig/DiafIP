@@ -7,9 +7,9 @@ section:    admin
 site:       user
 
     Für diesen Bereich ist keine Internationalisierung vorgesehen
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
@@ -59,7 +59,10 @@ $URL$
                 <td class="re"><button
                     type="submit"
                     name="submit"
-                    value="edUser">
+                    value="edUser"
+                    onmouseover="return overlib({literal}'{/literal}<b>Achtung: </b>Die &Auml;derungen werden erst wirksam, wenn sich der Nutzer neu einloggt! {literal}'{/literal},DELAY,500,FGCOLOR,{literal}'{/literal}#FFEfEf{literal}'{/literal},BGCOLOR,{literal}'{/literal}#C00010{literal}'{/literal},TEXTCOLOR,{literal}'{/literal}#C00010{literal}'{/literal});"
+                    onmouseout="return nd();"
+                    >
                     speichern
                     </button>
             </tr>

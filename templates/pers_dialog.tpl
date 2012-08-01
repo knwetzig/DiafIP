@@ -1,7 +1,7 @@
 {**************************************************************
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 call:   pers_class.php
@@ -9,7 +9,6 @@ class:  Person
 proc:   editPerson/
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************}
 
 <form method='post'>
@@ -59,7 +58,10 @@ ToDo:
 
 <!-- Tod.-tag/-Ort -->
 {if isset($dialog['ttag'])}
-        <tr>
+        <tr
+           onmouseover="return overlib({literal}'{/literal}{$dialog['tort'][3]} {literal}'{/literal},DELAY,500,FGCOLOR,{literal}'{/literal}#FFEfEf{literal}'{/literal},BGCOLOR,{literal}'{/literal}#C00010{literal}'{/literal},TEXTCOLOR,{literal}'{/literal}#C00010{literal}'{/literal});"
+           onmouseout="return nd();"
+        >
           <td>{$dialog['ttag'][2]}</td>
           <td><input
             type='text'

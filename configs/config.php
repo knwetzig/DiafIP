@@ -4,9 +4,9 @@ Konfigurationsdatei für Konstantendefinition / Pfade / DSN-Ort
 Die DSN steht in einer separaten Datei ausserhalb DocumentRoot
 Lädt den Header!
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -81,6 +81,6 @@ $params = array(
     "dsn"           => DSN,
     "table"         => "s_auth",
     "sessionName"   => "diafip",
-    "db_fields"     => "rechte, lang, realname, notiz"
+    "db_fields"     => "rechte, lang, uid, realname, notiz"
 );
 ?>

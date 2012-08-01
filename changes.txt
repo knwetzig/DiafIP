@@ -1,5 +1,12 @@
 <pre>
-20120731 - dito f&uuml; Aliasnamen
+20120801 - Korrektur: Label in Aliasnamen bearbeiten
+           Bearbeitungsmerkmale für Personendaten werden in DB gespeichert
+           Neuanlage Personen vereinfacht (keine Transaktion mehr).
+           Warnmeldung beim setzen von Sterbedaten und beim Erstellen neuer Accounts hinzugefügt
+           Fehlerhafte Aktionszuweisung im Newssystem und beim Anlegen neuer Accounts korrigiert
+           bei fehlerfafter Eingabe (eigenes Passwort ändern) wird nun der Dialog erneut angezeigt
+           kleinere Fixes
+20120731 - dito f&uuml;r Aliasnamen
 20120726 - Administration: Nutzer mit besonderen Rechten k&ouml;nnen unter Einstellungen
            - Presets Vorgabelisten f&uuml;r Ortsdaten erstellen und Korrekturen an bestehenden
            Namen vornehmen.

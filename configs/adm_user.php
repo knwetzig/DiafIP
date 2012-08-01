@@ -5,9 +5,9 @@ Eventhandler für Userverwaltung
 sektion:    admin
 site:       user
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -76,6 +76,7 @@ if(isset($_POST['submit'])) {
         $smarty->display('adm_useredit.tpl');
         // unset($_POST);
         break;
+
     case "edUser" :
         $sql = 'SELECT rechte FROM S_auth WHERE uid = ?;';
         $ore = $db->extended->getCol($sql, null, $myauth->getAuthData('selUser'));
@@ -90,17 +91,20 @@ if(isset($_POST['submit'])) {
             'username'  => normtext($_POST['username']),
             'realname'  => normtext($_POST['realname']),
             'rechte'    => bitArr2wert($ore, $_POST['rechte']),
-            'notiz'     => normtext($_POST['notiz'])
+            'notiz'     => normtext($_POST['notiz']),
+            'editdate'  => date('Y-m-d', $_SERVER['REQUEST_TIME']),
+            'editfrom'  => $myauth->getAuthData('uid')
         );
-        $types = array('text','text','integer','text');
+        $types = array('text','text','integer','text','date','integer');
         $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
             'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
         if(!IsDbError($data)) _v("Die Daten wurden erfolgreich aktualisiert");
         break;
+
     case "addUser" :
         if($_POST['username'] != "" AND $_POST['pwd'] != "")
-            $data = $myauth->addUser(normtext($_POST['username']), normtext($_POST['pwd']));
-        if(!IsDbError($data)) _v('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
+            $erg = $myauth->addUser(normtext($_POST['username']), normtext($_POST['pwd']));
+        if(!IsDbError($erg)) _v('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
     endswitch;
 }
 unset($_POST);
