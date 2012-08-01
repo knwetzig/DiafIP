@@ -2,9 +2,9 @@
 /**************************************************************
 Enthält alle Klassenbibliotheken zu Personendaten
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -16,9 +16,9 @@ ToDo:
 ================================================================= **/
 class Alias {
     public
-        $id     = null,
         $name   = null,
-        $notiz  = null;
+        $notiz  = null,
+        $id     = null;     // ! Böser Trick - id muss immer zuletzt stehen
 
     function __construct($nr = null) {
             if(isset($nr)) self::get($nr);
@@ -92,7 +92,6 @@ public
     $aliases = null,
     $bild   = null;       // id auf Bilddatenbank
 
-
 function __construct($nr = NULL) {
     if (isset($nr)) $this->getPerson($nr);
 }
@@ -122,8 +121,8 @@ Aufruf:     false   Formularanforderung
             true    Auswertung
 Return:     0   alles ok
             1
-Anm.: Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
-    haften Eingaben.
+Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
+            haften Eingaben.
 ****************************************************************/
     global $db, $myauth, $smarty;
     if($stat == false) {
@@ -141,7 +140,7 @@ Anm.: Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
             new d_feld('gtag', $this->gtag,    EDIT,   502,10000),
             new d_feld('gort', $this->gort,    EDIT,   4014),
             new d_feld('ttag', $this->ttag,    EDIT,   509,10000),
-            new d_feld('tort', $this->tort,    EDIT,   4014),
+            new d_feld('tort', $this->tort,    EDIT,   4014,5),
             new d_feld('strasse',$this->strasse,IEDIT, 510),
             new d_feld('wort', $this->wort,    IEDIT),
             new d_feld('plz',  $this->plz,     IEDIT),
@@ -235,26 +234,55 @@ Aufgabe: Neuanlage einer Person
 Aufruf: false   für Erstaufruf
         true    Verarbeitung nach Formular
 ****************************************************************/
-    global $db;
-    $types = array('text','date','integer','date','integer'/*tort*/,'text',
-            'text','integer'/*wort*/,'text','text','text','integer'/*aliases*/,
-            'integer'/*bild*/, /*alias->id*/'integer','text','text');
+    global $db, $myauth;
+    $types  = array(
+            'text',         // vname
+            'date',         // gtag
+            'integer',      // idx_gort
+            'date',         // ttag
+            'integer',      // idx_tort
+            'text',         // str
+            'text',         // plz (string!)
+            'integer',      // wort
+            'text',         // tel
+            'text',         // mail
+            'text',         // biogr
+            'integer',      // aliases
+            'integer',      // bild
+            'text',         // name (geerbt von Alias)
+            'text',         // notiz (geerbt von Alias)
+            'date',         // Zeitstempel
+            'integer',      // uid des bearbeiters
+    );
 
     if ($stat == false) {
+/* [1]
+        Alles Mist! Warum, sollte ich eine neue Id besorgen für einen
+        neu anzulegenden Datensatz, wo doch das DBMS die vergabe automatisch
+        für mich organisiert?
+        Aus diesem Grund fliegt der ganze Schmadder hinaus!
+
         // begin TRANSACTION anlage person
         $db->beginTransaction('newPerson'); isDBError($db);
         // neue id besorgen
-        $data =& $db->extended->getRow("SELECT nextval('p_alias_id_seq');");
+        $data = $db->extended->getRow("SELECT nextval('p_alias_id_seq');");
         IsDbError($data);
         $this->id = $data['nextval'];
+*/
         $this->editPerson(false);
     } else {
         $this->editPerson(true);
-        $data = $db->extended->autoExecute('p_person', $this,
+        foreach($this as $key => $wert) $data[$key] = $wert;
+        unset($data['id']);            // id löschen, wird vom DBMS vergeben
+        $data['editdate'] = date('Y-m-d', $_SERVER['REQUEST_TIME']);
+        $data['editfrom'] = $myauth->getAuthData('uid');
+        $erg = $db->extended->autoExecute('p_person', $data,
                     MDB2_AUTOQUERY_INSERT, null, $types);
-        IsDbError($data);
+        IsDbError($erg);
+/* [1]
         $db->commit('newPerson'); isDBError($db);
         // ende TRANSACTION
+*/
     }
 }
 
@@ -265,16 +293,38 @@ Aufgabe: schreibt das Obj. via Update in die DB zurück
          1  leerer Datensatz
    Anm.:
 ****************************************************************/
-    global $db;
-    $types = array('text','date','integer','date','integer'/*tort*/,'text',
-            'text','integer'/*wort*/,'text','text','text','integer'/*aliases*/,
-            'integer'/*bild*/, /*alias->id*/'integer','text','text');
+    global $db, $myauth;
+    $types = array(
+            'text',
+            'date',
+            'integer',
+            'date',
+            'integer',      // tort
+            'text',
+            'text',
+            'integer',      /*wort*/
+            'text',
+            'text',
+            'text',
+            'integer',      /*aliases*/
+            'integer',      /*bild*/
+            'text',         // name
+            'text',         // notiz
+            'integer',      // id geerbt von Alias
+            'date',         // Zeitstempel
+            'integer',      // uid des bearbeiters
+    );
 
     if (!$this->id) return 1;   // Abbruch weil leerer Datensatz
 
-    $data = $db->extended->autoExecute('p_person', $this,
+    foreach($this as $key => $wert) $data[$key] = $wert;
+    // Bearbeitungsoptionen anhängen
+    $data['editdate'] = date('Y-m-d', $_SERVER['REQUEST_TIME']);
+    $data['editfrom'] = $myauth->getAuthData('uid');
+
+    $erg = $db->extended->autoExecute('p_person', $data,
         MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
-    IsDbError($data);
+    IsDbError($erg);
     return 0;
 }
 
@@ -361,11 +411,4 @@ Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
     $smarty->display('pers_dat.tpl');
 }
 }   // end Personen-klasse
-
-
-/** SCHNIPSEL
-    $sql = 'SELECT ______ FROM ______ WHERE id = ?;';
-    $data = $db->extended->getRow($sql, null, array(______), TYP);
-    IsDbError($data);
-**/
 ?>

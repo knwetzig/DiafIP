@@ -3,38 +3,38 @@
    Enthält ein internes Board zum Austauschen von Nachrichten.
    Nicht für Produktionsumgebung geeignet!
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
+
 echo '<div class="bereich">Pinwand</div>';
 if (!isset($_POST['aktion'])) {
     // einfügen -> ist Benutzer berechtigt neue Artike zu erstellen
     echo "<form method='post'>
-            <input type='submit' name='aktion' value='add' />
-            <input type='hidden' name='section' value='news' />
+            <input type='submit' name='aktion' value='neu' />
+            <input type='hidden' name='sektion' value='news' />
         </form>";
 }
 
 switch(isset($_POST['aktion'])?$_POST['aktion']:'') {
-    case "add":
+    case "neu":
        if(!isset($_POST['submit'])) {
             // Formular anzeigen
 
-            echo <<<ADDFORM
+?>
             <form method='post'>
                 <fieldset><legend> Beitrag erstellen </legend>
                     <input style='width:500px' type='text' name='titel' value='Titel eingeben' onfocus="if(this.value=='Titel eingeben'){this.value='';}" /><br />
                     <textarea name='text' style='width:500px;height:300px'></textarea><br />
-                    <input type='hidden' name='section' value='news' />
-                    <input type='hidden' name='aktion' value='add' />
+                    <input type='hidden' name='sektion' value='news' />
+                    <input type='hidden' name='aktion' value='neu' />
                     <input type='submit' name='submit' />
                 </fieldset>
             </form>
-ADDFORM;
+<?php
 
         } else {
             //  Auswertung evt. Eingaben
@@ -52,7 +52,7 @@ ADDFORM;
             IsDbError($data);
             unset($_POST['aktion']);
         }
-        break; // Ende --add--
+        break; // Ende --neu--
 
     case "edit" :
         if (!isset($_POST['submit'])) {
@@ -66,7 +66,7 @@ ADDFORM;
         <legend> Beitrag bearbeiten </legend>
         <input type='text' name='titel' value='{$data['titel']}' style='width:500px' /><br />
         <textarea name='text' style='width:500px;height:300px'>{$data['inhalt']}</textarea><br />
-        <input type='hidden' name='section' value='news' />
+        <input type='hidden' name='sektion' value='news' />
         <input type='hidden' name='aktion' value='edit' />
         <input type='hidden' name='news' value='{$data['id']}' />
         <input type='submit' name='submit' />

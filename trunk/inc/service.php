@@ -2,9 +2,9 @@
 /**************************************************************
 Lose Sammlung diverser Funktionen
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -17,7 +17,7 @@ function loginFunction($username = null, $status = null, $myauth = null) {
     echo <<<LOGDLG
 <form method='post'>
     <fieldset id='login' style='text-align:center;' >
-        <legend> Login: </legend>
+        <legend>&nbsp;Login:&nbsp;</legend>
         <input
             type='text'
             name='username'

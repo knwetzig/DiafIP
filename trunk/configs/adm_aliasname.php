@@ -7,9 +7,9 @@ site:       alias
 
 Für diese Seite ist keine Internationalisierung vorgesehen
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -51,7 +51,7 @@ if(isset($_POST['submit'])) {
         $smarty->assign('aktion', 'edAlias');   // Initiator
         $ali = new Alias($_POST['alias']);
         // -> edit-dialog anzeigen
-        $dialog[0][3] = 'Alias&nbsp;bearbeiten';
+        $dialog[0][2] = 'Alias&nbsp;bearbeiten';
         $dialog[2][1] = $ali->name;
         $dialog[4][1] = $ali->notiz;
         $dialog[5][1] = $_POST['alias']?'edAlias':'addAlias';

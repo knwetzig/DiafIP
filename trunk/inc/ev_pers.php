@@ -1,13 +1,15 @@
 <?php /****************************************************
 Eventhandler für Aktionen der Personenverwaltung
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:   Die Methode searchPerson in der Klassenbibliothek funktioniert nicht
         wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
+
+        Gültigkeit eines Löschversuchs ist vorher zu prüfen.
 
 ***** (c) DIAF e.V. *******************************************/
 
