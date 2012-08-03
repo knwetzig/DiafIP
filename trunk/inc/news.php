@@ -19,7 +19,7 @@ if (!isset($_POST['aktion'])) {
         </form>";
 }
 
-switch(isset($_POST['aktion'])?$_POST['aktion']:'') {
+switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
     case "neu":
        if(!isset($_POST['submit'])) {
             // Formular anzeigen
@@ -45,10 +45,10 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') {
             $a = array(
                 'titel'     => normtext($_POST['titel']),
                 'inhalt'    => normtext($_POST['text']),
-                'autor'     => $myauth->getUsername()
+                'editfrom'  => $myauth->getAuthData('uid')
             );
             $data = $db->extended->autoExecute('s_news', $a,
-                MDB2_AUTOQUERY_INSERT, null, array('text','text','text'));
+                MDB2_AUTOQUERY_INSERT, null, array('text','text','integer'));
             IsDbError($data);
             unset($_POST['aktion']);
         }
@@ -98,32 +98,43 @@ EDITFORM;
         } else;
 
         unset($_POST['aktion']);
-} // ende SWITCH
+endswitch;
 
 
 // Anzeige von die Scheiß
-
-$sql = "SELECT s_news.id AS nid, s_news.titel, s_news.inhalt, s_news.datum AS chdatum,
-        s_news.autor FROM s_news ORDER BY s_news.datum DESC;";
-
-$data = $db->extended->getAll($sql, array('integer','text','text','date','text','text'));
+$sql = "SELECT
+            s_news.id AS nid,
+            s_news.titel,
+            s_news.inhalt,
+            s_news.editdate AS chdatum,
+            s_news.editfrom AS autor,
+            s_auth.realname
+        FROM
+            public.s_news,
+            public.s_auth
+        WHERE
+            s_news.editfrom = s_auth.uid
+        ORDER BY
+            s_news.editdate DESC;";
+$data = $db->extended->getAll($sql, array('integer','text','text','date','text'));
 IsDbError($data);
 
-foreach($data as $wert) {
+foreach($data as $wert) :
     echo "<hr /><form method='post'><span style='float:right'>\n"
-        .$wert['chdatum']."&nbsp;|&nbsp;".$wert['autor']."&nbsp;&nbsp;\n";
+        .$wert['chdatum']."&nbsp;|&nbsp;".$wert['realname']."&nbsp;\n";
     /* Nutzer berechtigt zu editieren? */
-    if($myauth->getUsername() === $wert['autor'] OR $myauth->getAuthData('rechte') == SU) {
+    if($myauth->getAuthdata('uid') === $wert['autor'] OR
+            isbit($myauth->getAuthData('rechte'), SU)) {
         echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n";
         echo "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
     }
-    echo "<input type='hidden' name='section' value='news' />
+    echo "<input type='hidden' name='sektion' value='news' />
         <input type='hidden' name='news' value='{$wert['nid']}' /></span>\n";
 
     // Der eigtl. Inhalt
     echo "<div style='font-weight:bold'>".$wert['titel']."</div>\n";
     echo "<p style='white-space:normal'>".nl2br(changetext($wert['inhalt']))."</p>\n";
     echo "</form>\n";
-}
+endforeach;
 // Ende Anzeige
 ?>
