@@ -8,8 +8,8 @@ $Date::                        $:  Datum der letzten Übertragung
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
+?>
 
-echo <<<'INH'
 <h2>
     Willkommen auf der Testseite des<br />"Deutschen Instituts f&uuml;r Animationsfilm"
 </h2>
@@ -60,5 +60,3 @@ Sprache etc)</li>
 Tooltips</li>
     </ul>
 </p>
-INH;
-?>
