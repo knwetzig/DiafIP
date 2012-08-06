@@ -78,7 +78,10 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
             // }
             if ($plist AND is_array($plist)) {
                 // Ausgabe
+                $bg = 1;
                 foreach(($plist) as $nr) {
+                    $bg =++;
+                    $smarty->assign('darkBG', $bg % 2);
                     $pers = new Person($nr);
                     $pers->view();
                 }
