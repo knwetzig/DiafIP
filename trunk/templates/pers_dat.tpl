@@ -20,16 +20,16 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
 ***** (c) DIAF e.V. *******************************************}
 
 {* Kopfzeile *}
-<table width="100%"><tr>
+<table width="100%" {if !empty($darkBG)} style="background-image:url(images/bg_dark.png)" {/if}><tr>
     <td>
         <div style='white-space:normal' class='fett'>
-        {if isset($dialog['vname'])}
+        {if !empty($dialog['vname'])}
             {$dialog['vname'][1]}&nbsp;
         {/if}
-        {if isset($dialog['name'])}
+        {if !empty($dialog['name'])}
             {$dialog['name'][1]}
         {/if}
-        {if isset($dialog['aliases'])}
+        {if !empty($dialog['aliases'])}
             <span style='font-weight:normal'>&nbsp;(
             {foreach from=$dialog['aliases'][1] item=alias}{$alias}&nbsp;{/foreach})
         </span>{/if}</div>
@@ -57,8 +57,9 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
     </td>
 </tr></table>   {* Ende Kopfzeile *}
 
-<table style='margin-left:30px'>
+<table style='margin-left:30px' {if !empty($darkBG)} style="background-image:url(images/bg_dark.png)" {/if}>
     <colgroup><col width='10%'><col><col></colgroup>
+    {if !empty($dialog['gtag'] OR !empty($dialog['gort']}
         <tr>
             <td class='re'>
                 {if isset($dialog['gtag'])}
@@ -67,7 +68,7 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
             <td>
                 {$dialog['gtag'][1]}
                 {/if}
-                {if isset($dialog['gort'])}
+                {if !empty($dialog['gort'])}
                     &nbsp;{$dialog['gort'][2]}&nbsp;{$dialog['gort'][1]['ort']}
                     &nbsp;({$dialog['gort'][1]['land']},&nbsp;{$dialog['gort'][1]['bland']})
                 {/if}
