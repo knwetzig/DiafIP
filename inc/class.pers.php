@@ -8,6 +8,7 @@ $Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
+    - Vorabfrage beim Löschen (Verküpfung auflösen)
 ***** (c) DIAF e.V. *******************************************/
 
 
@@ -251,7 +252,6 @@ Aufruf: false   für Erstaufruf
             'integer',      // bild
             'text',         // name (geerbt von Alias)
             'text',         // notiz (geerbt von Alias)
-            'date',         // Zeitstempel
             'integer',      // uid des bearbeiters
     );
 
@@ -274,7 +274,6 @@ Aufruf: false   für Erstaufruf
         $this->editPerson(true);
         foreach($this as $key => $wert) $data[$key] = $wert;
         unset($data['id']);            // id löschen, wird vom DBMS vergeben
-        $data['editdate'] = date('Y-m-d', $_SERVER['REQUEST_TIME']);
         $data['editfrom'] = $myauth->getAuthData('uid');
         $erg = $db->extended->autoExecute('p_person', $data,
                     MDB2_AUTOQUERY_INSERT, null, $types);
@@ -319,7 +318,7 @@ Aufgabe: schreibt das Obj. via Update in die DB zurück
 
     foreach($this as $key => $wert) $data[$key] = $wert;
     // Bearbeitungsoptionen anhängen
-    $data['editdate'] = date('Y-m-d', $_SERVER['REQUEST_TIME']);
+    $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
     $data['editfrom'] = $myauth->getAuthData('uid');
 
     $erg = $db->extended->autoExecute('p_person', $data,
@@ -357,13 +356,9 @@ Aufgabe: Simple Suche nach Personen über Namen
         ORDER BY p_person.name ASC;';
     // DISTINCT wieder entfernt -> array_unique()
     /* Beispiel für die UNION-Klausel
-    SELECT verleihe.name
-    FROM verleihe
-    WHERE verleihe.name LIKE 'W%'
+    SELECT verleihe.name FROM verleihe WHERE verleihe.name LIKE 'W%'
     UNION
-    SELECT schauspieler.name
-    FROM schauspieler
-    WHERE schauspieler.name LIKE 'W%';
+    SELECT schauspieler.name FROM schauspielerWHERE schauspieler.name LIKE 'W%';
     */
     $data =&$db->extended->getAll($sql, null, array($s,$s));
     IsDbError($data);
