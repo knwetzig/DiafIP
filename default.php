@@ -19,13 +19,13 @@ $URL$
 Leistungstest unterzogen.<br />F&uuml;r diesen Test haben sie Zugangsdaten
 bekommen die einen bestimmten Satz an Privilegien beinhalten. Alternativ
 k&ouml;nnen Sie sich als "gast" mit dem Passwort "gast" einloggen (nur
-lesen).<br />Momentan sehen Sie die Entwicklerversion $Rev$
-vom $Date$
-
+lesen).<br />
+Technische Informationen, wie aktuelle Release, Quelltext, &Auml;nderungen usw. finden Sie auf der <a href="http://code.google.com/p/diafip" target="_blank">Projekthomepage</a>
 </p>
+
 <p><b>Hinweise:</b>
     <ul>
-        <li> Alle hier eingetragenen Daten werden nach der Testphase verworfen. Man kann also nach Herzenslust experimentieren.</li>
+        <li> Alle hier eingetragenen Daten werden nach der Testphase verworfen! Man kann also nach Herzenslust experimentieren.</li>
         <li>Wenn wider Erwarten eine Fehlermeldung auftaucht, bitte den
 Fehlertext (Copy-Paste) oder die Uhrzeit mit einer kurzen Beschreibung hier
 posten.</li>
@@ -39,9 +39,11 @@ Beschreibung "...Tochter des Wasserk<span class="fett">hans</span> wird die Frau
 ...". Eine "leere" Suche ergibt folglich den gesamten Bestand!
 Gross-/Kleinschreibung wird nicht unterschieden.
 </p>
+
 <p>
     W&uuml;nsche und Vorschl&auml;ge bitte (kurz) auf die Pinwand posten.
 </p>
+
 <p>
     <strong>ToDo Funktionalit&auml;t:</strong><ol>
         <li>Funktionen zur Verwaltung der Serientitel</li>
