@@ -171,7 +171,7 @@ Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
             if($_POST['gtag']) {
                 if(isValid($_POST['gtag'], DATUM)) $this->gtag = $_POST['gtag'];
                 else fehler(103);
-            } else $this->gtag = null;
+            } else $this->gtag = '1900-01-01';
         }
 
         if(isset($_POST['gort'])) {
@@ -353,7 +353,7 @@ Aufgabe: Simple Suche nach Personen über Namen
         WHERE
          (p_person.name ILIKE ?) OR
          (p_person.vname ILIKE ?)
-        ORDER BY p_person.name ASC;';
+        ORDER BY p_person.name ASC, p_person.vname ASC;';
     // DISTINCT wieder entfernt -> array_unique()
     /* Beispiel für die UNION-Klausel
     SELECT verleihe.name FROM verleihe WHERE verleihe.name LIKE 'W%'
@@ -398,8 +398,8 @@ Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
         new d_feld('biogr',  changetext($this->biogr),  VIEW,   513),   // Biografie
         new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514),   // Notiz
         new d_feld('bild',   $this->bild,               VIEW),
-        new d_feld('edit',   null,                      EDIT),          // edit-Button
-        new d_feld('del',    null,                      DELE),          // Lösch-Button
+        new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button
+        new d_feld('del',    null,                      DELE, null, 4020)  // Lösch-Button
     ));
 
     $smarty->assign('dialog', $data, 'nocache');

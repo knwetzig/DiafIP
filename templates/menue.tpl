@@ -1,20 +1,21 @@
-{***********************************************************
+{***********************************+++************************
     Enthält die statische Menüstruktur im linken Bereich
     der Seite einschließlich der DB-Statistik
     Daten werden an main.php und anschließend an index.php
     via POST weitergegeben.
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
 <div id='menue'>
-    <img src='images/diaf.png' alt='DIAF' />
+
 
     <form method='post'>
+        <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <p style='text-align:center; font-weight:bold'>{$dlg[0]}
         <!--button name='sektion' value='film'>{$dlg[1]}</button>
         <button name='section' value='titel'>{$dlg[2]}</button-->

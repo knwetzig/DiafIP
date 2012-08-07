@@ -28,6 +28,7 @@ $smarty->assign('dialog', $data);
 $smarty->display('pers_pers.tpl');
 
 if (isset($_POST['aktion'])?$_POST['aktion']:'') {
+    $smarty->assign('darkBG', 0);
     $smarty->assign('aktion', $_POST['aktion']);
 
     // switch:action => add | edit | search | del

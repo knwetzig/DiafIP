@@ -145,8 +145,19 @@ button {
     margin:2px;
 }
 
+button.noBG {
+    background-image:url(images/bg.png);
+    border:none;
+}
+
 button.small {
-    background:#f8f7e6 url(images/bg.png);
+    background-image:url(images/bg.png);
+    border:none;
+    width:20px;
+}
+
+button.small_dk {
+    background-image:url(images/bg_dark.png);
     border:none;
     width:20px;
 }
