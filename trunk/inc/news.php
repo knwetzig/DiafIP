@@ -38,7 +38,7 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
 
         } else {
             //  Auswertung evt. Eingaben
-            if (!preg_match('/'.NAMEN.'/',$_POST['titel'])) {
+            if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
                 fehler(100);
                 break;
             }
@@ -75,7 +75,7 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
 EDITFORM;
         } else {
             // Auswertung evt. Eingaben
-            if (!preg_match('/'.NAMEN.'/',$_POST['titel'])) {
+            if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
                 fehler(100);
                 break;
             }
@@ -120,7 +120,7 @@ $data = $db->extended->getAll($sql, array('integer','text','text','date','text')
 IsDbError($data);
 
 foreach($data as $wert) :
-    echo "<hr /><form method='post'><span style='float:right'>\n"
+    echo "<hr /><form method='post'><span style='float:right' class='note'>\n"
         .$wert['chdatum']."&nbsp;|&nbsp;".$wert['realname']."&nbsp;\n";
     /* Nutzer berechtigt zu editieren? */
     if($myauth->getAuthdata('uid') === $wert['autor'] OR
