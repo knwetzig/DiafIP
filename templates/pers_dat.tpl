@@ -29,9 +29,9 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
             {if !empty($dialog['vname'][1])}{$dialog['vname'][1]}&nbsp;{/if}
             {if !empty($dialog['name'][1])} {$dialog['name'][1]}{/if}
             {if !empty($dialog['aliases'][1])}
-                <span style="font-weight:normal">&nbsp;(
-                {foreach from=$dialog['aliases'][1] item=alias}{$alias}&nbsp;{/foreach}
-                )</span>{/if}
+                <span style="font-weight:normal">&nbsp;
+                ({foreach from=$dialog['aliases'][1] item=alias}{$alias}{/foreach})</span>
+            {/if}
             </div>
         </td>
 
@@ -98,7 +98,8 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
             {if !empty($dialog['strasse'][1])}{$dialog['strasse'][1]}<br />{/if}
             {if !empty($dialog['plz'])}{$dialog['plz'][1]}&nbsp;{/if}
             {if !empty($dialog['wort'][1])}
-                {$dialog['wort'][1]['ort']}&nbsp;({$dialog['wort'][1]['land']}&nbsp;-&nbsp;{$dialog['wort'][1]['bland']}){/if}
+                {$dialog['wort'][1]['ort']}&nbsp;({$dialog['wort'][1]['land']}&nbsp;,&nbsp;{$dialog['wort'][1]['bland']})
+            {/if}
         </td>
     </tr>{/if}
 
@@ -111,7 +112,7 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
 {* --Mailzeile-- *}
     {if !empty($dialog['mail'][1])}<tr>
             <td class="re">{$dialog['mail'][2]}:</td>
-            <td>{$dialog['mail'][1]}</td>
+            <td><a href="mailto:{$dialog['mail'][1]}">{$dialog['mail'][1]}</a></td>
     </tr>{/if}
 
 

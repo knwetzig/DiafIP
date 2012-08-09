@@ -77,7 +77,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 <!-- Anschrift -->
 {if isset($dialog['strasse'])}
-        <tr>
+        <tr class="darkBG">
           <td>{$dialog['strasse'][2]}</td>
           <td colspan=3>
             <input
@@ -91,7 +91,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 <!-- PLZ/Ort -->
 {if isset($dialog['plz'])}
-        <tr>
+        <tr class="darkBG">
           <td>&nbsp;</td>
           <td colspan=3>
             <input
@@ -107,7 +107,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 <!-- email -->
 {if isset($dialog['mail'])}
-        <tr>
+        <tr class="darkBG">
           <td>{$dialog['mail'][2]}</td>
           <td colspan=3>
             <input
@@ -121,7 +121,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 <!-- tel -->
 {if isset($dialog['tel'])}
-        <tr>
+        <tr class="darkBG">
           <td>{$dialog['tel'][2]}</td>
           <td colspan=3>
             <input
@@ -151,7 +151,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 <!-- Notiz -->
 {if isset($dialog['notiz'])}
-        <tr>
+        <tr class="darkBG">
           <td>{$dialog['notiz'][2]}</td>
           <td colspan=3>
             <textarea

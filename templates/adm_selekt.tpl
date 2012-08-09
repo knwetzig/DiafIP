@@ -25,7 +25,7 @@ ToDo:
             type="submit"
             name="submit"
             value="selekt"
-        >&crarr;</button>
+        ><img src="images/forward.png" alt="enter" /></button>
         <input type="hidden" name="sektion" value="admin" />
         <input type="hidden" name="site" value="{$dialog[0]}" />
     </fieldset>

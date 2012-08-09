@@ -24,41 +24,24 @@ Technische Informationen, wie aktuelle Release, Quelltext, &Auml;nderungen usw. 
 </p>
 
 <p><b>Hinweise:</b>
-    <ul>
-        <li> Alle hier eingetragenen Daten werden nach der Testphase verworfen! Man kann also nach Herzenslust experimentieren.</li>
-        <li>Wenn wider Erwarten eine Fehlermeldung auftaucht, bitte den
-Fehlertext (Copy-Paste) oder die Uhrzeit mit einer kurzen Beschreibung hier
-posten.</li>
-        <li>BB-Code ist in den Textfeldern (Notiz etc.) erlaubt. Folgende Auszeichnungen stehen zur Verf&uuml;gung: b, i, u, pre, url und img</li>
-    </ul>
-    Die Eingabefelder für die Suche nehmen immer einen Teilstring auf. Das
+    <dl>
+        <dt>Datensicherheit</dt>
+        <dd> Alle hier eingetragenen Daten werden nach der Testphase verworfen! Man kann also nach Herzenslust experimentieren.</dd>
+        <dt>Fehlermeldungen</dt>
+        <dd>Das Projekt ist auf Ihre Mithilfe angewiesen. Bitte posten Sie Fehlermeldungen mit einer kurzen Beschreibung wie der Fehler zustande kam in den Breich Pinwand.</dd>
+        <dt>BB-Code</dt>
+        <dd> ist in den Textfeldern (Notiz etc.) erlaubt. Folgende Auszeichnungen stehen zur Verf&uuml;gung: b, i, u, pre, url und img. Weitergehende Informationen dazu finden sie auf <a href="http://de.wikipedia.org/wiki/BB-Code">http://de.wikipedia.org/wiki/BB-Code</a></dd>
+        <dt>Suchfunktion</dt>
+        <dd>Die Eingabefelder für die Suche nehmen immer einen Teilstring auf. Das
 heist, die Suche mit <span class="fett">hans</span> f&uuml;hrt vielleicht zum
 gesuchten Titel "<span class="fett">Hans</span> im Gl&uuml;ck", aber auch zu
 "Der Junge mit der Pferdegeige". Hier findet sich der Suchtext in der
 Beschreibung "...Tochter des Wasserk<span class="fett">hans</span> wird die Frau
 ...". Eine "leere" Suche ergibt folglich den gesamten Bestand!
-Gross-/Kleinschreibung wird nicht unterschieden.
+Gross-/Kleinschreibung wird nicht unterschieden.</dd>
+    </dl>
 </p>
 
 <p>
     W&uuml;nsche und Vorschl&auml;ge bitte (kurz) auf die Pinwand posten.
-</p>
-
-<p>
-    <strong>ToDo Funktionalit&auml;t:</strong><ol>
-        <li>Funktionen zur Verwaltung der Serientitel</li>
-        <li style="text-decoration:line-through;">Verwaltung für Aliasnamen</li>
-        <li style="text-decoration:line-through;">Modul zur Verwaltung von
-Orten</li>
-        <li style="text-decoration:line-through;">Erstellung
-Benutzerverwaltung</li>
-        ...
-        <li style="text-decoration:line-through;">Eigenverwaltung (Password,
-Sprache etc)</li>
-    </ol>
-    <strong>Aufgaben für Benutzerdesign:</strong>
-    <ul>
-        <li style="text-decoration:line-through;">Implementierung der
-Tooltips</li>
-    </ul>
 </p>

@@ -17,10 +17,11 @@ ToDo:
 /**********************************************************
 func: __construct($)
     ::getOrt($!)    // holt die Ortsdaten aus der Ortstabelle -> array
-      get()        // --dito-- schreibt dies aber ins Objekt
+      get()         // --dito-- schreibt dies aber ins Objekt
       neu()
       edit()
-      set()      // schreibt objekt -> db
+      set()         // schreibt objekt -> db
+      del()         // löscht einen Ort
     ::getOrtList()  // listet alle Orte in einem Array
 
 Anm.:
@@ -126,6 +127,24 @@ function set() {
         'id = '.$db->quote($this->id, 'integer'), $types);
     IsDbError($data);
     return 0;
+}
+
+function del() {
+    global $db;
+    // Abfrage, ob Ort mit einer Person verküpft ist
+    $sql = "SELECT p_person.id FROM public.p_person
+            WHERE p_person.tort = ? OR p_person.gort = ? OR p_person.wort = ?;";
+    $data = $db->extended->getCol(
+            $sql, null,
+            array($this->id, $this->id, $this->id),
+            array('integer', 'integer', 'integer'));
+    IsDbError($data);
+    // $data enthält das array mit den konfliktdatensätzen
+    if(!$data) {
+        _v("Lösche Ort: ".$this->ort);
+        $res = $db->extended->autoExecute('s_orte', null,
+                    MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer'));
+    } else fehler(6);
 }
 
 function getOrtList() {

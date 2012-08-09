@@ -5,9 +5,9 @@ class: s_location_class.php
 proc:  editOrt
 param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] => tooltip)
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
@@ -17,7 +17,7 @@ ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
 <br />
 <form method='post'>
     <fieldset>
-        <legend>Verwaltung der Ortsnamen</legend>
+        <legend>Ortsnamen</legend>
         <table><colgroup><col><col></colgroup>
             <tr><!-- Land -->
                 <td>Land/Bundesland</td>
@@ -42,6 +42,13 @@ ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
             </tr>
             <tr>
                 <td colspan="2" class="re">
+                    <button
+                        type="submit"
+                        name="submit"
+                        value="delOrt">
+                        löschen
+                    </button>
+
                     <button
                         type="submit"
                         name="submit"
