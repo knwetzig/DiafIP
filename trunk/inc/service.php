@@ -14,26 +14,7 @@ function loginFunction($username = null, $status = null, $myauth = null) {
 /*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
     den Authorisations-Zustand und das Auth-Objekt
 */
-    echo <<<LOGDLG
-<form method='post'>
-    <fieldset id='login' style='text-align:center;' >
-        <legend>&nbsp;Login:&nbsp;</legend>
-        <input
-            type='text'
-            name='username'
-            value='gast'
-            style='width:120px; text-align:center'
-            onfocus="if(this.value=='gast'){this.value='';}" /><br />
-        <input
-            type='password'
-            name='password'
-            value='gast'
-            style='width:120px; text-align:center'
-            onfocus="if(this.value=='gast'){this.value='';}" /><br />
-        <input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' />
-    </fieldset>
-</form>
-LOGDLG;
+?>    <form method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
 }
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt

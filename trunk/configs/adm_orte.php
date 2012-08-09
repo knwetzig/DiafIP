@@ -7,9 +7,9 @@ site:       orte
 
 Für diese Seite ist keine Internationalisierung vorgesehen
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
@@ -56,6 +56,13 @@ if(isset($_POST['submit'])) {
         $loc->edit(true);
         $loc->set();
         break;
+    case "delOrt" :
+        if(!isBit($myauth->getAuthData('rechte'), DELE)) {
+            fehler(2);
+            die();
+        }
+        $loc = new Ort($myauth->getAuthData('selOrt'));
+        $loc->del();
     endswitch;
 }
 if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !== "selekt")) {

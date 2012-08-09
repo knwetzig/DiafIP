@@ -24,19 +24,19 @@ $URL$
 }
 
 #login {
-    background:#f8f7e6;
     position:absolute;
     top:100px;
     left:100px;
-    width:180px;
     text-align:center;
     z-index:100;
 }
 
+/* Vorläufig so wie im Browser eingestellt
 a:link		{text-decoration:underline;color:blue}
 a:visited	{text-decoration:underline;}
 a:hover		{text-decoration:underline}
 a:active	{text-decoration:none}
+*/
 a.noul      {text-decoration:none;color:black}
 
 body {
@@ -52,9 +52,13 @@ ul.noBullet {
     margin-left:-20px;
 }
 
-/************ Tabellenformate *************************************************/
+/***** Tabellenformate *************************************************/
 table {
     border:none;
+}
+
+tr.darkBG {
+    background-image:url(images/bg_dark.png);
 }
 
 td {
@@ -91,7 +95,7 @@ td.brline {
     font-weight: bold
 }
 
-/************* Formularelemente ***********************************************/
+/***** Formularelemente ***********************************************/
 fieldset {
   /*  border:solid 1px #800040;*/
     border:groove 2px #E7E4E0;
@@ -105,7 +109,9 @@ fieldset input[type='image'] {
 }
 
 legend {
-    font-size:1.0em
+    font-size:1.0em;
+    padding-left:10px;
+    padding-right:10px;
 }
 
 input {
@@ -163,7 +169,7 @@ button.small_dk {
 }
 
 
-/************** Eigene Elemente ***********************************************/
+/***** Eigene Elemente ***********************************************/
 p.mittig {
     text-align:justify;
 }
@@ -199,6 +205,12 @@ p.mittig {
     padding-left:50px;
     padding-top:10px;
 }
+
+.darkBG {
+    background-image:url(images/bg_dark.png);
+}
+
+/***** Darstellungsfenster **********************************************/
 .bereich {
     font-size:20px;
     font-weight:bold;
@@ -220,7 +232,6 @@ p.mittig {
     /*text-align:center;*/
 }
 
-/*********** Darstellungsfenster **********************************************/
 .visor {
     position:relative;
     margin:20px;
@@ -233,5 +244,3 @@ p.mittig {
     z-index:99
 }
 
-.row0	{background-color:#102000}
-.row1	{background-color:#173000}

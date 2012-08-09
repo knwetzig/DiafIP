@@ -39,6 +39,7 @@ class Alias {
     function getAlias($nr) {
     // Diese Funktion gibt den Namen zurück
         global $db;
+        if (empty($nr)) return null;
         $sql = 'SELECT name FROM ONLY p_alias WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $nr, 'integer');
         IsDbError($data);
@@ -106,7 +107,6 @@ Aufgabe: Datensatz holen, in @self schreiben
    Anm.:
 ****************************************************************/
     global $db;
-
     $sql = 'SELECT * FROM p_person WHERE id = ?;';
     $data = $db->extended->getRow($sql, null, array($nr));
     // Ergebnis -> Objekt schreiben

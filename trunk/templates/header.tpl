@@ -31,7 +31,8 @@ ToDo:   Freischaltung der JScript-bereich nach Bedarf
     <script language="javascript" src="inc/overlib/overlib_hideform.js"></script>
     <script language="javascript" src="inc/overlib/overlib_shadow.js"></script>
     <script language="javascript" src="inc/overlib/overlib_centerpopup.js"></script>
-*}
+
     <script type="text/javascript">
-        var ol_width = "300px";
+        var ol_width = '300px';
     </script>
+*}

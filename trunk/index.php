@@ -1,9 +1,11 @@
 <?php
 /**************************************************************
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+
+$Rev::                              $:  Revision der letzten Übertragung
+$Author::                           $:  Autor der letzten Übertragung
+$Date::                             $:  Datum der letzten Übertragung
 $URL$
+
 ***** (c) DIAF e.V. *******************************************/
 require_once	'configs/config.php';
 
@@ -62,5 +64,6 @@ if ($myauth->checkAuth()) {     // erfolgreiche Anmeldung
 
     $db->disconnect();
 }   // ende nutzbereich
-echo  "\n\t</body> \n </html>";
 ?>
+</body>
+</html>
