@@ -4,9 +4,9 @@
     Das Ladeprogramm für die Hauptseite
     Hier wird nur die "sektion" Fraktion ausgewertet
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev:: 5                       		$:  Revision der letzten Übertragung
+$Author:: mortagir@gmail.com   		$:  Autor der letzten Übertragung
+$Date:: 2012-07-31 22:11:39 +0#		$:  Datum der letzten Übertragung
 $URL$
 
 Anm.: Schreibe 'sektion' und nicht 'section'!!!

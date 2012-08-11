@@ -48,7 +48,7 @@ function __construct($nr = NULL) {
 
 protected function get() {    // die dynamische Version
     global $db;
-    $sql = 'SELECT * FROM orte WHERE id = ?;';
+    $sql = 'SELECT * FROM orte WHERE oid = ?;';
     $data = $db->extended->getRow($sql, null, array($this->id));
     IsDbError($data);
     // ACHTUNG: Die Kombination mit einem statischen Aufruf führt zum
@@ -60,7 +60,7 @@ protected function get() {    // die dynamische Version
 
 function getOrt($nr) {  // die statische Version
     global $db;
-    $sql = 'SELECT * FROM orte WHERE id = ?;';
+    $sql = 'SELECT * FROM orte WHERE oid = ?;';
     $data = $db->extended->getRow($sql, null, array($nr));
     IsDbError($data);
     return  $data;
@@ -155,7 +155,7 @@ function getOrtList() {
     IsDbError($data);
     $orte=array('-- unbekannt --');
     foreach($data as $val) { // val ist das Städtearray
-        $orte[$val['id']] = $val['ort'];
+        $orte[$val['oid']] = $val['ort'];
     }
     return $orte;
 }
@@ -167,7 +167,7 @@ function getLandList() {
     IsDbError($data);
     $laend = array();
     foreach($data as $val) {
-        $laend[$val['id']] = $val['bland']."&nbsp;-&nbsp;".$val['land'];
+        $laend[$val['id']] = (empty($val['bland'])?$val['land']:$val['bland']."&nbsp;-&nbsp;".$val['land']);
     }
     return $laend;
 }

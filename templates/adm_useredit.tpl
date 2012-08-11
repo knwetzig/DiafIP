@@ -60,7 +60,7 @@ $URL$
                     type="submit"
                     name="submit"
                     value="edUser"
-                    onmouseover="return overlib({literal}'{/literal}<b>Achtung: </b>Die &Auml;derungen werden erst wirksam, wenn sich der Nutzer neu einloggt! {literal}'{/literal},DELAY,500,FGCOLOR,{literal}'{/literal}#FFEfEf{literal}'{/literal},BGCOLOR,{literal}'{/literal}#C00010{literal}'{/literal},TEXTCOLOR,{literal}'{/literal}#C00010{literal}'{/literal});"
+                    onmouseover="{literal}return overlib('<b>Achtung: </b>Die &Auml;nderungen werden erst wirksam, wenn sich der Nutzer neu einloggt! ',DELAY,500,FGCOLOR,'#FFEfEf',BGCOLOR,'#C00010',TEXTCOLOR,'#C00010');{/literal}"
                     onmouseout="return nd();"
                     >
                     speichern

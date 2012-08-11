@@ -14,7 +14,7 @@ function loginFunction($username = null, $status = null, $myauth = null) {
 /*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
     den Authorisations-Zustand und das Auth-Objekt
 */
-?>    <form method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
+?>    <form method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle; padding-left:20px;"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
 }
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt
@@ -93,7 +93,7 @@ function getStringList($sl) {
 function isValid($val, $muster) {
     // Prüfung auf korrekte syntax - keine semantikprüfung!
     $muster = '/'.$muster.'/';
-    if(preg_match($muster, $val)) return true; else return false;
+    return preg_match($muster, $val);
 }
 
 function list2array($list) {
