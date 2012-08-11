@@ -158,7 +158,7 @@ Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
         // Formular auswerten
         if(isset($_POST['vname'])) $this->vname = normtext($_POST['vname']);
         if(isset($_POST['name'])) {
-            if(isValid($_POST['name'], NAMEN)) $this->name = normtext($_POST['name']);
+            if(!empty($_POST['name'])) $this->name = normtext($_POST['name']);
             else {
                 fehler(107);
                 die();

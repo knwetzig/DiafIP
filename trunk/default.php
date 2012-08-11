@@ -22,15 +22,20 @@ k&ouml;nnen Sie sich als "gast" mit dem Passwort "gast" einloggen (nur
 lesen).<br />
 Technische Informationen, wie aktuelle Release, Quelltext, &Auml;nderungen usw. finden Sie auf der <a href="http://code.google.com/p/diafip" target="_blank">Projekthomepage</a>
 </p>
-
-<p><b>Hinweise:</b>
+<p><strong>Regeln:</strong>
+    <ol>
+        <li>Pr&uuml;fen, ob ein geeigneter Eintrag schon vorhanden ist, wenn ja, dann diesen verwenden.</li>
+        <li>Sollte man feststellen, das man einen fehlerfaften Eintrag erstellt hat, dann diesen korrigieren statt einen weiteren anzulegen.</li>
+    </ol>
+<p>
+<p><strong>Hinweise:</strong>
     <dl>
         <dt>Datensicherheit</dt>
         <dd> Alle hier eingetragenen Daten werden nach der Testphase verworfen! Man kann also nach Herzenslust experimentieren.</dd>
         <dt>Fehlermeldungen</dt>
         <dd>Das Projekt ist auf Ihre Mithilfe angewiesen. Bitte posten Sie Fehlermeldungen mit einer kurzen Beschreibung wie der Fehler zustande kam in den Breich Pinwand.</dd>
         <dt>BB-Code</dt>
-        <dd> ist in den Textfeldern (Notiz etc.) erlaubt. Folgende Auszeichnungen stehen zur Verf&uuml;gung: b, i, u, pre, url und img. Weitergehende Informationen dazu finden sie auf <a href="http://de.wikipedia.org/wiki/BB-Code">http://de.wikipedia.org/wiki/BB-Code</a></dd>
+        <dd> ist in den Textfeldern (Notiz etc.) erlaubt. Folgende Auszeichnungen stehen zur Verf&uuml;gung: b, i, u, pre, url und img. Weitergehende Informationen dazu finden Sie auf <a href="http://de.wikipedia.org/wiki/BB-Code">http://de.wikipedia.org/wiki/BB-Code</a></dd>
         <dt>Suchfunktion</dt>
         <dd>Die Eingabefelder für die Suche nehmen immer einen Teilstring auf. Das
 heist, die Suche mit <span class="fett">hans</span> f&uuml;hrt vielleicht zum
@@ -39,6 +44,7 @@ gesuchten Titel "<span class="fett">Hans</span> im Gl&uuml;ck", aber auch zu
 Beschreibung "...Tochter des Wasserk<span class="fett">hans</span> wird die Frau
 ...". Eine "leere" Suche ergibt folglich den gesamten Bestand!
 Gross-/Kleinschreibung wird nicht unterschieden.</dd>
+        <dd>Tip:<br />- Das dr&uuml;cken von Enter in der Textzeile eines Formulars, bewirkt die Ausf&uuml;ng desselben.<br />- Mit der Tabulatortaste kann man auf das n&auml;chste Eingabefeld navigieren. Strg+Tabulator kehrt diesen Vorgang um.</dd>
     </dl>
 </p>
 

@@ -26,7 +26,7 @@ const
     NAMEN =     '^[^`{}"-,:-@[-^]+$',
     NAME_LEER = '[^`{}"-,:-@[-^]*',
     ANZAHL =    '[1-9]+[\d]*',
-    TELNR =     '[+\d][\d\s]*',              // +49 351 123456
+    TELNR =     '^[+\d][\d\s]*$',              // +49 351 123456
     EMAIL =     '[\w].*[@].*[.][\w]{2,3}',   //xxx@yyy.zzz
     DATUM =     '[\d]{4,4}[\D\W][\d]{1,2}[\D\W][\d]{1,2}|[\d]{4,4}[0-1][\d][0-3][\d]|[\d]{1,2}[\D\W][\d]{1,2}[\D\W][\d]{2,4}',
     /* Vorsicht nicht Narrensicher! Kann nur der groben Prüfung dienen
