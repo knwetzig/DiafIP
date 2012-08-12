@@ -8,7 +8,7 @@ $Date::                             $:  Datum der letzten Übertragung
 $URL$
 
 ToDo:
-    - Vorabfrage beim Löschen (Verküpfung auflösen)
+    - Vorabfrage beim Löschen (Verknüpfung auflösen)
 ***** (c) DIAF e.V. *******************************************/
 
 

@@ -125,6 +125,6 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
 {* --Notizfeld-- *}
     {if !empty($dialog['notiz'][1])}<tr>
             <td class="re">{$dialog['notiz'][2]}:</td>
-            <td colspan="2" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
+            <td colspan="2" class="note" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
 </table>

@@ -32,15 +32,15 @@ Anm.:
 **********************************************************/
 class Ort {
 protected
-    $id     = null,
-    $lid    =    1, // Landeskennung
+    $oid     = null,
+    $lid    =    1,             // Landeskennung
     $ort    = null,
     $land   = null,
     $bland  = null;
 
 function __construct($nr = NULL) {
     if (isset($nr) AND ($nr>0)) {
-        $this->id = $nr;
+        $this->oid = $nr;
         $this->get();
     }
     else $this->neu(false);
@@ -49,11 +49,10 @@ function __construct($nr = NULL) {
 protected function get() {    // die dynamische Version
     global $db;
     $sql = 'SELECT * FROM orte WHERE oid = ?;';
-    $data = $db->extended->getRow($sql, null, array($this->id));
+    $data = $db->extended->getRow($sql, null, array($this->oid));
     IsDbError($data);
-    // ACHTUNG: Die Kombination mit einem statischen Aufruf führt zum
-    // Überschreiben von Speicherinhalten!!!
-    // deswegen gibt es diese 2 Versionen
+    /* ACHTUNG: Die Kombination mit einem statischen Aufruf führt zum
+       Überschreiben von Speicherinhalten!!! deswegen gibt es 2 Versionen */
     foreach($this as $key => &$wert) $wert = $data[$key];
     unset($wert);
 }
@@ -120,11 +119,11 @@ function set() {
          1  leerer Datensatz
 **************************************************************/
     global $db;
-    if (!$this->id) return 1;   // Abbruch weil leerer Datensatz
+    if (!$this->oid) return 1;   // Abbruch weil leerer Datensatz
     $types = array('integer','text');
     $werte = array('land' => $this->lid, 'ort' => $this->ort);
     $data = $db->extended->autoExecute('s_orte', $werte, MDB2_AUTOQUERY_UPDATE,
-        'id = '.$db->quote($this->id, 'integer'), $types);
+        'id = '.$db->quote($this->oid, 'integer'), $types);
     IsDbError($data);
     return 0;
 }
@@ -136,14 +135,14 @@ function del() {
             WHERE p_person.tort = ? OR p_person.gort = ? OR p_person.wort = ?;";
     $data = $db->extended->getCol(
             $sql, null,
-            array($this->id, $this->id, $this->id),
+            array($this->oid, $this->oid, $this->oid),
             array('integer', 'integer', 'integer'));
     IsDbError($data);
     // $data enthält das array mit den konfliktdatensätzen
     if(!$data) {
         _v("Lösche Ort: ".$this->ort);
         $res = $db->extended->autoExecute('s_orte', null,
-                    MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer'));
+                    MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->oid, 'integer'));
     } else fehler(6);
 }
 
