@@ -5,12 +5,11 @@ Eventhandler für Userverwaltung
 sektion:    admin
 site:       user
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-01 18:03:19 +0200 (#$
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
 if (!$myauth->getAuth()) {
@@ -84,7 +83,7 @@ if(isset($_POST['submit'])) {
         $ore = $ore[0];
         for ($i = 0; $i < 15; $i++) clearBit($ore, $i);
         if(!isset($_POST['rechte'])) :
-            fehler(4);
+            fehler(10004);
             $_POST['rechte'] = array();
         endif;
         $data = array(
@@ -98,13 +97,13 @@ if(isset($_POST['submit'])) {
         $types = array('text','text','integer','text','date','integer');
         $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
             'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
-        if(!IsDbError($data)) _v("Die Daten wurden erfolgreich aktualisiert");
+        if(!IsDbError($data)) erfolg("Die Daten wurden erfolgreich aktualisiert");
         break;
 
     case "addUser" :
         if($_POST['username'] != "" AND $_POST['pwd'] != "")
             $erg = $myauth->addUser(normtext($_POST['username']), normtext($_POST['pwd']));
-        if(!IsDbError($erg)) _v('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
+        if(!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
     endswitch;
 }
 unset($_POST);

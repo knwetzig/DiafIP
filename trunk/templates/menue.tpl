@@ -17,8 +17,8 @@ $URL$
     <form method='post'>
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <p style='text-align:center; font-weight:bold'>{$dlg[0]}
-        <!--button name='sektion' value='film'>{$dlg[1]}</button>
-        <button name='section' value='titel'>{$dlg[2]}</button-->
+        <button name='sektion' value='film'>{$dlg[1]}</button>
+        <!-- 2. ist frei -->
         <button name='sektion' value='person'>{$dlg[3]}</button></p>
         <p style='text-align:center; font-weight:bold'>{$dlg[4]}
         <button name='sektion'  value='admin'>{$dlg[6]}</button>

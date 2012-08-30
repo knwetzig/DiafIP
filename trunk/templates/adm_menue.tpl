@@ -2,26 +2,40 @@
 {**********************************************************
    Menüseite für die Administration
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-01 18:03:19 +0200 (#$
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************}
+<table style='margin-top:50px; margin-left:50px'><tr>
 
-<form method='post' style='margin-top:50px; margin-left:50px'>
-    <fieldset>
-        <button name='site' value='self'>Password&nbsp;&auml;ndern</button>
-    </fieldset><br />
+{*links*}
+    <td>
+        <form method="post">
+            <fieldset><legend>&nbsp;Administration&nbsp;</legend>
+                <button name='site' value='self'>Password&nbsp;&auml;ndern</button>
+                <br />
 
-    <fieldset><legend>&nbsp;Voreinstellungen/Listen&nbsp;</legend>
-        <button name="site" value="alias">Alias verwalten</button><br />
-        <button name="site" value="orte">Orte verwalten</button>
-    </fieldset><br />
+                <button name='site' value='user'>Nutzerverwaltung</button>
+            </fieldset>
+            <input type='hidden' name='sektion' value='admin' />
+        </form>
+    </td>
 
-    <fieldset><legend>&nbsp;Administration&nbsp;</legend>
-        <button name='site' value='user'>Nutzerverwaltung</button>
-    </fieldset>
-    <input type='hidden' name='sektion' value='admin' />
-</form>
+{*rechts*}
+    <td>
+        <form method="post">
+            <fieldset><legend>&nbsp;Voreinstellungen/Listen&nbsp;</legend>
+                <button name="site" value="alias">Alias verwalten</button><br />
+                <button name="site" value="orte">Orte verwalten</button>
+                <input type='hidden' name='sektion' value='admin' />
+        </form>
+
+        <form method="post">
+                <button name="sektion" value="titel">Titel verwalten</button><br />
+            </fieldset>
+        </form>
+
+    </td>
+</tr></table>

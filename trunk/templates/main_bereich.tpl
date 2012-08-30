@@ -1,9 +1,9 @@
 {**************************************************************
-Smarty-Template: Bereichsseite Personenverwaltung
+Smarty-Template: Bereichsseite für alle "Sektionen"
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
@@ -20,9 +20,9 @@ $URL$
           onfocus="if(this.value=='{$dialog['sstring'][1]}'){literal}{this.value='';}{/literal}"
         />
         <input
-          type='hidden'
-          name='sektion'
-          value='person'
+          type="hidden"
+          name="sektion"
+          value="{$dialog['sektion'][1]}"
         />
         <input
           type='hidden'
@@ -39,7 +39,7 @@ $URL$
             class='small'
             name='aktion'
             value='add'
-            onmouseover="return overlib( {literal}'{/literal}{$dialog['add'][3]}{literal}'{/literal}, DELAY, 1000);"
+            onmouseover="return overlib('{$dialog['add'][3]}', DELAY, 1000);"
             onmouseout="return nd();"
           ><img src='images/add.png' /></button>
           <input
@@ -48,9 +48,9 @@ $URL$
             value='true'
           />
         <input
-          type='hidden'
-          name='sektion'
-          value='person'
+          type="hidden"
+          name="sektion"
+          value="{$dialog['sektion'][1]}"
         />
       </form>
   </td>

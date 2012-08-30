@@ -1,9 +1,9 @@
 <?php
 /**************************************************************
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-09 19:41:46 +0200 (#$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
