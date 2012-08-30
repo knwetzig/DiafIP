@@ -2,9 +2,9 @@
 /**************************************************************
 Enthält alle Klassenbibliotheken zu Personendaten
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-12 23:05:36 +0200 (#$
 $URL$
 
 ToDo:
@@ -69,7 +69,7 @@ class Person extends Alias {
 func: __construct($)
       newPerson()
       editPerson()
-      getPerson($!)     // holt db-felder -> this / gibt ein array zurück
+      getPerson($!)     // holt db-felder -> this
       setPerson()       // schreibt objekt.person -> db
     ::delPerson()       // löscht Personendatensatz
     ::searchPerson($!)  // gibt array der ID's zurück
@@ -98,17 +98,15 @@ function __construct($nr = NULL) {
     if (isset($nr)) $this->getPerson($nr);
 }
 
-function getPerson($nr) {
+protected function getPerson($nr) {
 /****************************************************************
 Aufgabe: Datensatz holen, in @self schreiben
  Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
- Return: array   alles ok
-         1       Fehler
-   Anm.:
+ Return: none
 ****************************************************************/
     global $db;
     $sql = 'SELECT * FROM p_person WHERE id = ?;';
-    $data = $db->extended->getRow($sql, null, array($nr));
+    $data = $db->extended->getRow($sql, null, $nr);
     // Ergebnis -> Objekt schreiben
     foreach($this as $key => &$wert) $wert = $data[$key];
     unset($wert);
@@ -126,6 +124,7 @@ Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
             haften Eingaben.
 ****************************************************************/
     global $db, $myauth, $smarty;
+    if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     if($stat == false) {
         // Liste mit Alias erstellen und smarty übergeben
         $smarty->assign('alist', parent::getAliasList());
@@ -141,7 +140,7 @@ Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
             new d_feld('gtag', $this->gtag,    EDIT,   502,10000),
             new d_feld('gort', $this->gort,    EDIT,   4014),
             new d_feld('ttag', $this->ttag,    EDIT,   509,10000),
-            new d_feld('tort', $this->tort,    EDIT,   4014,5),
+            new d_feld('tort', $this->tort,    EDIT,   4014,10005),
             new d_feld('strasse',$this->strasse,IEDIT, 510),
             new d_feld('wort', $this->wort,    IEDIT),
             new d_feld('plz',  $this->plz,     IEDIT),
@@ -236,6 +235,7 @@ Aufruf: false   für Erstaufruf
         true    Verarbeitung nach Formular
 ****************************************************************/
     global $db, $myauth;
+    if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     $types  = array(
             'text',         // vname
             'date',         // gtag
@@ -257,10 +257,10 @@ Aufruf: false   für Erstaufruf
 
     if ($stat == false) {
 /* [1]
-        Alles Mist! Warum, sollte ich eine neue Id besorgen für einen
-        neu anzulegenden Datensatz, wo doch das DBMS die vergabe automatisch
-        für mich organisiert?
-        Aus diesem Grund fliegt der ganze Schmadder hinaus!
+    Alles Mist! Warum, sollte ich eine neue Id besorgen für einen
+    neu anzulegenden Datensatz, wo doch das DBMS die vergabe automatisch
+    für mich organisiert?
+    Aus diesem Grund fliegt der ganze Schmadder hinaus!
 
         // begin TRANSACTION anlage person
         $db->beginTransaction('newPerson'); isDBError($db);
@@ -268,6 +268,10 @@ Aufruf: false   für Erstaufruf
         $data = $db->extended->getRow("SELECT nextval('p_alias_id_seq');");
         IsDbError($data);
         $this->id = $data['nextval'];
+
+    Antwort:
+        Bei Neuanlage ist es ein MUSS da man ja sonst das Objekt nicht wieder
+        referenzieren kann allerdings reicht es im Verwertungszweig..
 */
         $this->editPerson(false);
     } else {
@@ -289,10 +293,12 @@ function setPerson(){
 /****************************************************************
 Aufgabe: schreibt das Obj. via Update in die DB zurück
  Return: 0  alles ok
-         1  leerer Datensatz
-   Anm.:
+         4  leerer Datensatz
 ****************************************************************/
     global $db, $myauth;
+    if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+    if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
+
     $types = array(
             'text',
             'date',
@@ -314,8 +320,6 @@ Aufgabe: schreibt das Obj. via Update in die DB zurück
             'integer',      // uid des bearbeiters
     );
 
-    if (!$this->id) return 1;   // Abbruch weil leerer Datensatz
-
     foreach($this as $key => $wert) $data[$key] = $wert;
     // Bearbeitungsoptionen anhängen
     $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
@@ -328,12 +332,14 @@ Aufgabe: schreibt das Obj. via Update in die DB zurück
 }
 
 function delPerson($nr) {
-    global $db;
+    global $myauth, $db;
+    if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
     /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
     knüpft ist oder problemlos gelöscht werden kann */
-    $data = $db->extended->autoExecute('p_person', null,
-        MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($nr, 'integer'));
-    IsDbError($data);
+
+    IsDbError($db->extended->autoExecute('p_person', null,
+        MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($nr, 'integer')));
+    erfolg(); return 0;
 }
 
 function searchPerson($s) {
@@ -344,7 +350,9 @@ Aufgabe: Simple Suche nach Personen über Namen
          1   nichts gefunden
    Anm.: statisch
 ****************************************************************/
-    global $db;
+    global $db, $myauth;
+    if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
     $erg = array();
     $s = "%".$s."%";        // Suche nach Teilstring
     $sql ='
@@ -376,7 +384,8 @@ Aufruf:  DYNA
 Return:  void
 Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
 ****************************************************************/
-    global $smarty;
+    global $myauth, $smarty;
+    if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
     // Zuweisungen und ausgabe an pers_dat.tpl
 
     $data = a_display(array(

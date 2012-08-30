@@ -127,6 +127,14 @@ function fehler($nr) {
     echo "<div class='error'>".d_feld::getString($nr)."</div>";
 }
 
+function erfolg($s = null) {
+    if (isset($s)) :
+        echo "<div class='visor'>".$s."</div>";
+    else :
+        echo "<div class='visor'>".d_feld::getString(3)."</div>";
+    endif;
+}
+
 /** ___________ TEXTBEARBEITUNG ___________ **/
 function array_stripslashes($var) {
     if(is_string($var)) {

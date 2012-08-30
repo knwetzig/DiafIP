@@ -38,7 +38,7 @@ if(isset($_POST['submit']) AND $_POST['submit'] === "speichern") {
     } else {
         $data = $myauth->changePassword($myauth->getUsername(), $_POST['password']);
         IsDbError($data);
-        _v(d_feld::getString(3));
+        erfolg();
         }
     }
     unset($_POST);

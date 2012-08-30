@@ -1,15 +1,16 @@
 <?php /****************************************************
 Eventhandler für Aktionen der Personenverwaltung
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-07 16:26:19 +0200 (#$
 $URL$
 
 ToDo:   Die Methode searchPerson in der Klassenbibliothek funktioniert nicht
         wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
 
-        Gültigkeit eines Löschversuchs ist vorher zu prüfen.
+        Löschanfrage via Datenfeld eintragen (Papierkorb). löschen als Cron-Job
+        nach 4 Wochen
 
 ***** (c) DIAF e.V. *******************************************/
 
@@ -23,16 +24,17 @@ $data = a_display(array(
         // name,inhalt,rechte, optional-> $label,$tooltip,valString
         new d_feld('bereich', d_feld::getString(4012)),
         new d_feld('sstring', d_feld::getString(4011)),
+        new d_feld('sektion', 'person'),
         new d_feld('add', true, EDIT, null, 10001)));
 $smarty->assign('dialog', $data);
-$smarty->display('pers_pers.tpl');
+$smarty->assign('darkBG', 0);
+$smarty->display('main_bereich.tpl');
 
 if (isset($_POST['aktion'])?$_POST['aktion']:'') {
-    $smarty->assign('darkBG', 0);
     $smarty->assign('aktion', $_POST['aktion']);
 
-    // switch:action => add | edit | search | del
-    switch($_POST['aktion']) {
+    // switch:action => add | edit | search | del | view
+    switch($_POST['aktion']) :
         case "add":
             if(!isBit($myauth->getAuthData('rechte'), EDIT)) break;
             if(isset($_POST['form'])) {
@@ -77,12 +79,11 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
                 $myauth->setAuthData('search', normtext($_POST['sstring']));
                 $plist = Person::searchPerson($myauth->getAuthData('search'));
             // }
-            if ($plist AND is_array($plist)) {
+            if (!empty($plist) AND is_array($plist)) {
                 // Ausgabe
                 $bg = 1;
                 foreach(($plist) as $nr) {
-                    ++$bg;
-                    $smarty->assign('darkBG', $bg % 2);
+                    ++$bg; $smarty->assign('darkBG', $bg % 2);
                     $pers = new Person($nr);
                     $pers->view();
                 }
@@ -93,10 +94,16 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
         break; // Ende --search--
 
         case "del" :
-        /* Voraussetzung: Überprüfung aller Abhängigkeiten. Dann kann erst
-            gelöscht werden. Im Moment noch nicht implementiert */
-        if(isBit($myauth->getAuthData('rechte'),DELE)) Person::delPerson($_POST['pid']);
+            /* Voraussetzung: Überprüfung aller Abhängigkeiten. Dann kann erst
+                gelöscht werden. Im Moment noch nicht implementiert */
+            if(isBit($myauth->getAuthData('rechte'), DELE))
+                Person::delPerson($_POST['pid']);
+        break; // del
 
-    } // ende SWITCH
+        case "view" :
+            $pers = new Person((int)$_POST['pid']);
+            $pers->view();
+        break;  // Endview
+    endswitch;
 }  // aus iwelchen Gründen wurde keine 'aktion' ausgelöst?
 ?>

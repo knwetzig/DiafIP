@@ -14,10 +14,7 @@ Anm.: Schreibe 'sektion' und nicht 'section'!!!
 
     echo "<div id='main'>";
 
-    if(isset($_POST['sektion']) AND isset($datei[$_POST['sektion']])) {
-        include $datei[$_POST['sektion']];
-    } else {
-        include 'default.php';
-    }
+    if(isset($_POST['sektion']) AND isset($datei[$_POST['sektion']]))
+        include $datei[$_POST['sektion']]; else include 'default.php';
     echo "</div>";
 ?>
