@@ -2,7 +2,7 @@
 
 Smarty-Template für die Bearbeitung/Neuanlage von filmografischen Datensätzen
 
-$Rev: 5$
+$Rev$
 $Author: mortagir@gmail.com   		$
 $Date: 2012-07-31 22:11:39 +0#		$
 $URL$
