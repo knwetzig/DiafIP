@@ -30,9 +30,7 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
     return false;
 }
 
-/****************************************************************************
-*       Bitfeldfunktionen / Checkboxen
-****************************************************************************/
+/** **** Bitfeldfunktionen / Checkboxen **************************************/
 function setBit(&$bitFeld,$n) {
 	// Ueberprueft, ob der Wert zwischen 0-31 liegt
 	// $n ist die Position (0 beginnend)
@@ -65,20 +63,16 @@ function bit2array($wert) {
     return $a;
 }
 
-function bitArr2wert($wert, $arr) {
+function bitArr2wert($arr) {
+    $wert = null;
     for ($i = 0; $i < sizeof($arr); $i++) :
         setBit($wert,$arr[$i]);
     endfor;
     return $wert;
 }
-/******************************************************************************
-*
-*       ALLGEMEINE FUNKTIONEN
-*
-* Die beiden folgenden Function sind "deprecated" und sollten"
-* durch das View-Objekt ersetzt werden
-*
-******************************************************************************/
+/** **** ALLGEMEINE FUNKTIONEN ***********************************************/
+// Die beiden folgenden Function sind "deprecated" und sollten"
+// durch das View-Objekt ersetzt werden
 
 function getStringList($sl) {
     if (!is_array($sl)) return 1;
@@ -106,6 +100,7 @@ function list2array($list) {
 
 function array2list($arr) {
     // wandelt ein PHP-Array in eine DB-Liste um
+/** _____ ACHTUNG! Baustelle _____ **/
 _v(count($arr));
 _v($arr,'array');
     $list = '{';
@@ -123,8 +118,10 @@ function _v($text, $titel = null) {
     }
 }
 
-function fehler($nr) {
-    echo "<div class='error'>".d_feld::getString($nr)."</div>";
+function fehler($err) {
+    if(is_numeric($err))
+        echo "<div class='error'>".d_feld::getString((int)$err)."</div>";
+    else echo '<div class="error">'.$err.'</div>';
 }
 
 function erfolg($s = null) {
@@ -135,7 +132,7 @@ function erfolg($s = null) {
     endif;
 }
 
-/** ___________ TEXTBEARBEITUNG ___________ **/
+/** **** TEXTBEARBEITUNG ****************************************************/
 function array_stripslashes($var) {
     if(is_string($var)) {
         $var = stripslashes($var);

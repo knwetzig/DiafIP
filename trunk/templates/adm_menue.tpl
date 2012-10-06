@@ -32,10 +32,5 @@ $URL$
                 <input type='hidden' name='sektion' value='admin' />
         </form>
 
-        <form method="post">
-                <button name="sektion" value="titel">Titel verwalten</button><br />
-            </fieldset>
-        </form>
-
     </td>
 </tr></table>

@@ -32,7 +32,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
     // switch:action => add | edit | search | del | view
     switch($_POST['aktion']) :
         case "add":
-            if(!isBit($myauth->getAuthData('rechte'), EDIT)) break;
             if (isset($_POST['form'])) {
                 // Formular anfordern
                 $nt = new Titel;
@@ -45,7 +44,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         break; // Ende add
 
         case "edit" :
-            if(!isBit($myauth->getAuthData('rechte'), EDIT)) break;
             if (isset($_POST['form'])) {
                 $eTit = new Titel;
                 $eTit->getTitel($_POST['tid']);
@@ -84,7 +82,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
 
         case 'del' :
             // Löscht den Titel unmittelbar aus der DB!
-            if(!isBit($myauth->getAuthData('rechte'), DELE)) break;
             $ti = new Titel($_POST['tid']);
             $ti->delTitel();
         break;

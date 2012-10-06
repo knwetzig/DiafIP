@@ -4,12 +4,11 @@ Konfigurationsdatei für Konstantendefinition / Pfade / DSN-Ort
 Die DSN steht in einer separaten Datei ausserhalb DocumentRoot
 Lädt den Header!
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-11 18:40:41 +0200 (#$
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
 error_reporting(E_ALL);
@@ -53,7 +52,6 @@ siehe auch configs/adm_user.php */
 $datei = array(
     'admin' => "configs/admin.php",
     'film'	=> "inc/ev_figd.php",		 // filmografische Daten
-    'titel'	=> "inc/ev_figd_titel.php",  // Titel dazu
     'person'=> "inc/ev_pers.php",		 // Personenverzeichnis
     'news'  => "inc/news.php",           // Pinwand
     'changes' => 'changes.txt'

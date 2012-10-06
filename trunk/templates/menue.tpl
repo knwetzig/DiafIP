@@ -4,16 +4,14 @@
     Daten werden an main.php und anschließend an index.php
     via POST weitergegeben.
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date: 2012-08-30 15:31:15 +0200 (#$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
 <div id='menue'>
-
-
     <form method='post'>
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <p style='text-align:center; font-weight:bold'>{$dlg[0]}

@@ -3,14 +3,12 @@
 Stellt Klassen und Funktionen für die
 Ein-/Ausgabefunktionalität bereit.
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev$
+$Author::                      $
+$Date: 2012-07-31 22:11:39 +0#$
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
-
 
 
 /** =================================================================
@@ -18,11 +16,10 @@ ToDo:
 ================================================================= **/
 class d_feld {
 /**********************************************************
-Beschreibt ein Ein-/Ausgabeelement
+Repräsentiert ein Ein-/Ausgabeelement
 
   getString(int)  STATIC  Holt String aus Tabelle s_strings
   isValid()               Validierung + Variable setzen
-                          bool / 2->keine Validierung möglich
   display()       DYNA    Gibt ein Array für Anzeige aus
 **********************************************************/
 protected
@@ -44,21 +41,24 @@ function __construct($na, $inh, $ri = null, $de = null, $tt = null, $ty= null) {
     if ($tt) $this->tooltip = self::getString($tt);
 }
 
-function getString($nr) {
+static function getString($nr) {
     global $db, $lang;
     $str = "";
-    if($lang === 'us' OR $lang === 'en') {
-        $sql = "SELECT en FROM s_strings WHERE id = ?;";
-        $data = $db->extended->getRow($sql, null, $nr);
-        IsDbError($data);
-        if($data['en']) $str = $data['en'];
-    }
-    if($str == "") {
-        $sql = "SELECT de FROM s_strings WHERE id = ?;";
-        $data = $db->extended->getRow($sql, null, $nr);
-        IsDbError($data);
-        $str = $data['de'];
-    }
+    switch ($lang) :
+        case 'eu' :
+        case 'us' :
+            $sql = "SELECT en FROM s_strings WHERE id = ?;";
+            $data = $db->extended->getRow($sql, null, $nr);
+            IsDbError($data);
+            if(!empty($data['en'])) $str = $data['en'];
+            break;
+
+        default :
+            $sql = "SELECT de FROM s_strings WHERE id = ?;";
+            $data = $db->extended->getRow($sql, null, $nr);
+            IsDbError($data);
+            $str = $data['de'];
+    endswitch;
     return $str;
 }
 
@@ -70,7 +70,7 @@ function isValid() {
             return true;
         } else return false;
     }
-    return 2;   // kein Validierungsstring vorhanden
+    return 4;   // kein Validierungsstring vorhanden
 }
 
 function display() {
