@@ -36,7 +36,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
     // switch:action => add | edit | search | del | view
     switch($_POST['aktion']) :
         case "add":
-            if(!isBit($myauth->getAuthData('rechte'), EDIT)) break;
             if(isset($_POST['form'])) {
                 // neues Formular
                 $np = new Person;
@@ -50,7 +49,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
         break; // Ende --add--
 
         case "edit" :
-            if(!isBit($myauth->getAuthData('rechte'), EDIT)) break;
             if (isset($_POST['form'])) {
                 $ePer = new Person;
                 // Daten einlesen und Formular anzeigen
@@ -96,7 +94,6 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
         case "del" :
             /* Voraussetzung: Überprüfung aller Abhängigkeiten. Dann kann erst
                 gelöscht werden. Im Moment noch nicht implementiert */
-            if(isBit($myauth->getAuthData('rechte'), DELE))
                 Person::delPerson($_POST['pid']);
         break; // del
 

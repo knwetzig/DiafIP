@@ -63,7 +63,7 @@ tr.darkBG {
 
 td {
     font-family:sans-serif;
-    vertical-align:top;
+    vertical-align:middle;
     /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
     /* border:1px dotted gray;  zu testzwecken */
 }
