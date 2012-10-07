@@ -12,7 +12,7 @@ $URL$
 
 
 /** ==========================================================================
-                               TITEL KLASSE
+    (deprecated)               TITEL KLASSE
 ========================================================================== **/
 abstract class Titel {
 /**********************************************************
@@ -262,7 +262,7 @@ func: __construct($)
 
 
 /** ==========================================================================
-                                MAIN CLASS
+                               MAIN CLASS
 ========================================================================== **/
 abstract class Main {
 /********************************************************************
@@ -271,8 +271,7 @@ abstract class Main {
     get(int $nr)        protected
     add(bool $stat)     abstract public
     edit(bool $stat)    abstract public
-    set()               abstract protected
-    del()               public
+    set()               abstract public
     existCast()         protected
     addCast()           public
     delCast()           public
@@ -282,6 +281,7 @@ abstract class Main {
     is_Del()            static public
     isLinked()          protected
     isVal()             protected
+    search              static public
     view()              abstract public
 
 ********************************************************************/
@@ -325,7 +325,12 @@ abstract class Main {
                          p_person."name" ASC, p_person.vname ASC;',
         SQL_isDel   = 'SELECT del FROM f_main WHERE id = ?;',
         SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?',
-        SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;';
+        SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;',
+        SQL_search1  = 'SELECT id FROM f_film
+                            WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
+                            OR (atitel ILIKE ?) ORDER BY titel ASC;',
+        SQL_search2 = 'SELECT sertitel_id FROM f_stitel WHERE (titel ILIKE ?);',
+        SQL_search3 = 'SELECT id FROM f_film WHERE sid = ?;';
 
     abstract function add($stat);
     abstract function edit($stat);
@@ -448,15 +453,15 @@ abstract class Main {
 
         IsDbError($db->extended->autoExecute(
             'f_cast', null, MDB2_AUTOQUERY_DELETE,
-            'fid = '.$db->quote($this->id, 'integer') AND
-            'pid = '.$db->quote($p, 'integer') AND
-            'tid = '.$db->quote($t, 'integer')));
+            'fid = '.$this->id.' AND pid = '.$p.' AND tid = '.$t
+            ));
     }
 
     protected function getCastList() {
     // gibt die Besetzungsliste für diesen Eintrag aus:
     // array(vname, name, tid, pid, job)
         global $db;
+        if (empty($this->id)) return;
         $data = $db->extended->getALL(
             self::SQL_getCaLi, null, $this->id, 'integer');
         IsDbError($data);
@@ -479,6 +484,7 @@ abstract class Main {
     protected function isDel() {
     // Testet ob die Löschflagge gesetzt ist
         global $db;
+        if(empty($this->id)) return;
         $data = $db->extended->getRow(
             self::SQL_isDel, 'boolean', $this->id, 'integer');
         IsDbError($data);
@@ -511,6 +517,41 @@ abstract class Main {
         IsDbError($data);
         return $data['isvalid'];
     }
+
+    static function search($s) {
+    /****************************************************************
+    *  Aufgabe: Suchfunktion in allen Titelspalten
+    *   Param:  string
+    *   Return: Array der gefunden ID's
+    *           Fehlercode
+    *     Anm.: statisch
+    ****************************************************************/
+        global $db, $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        $s = "%".$s."%";
+
+        // Suche in titel, atitel, utitel
+        $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s));
+        IsDbError($data);
+        $erg = $data;
+
+        //Weiter suche in Serientiteln
+        $stit = $db->extended->getCol(self::SQL_search2, null, $s);
+        IsDbError($stit);
+        foreach($stit as $wert) {
+            $data = $db->extended->getCol(self::SQL_search3, null, array($wert));
+            IsDbError($data);
+            $erg = array_merge($erg,$data);
+        }
+        if ($erg) {
+            // Ausfiltern gelöschter Datensätze
+            $erg = array_unique($erg);
+            foreach($erg as $key => $wert) :
+                if(self::is_Del($wert)) unset($erg[$key]);
+            endforeach;
+            return $erg;
+        } else return 1;
+    }
 }// ende Main KLASSE
 
 
@@ -521,8 +562,8 @@ class Film extends Main {
 /********************************************************************
 
     del()               public      (inherit)
-    addCast()           public      (inherit)
-    delCast()           public      (inherit)
+void addCast(pid,tid)   public      (inherit)
+void delCast(pid,tid)   public      (inherit)
     getCastList()       protected   (inherit)
     viewCastList()      public      (inherit)
     isDel()             protected   (inherit)
@@ -530,9 +571,18 @@ class Film extends Main {
     isVal()             protected   (inherit)
     __construct(?int)               (inherit)
     get(int)            protected   (inherit)
+    refresh()           public
+    getListGattung()    protected static -> Array(num, text) der Gattungen
+    getListPraedikat()  protected static -> Array(num, text) der Praedikate
+    getListMediaSpez()  protected static -> num. Liste der Mediaspezifikationen
+    getThisMediaSpez()  protected        -> dito für angewandte Mediaspezifikationen
+    getListProdTech()   protected static -> array(txt)der Produktionstechniken
+    getThisProdTech()   protected        -> dito für verwendete Produktionstechniken
     set()               public
     add(bool)           public
     edit(bool)          public
+    search(str)         public static (inherit)
+    del()               public
     view()              public
 
 ********************************************************************/
@@ -583,6 +633,10 @@ class Film extends Main {
         endforeach;
     }
 
+    function refresh() {
+        $this->get($this->id);
+    }
+
     protected static function getListGattung() {
     // gibt ein Array(num, text) der Gattungen zurück
         global $db;
@@ -624,7 +678,6 @@ class Film extends Main {
         foreach($list as $key => $wert) :
             if(isbit($this->mediaspezi, $key)) $data[] = $wert;
         endforeach;
-        $data = getStringList($data);
         return $data;
     }
 
@@ -644,7 +697,6 @@ class Film extends Main {
         foreach($list as $key => $wert) :
             if(isbit($this->prodtechnik, $key)) $data[] = $wert;
         endforeach;
-        $data = getStringList($data);
         return $data;
     }
 
@@ -688,8 +740,10 @@ class Film extends Main {
             // 1. Daten für f_film
             // Typ und ID werden autom. generiert
             foreach($this as $key => $wert) $data[$key] = $wert;
-            unset($data['id']);            // id löschen, wird vom DBMS vergeben
+            // id löschen, wird vom DBMS vergeben
+            unset($data['stitel'], $data['sdescr'], $data['id']);
             $data['editfrom'] = $myauth->getAuthData('uid');
+            $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
             $erg = $db->extended->autoExecute('f_film', $data,
                         MDB2_AUTOQUERY_INSERT, null, $types);
             IsDbError($erg);
@@ -737,20 +791,18 @@ class Film extends Main {
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
                 new d_feld('cast',      $this->getCastList(), EDIT),
-
             ));
             $smarty->assign('dialog', $data);
             $smarty->display('figd_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
-        } else {
-        // Formular auswerten
+        } else {                        // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             if (empty($this->titel) AND empty($_POST['titel'])) {
                 fehler(100);
                 exit();
             } else if ($_POST['titel']) $this->titel = normtext($_POST['titel']);
 
-            if(!isset($_POST['atitel'])) :
+            if(isset($_POST['atitel'])) :
                 if ($_POST['atitel']) $this->atitel = normtext($_POST['atitel']);
                 else $this->atitel = null;
             endif;
@@ -803,7 +855,7 @@ class Film extends Main {
             endif;
 
             if(isset($_POST['prodtech']))
-                $this->prodtech = bitArr2wert($_POST['prodtech']);
+                $this->prodtechnik = bitArr2wert($_POST['prodtech']);
 
             if(isset($_POST['laenge'])) :
                 if ($_POST['laenge'])
@@ -828,10 +880,10 @@ class Film extends Main {
                 } else $this->praedikat = null;
             endif;
 
-            if(isset($_POST['urauffuehr'])) :
-                if ($_POST['urauffuehr']) {
-                    if(isvalid($_POST['urauffuehr'], DATUM))
-                        $this->urauffuehr = normtext($_POST['urauffuehr']);
+            if(isset($_POST['urauff'])) :
+                if ($_POST['urauff']) {
+                    if(isvalid($_POST['urauff'], DATUM))
+                        $this->urauffuehr = normtext($_POST['urauff']);
                     else fehler(103);
                 } else $this->urauffuehr = null;
             endif;
@@ -845,10 +897,7 @@ class Film extends Main {
                     $this->notiz = normtext($_POST['notiz']);
                 else $this->notiz = null;
             endif;
-
-_v($this,'Editierte Daten');
         } // Formularbereich
-
     }
 
     function set() {
@@ -883,9 +932,11 @@ _v($this,'Editierte Daten');
             'text',         // utitel
             'integer',      // sid
             'integer',      // sfolge
+            'integer',      // typ (1 = film)
         );
         foreach($this as $key => $wert) $data[$key] = $wert;
         // Bearbeitungsoptionen anhängen
+        unset($data['stitel'], $data['sdescr'], $data['id']);
         $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
         $data['editfrom'] = $myauth->getAuthData('uid');
 
@@ -901,11 +952,15 @@ _v($this,'Editierte Daten');
         Aufruf:
         Return: none
     ****************************************************************/
-        global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        global $db, $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
-
-/** _____ ACHTUNG! BAUSTELLE _____ **/
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if(!empty($this->editfrom)) :
+            $bearbeiter = $db->extended->getCol(
+                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
+            IsDbError($bearbeiter);
+        else : $bearbeiter = null;
+        endif;
         $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
             new d_feld('id',        $this->id,          VIEW),   // fid
             new d_feld('titel',     $this->titel,       VIEW, 500), // Originaltitel
@@ -930,7 +985,9 @@ _v($this,'Editierte Daten');
             new d_feld('urrauff',   $this->urauffuehr,  VIEW, 584),
             new d_feld('cast',      $this->getCastList(), VIEW),
             new d_feld('edit',   null, EDIT, null, 4013), // edit-Button
-            new d_feld('del',    null, DELE, null, 4020)  // Lösch-Button
+            new d_feld('del',    null, DELE, null, 4020), // Lösch-Button
+            new d_feld('chdatum',   $this->editdate),
+            new d_feld('chname',    $bearbeiter[0]),
         ));
         $smarty->assign('dialog', $data);
         $smarty->display('figd_dat.tpl');
@@ -1014,47 +1071,4 @@ class Biblio extends Main {
     }
 } // endclass Biblio
 
-
-
-/** ----- Altlasten --- snippet
-function searchByText($SText) {
-/ ****************************************************************
-    Aufgabe: einfache Suchfunktion
-            1. Titel durchsuchen (einschl. Notizen)
-            2. In Filmnotizen suchen
-    Aufruf: string
-    Return: (array) der f_Titel.id's
-            1  nichts gefunden
-        var: $ergebnis   Liste der ID's
-        Anm.:
-**************************************************************** /
-    global $db;
-    $ergebnis = array();
-
-    // 1. suche in Titeln und Inhalt
-    $tli = Titel::search($STxt);
-    foreach($tli as $nr) {
-        $erg =& $db->query('
-            SELECT DISTINCT fid FROM f_film
-            WHERE titel = '.$nr.';
-        ');
-        IsDbError($erg);
-        while ($row = $erg->fetchInto()) $ergebnis[] = (int)$row['fid'];
-    }
-
-    // 2. Suche in Notizen
-    $STxt = "%".$STxt."%";
-    $erg =& $db->query("
-        SELECT DISTINCT fid
-        FROM f_film
-        WHERE film.notiz ILIKE '".$STxt."';");
-    IsDbError($erg);
-
-    while ($row = $erg->fetchRow()) $ergebnis[] = (int)$row['fid'];
-    if ($ergebnis) {
-        return array_unique($ergebnis); // id's der gefundenen Filme
-    } else return 1;
-}
-
----- /snippet **/
 ?>

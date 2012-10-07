@@ -157,7 +157,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
             <textarea
               name="{$dialog['notiz'][0]}"
               cols='60'
-              rows='15'
+              rows='10'
               wrap='soft'
             >{$dialog['notiz'][1]}</textarea>
           </td>

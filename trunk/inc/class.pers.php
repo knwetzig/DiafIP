@@ -7,8 +7,6 @@ $Author$
 $Date: 2012-08-12 23:05:36 +0200 (#$
 $URL$
 
-ToDo:
-    - Vorabfrage beim Löschen (Verknüpfung auflösen)
 ***** (c) DIAF e.V. *******************************************/
 
 
@@ -93,10 +91,13 @@ func: __construct($)
         $mail   = null,       // mailadresse;
         $biogr  = null,       // Kurzbiografie
         $aliases = null,
-        $bild   = null;       // id auf Bilddatenbank
+        $bild   = null,       // id auf Bilddatenbank
+        $editdate = null,
+        $editfrom = null;
 
     const
-        SQL_getPersLi = 'SELECT id, vname, name FROM p_person ORDER BY name ASC;';
+        SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?',
+        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person ORDER BY name ASC;';
 
     function __construct($nr = NULL) {
         if (isset($nr)) $this->getPerson($nr);
@@ -113,6 +114,16 @@ func: __construct($)
         endforeach;
         return $data;
     }
+
+    protected function isLinked() {
+    // Prüft ob der Datensatz verknüpft ist (0 = frei / Nr = Anzahl)
+        global $db;
+        // Prüfkandidaten: f_cast.pid / ...?
+        $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
+        IsDbError($data);
+        return $data['count'];
+    }
+
 
     protected function getPerson($nr) {
     /****************************************************************
@@ -346,11 +357,16 @@ func: __construct($)
         return 0;
     }
 
-    function delPerson($nr) {
+    function del() {
         global $myauth, $db;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
         /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
         knüpft ist oder problemlos gelöscht werden kann */
+
+        if(self::isLinked()) :
+            fehler(10006);
+            exit();
+        endif;
 
         IsDbError($db->extended->autoExecute('p_person', null,
             MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($nr, 'integer')));
@@ -399,8 +415,14 @@ func: __construct($)
     Return:  void
     Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
     ****************************************************************/
-        global $myauth, $smarty;
+        global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if(!empty($this->editfrom)) :
+            $bearbeiter = $db->extended->getCol(
+                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
+            IsDbError($bearbeiter);
+        else : $bearbeiter = null;
+        endif;
         // Zuweisungen und ausgabe an pers_dat.tpl
 
         $data = a_display(array(
@@ -423,7 +445,9 @@ func: __construct($)
             new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514),   // Notiz
             new d_feld('bild',   $this->bild,               VIEW),
             new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button
-            new d_feld('del',    null,                      DELE, null, 4020)  // Lösch-Button
+            new d_feld('del',    null,                      DELE, null, 4020), // Lösch-Button
+            new d_feld('chdatum',   $this->editdate),
+            new d_feld('chname',    $bearbeiter[0]),
         ));
 
         $smarty->assign('dialog', $data, 'nocache');
