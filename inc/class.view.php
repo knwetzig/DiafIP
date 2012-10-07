@@ -43,6 +43,7 @@ function __construct($na, $inh, $ri = null, $de = null, $tt = null, $ty= null) {
 
 static function getString($nr) {
     global $db, $lang;
+    if(empty($nr) OR !is_numeric($nr)) return null;
     $str = "";
     switch ($lang) :
         case 'eu' :

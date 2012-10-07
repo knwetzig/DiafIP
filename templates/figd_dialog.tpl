@@ -8,11 +8,9 @@ $Date: 2012-07-31 22:11:39 +0#		$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
-
 <form method='post'>
     <table><colgroup><col><col></colgroup><tr>
-<td><!-- linke Seite -->
-    <table>
+<td><!-- linke Seite --><table>
 {* --- titel --- *}
         {if isset($dialog['titel'])}<tr>
             <td class="re">{$dialog['titel'][2]}:</td>
@@ -54,7 +52,7 @@ $URL$
 
 {* --- Beschreibung --- *}
         {if isset($dialog['inhalt'])}<tr>
-            <td class="re">{$dialog['inhalt'][2]}:</td>
+            <td class="re" style="vertical-align:top">{$dialog['inhalt'][2]}:</td>
             <td><textarea
                 cols="40"
                 rows="10"
@@ -65,7 +63,7 @@ $URL$
 
 {* --- Quellen --- *}
         {if isset($dialog['quellen'])}<tr>
-            <td class="re">{$dialog['quellen'][2]}:</td>
+            <td class="re" style="vertical-align:top">{$dialog['quellen'][2]}:</td>
             <td><textarea
                 cols="40"
                 rows="1"
@@ -76,7 +74,7 @@ $URL$
 
 {* --- Anmerkungen --- *}
         {if isset($dialog['anmerk'])}<tr>
-            <td class="re">
+            <td class="re" style="vertical-align:top">
                 {$dialog['anmerk'][2]}:<br />
                 <span class="note">(public)</span>
             </td>
@@ -118,7 +116,7 @@ $URL$
 
 {* --- Prod_technik --- *}
         {if isset($dialog['prodtech'])}<tr>
-            <td class="re">{$dialog['prodtech'][2]}:</td>
+            <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
             <td>{html_checkboxes
                     name=$dialog['prodtech'][0]
                     options=$dialog['prodTecLi'][1]
@@ -177,7 +175,7 @@ $URL$
 
 {* --- Notiz --- *}
         {if isset($dialog['notiz'])}<tr>
-            <td class="re">
+            <td class="re" style="vertical-align:top">
                 {$dialog['notiz'][2]}:<br />
                 <span class="note">(intern)</span>
             </td>
@@ -200,7 +198,7 @@ $URL$
 </form>
 
 {* --- Besetzung --- *}
-<fieldset><legend>Besetzung</legend>
+{if !empty($dialog['id'][1])}<fieldset><legend>Besetzung</legend>
   <table>
     {if isset($dialog['cast'])}{foreach from=$dialog['cast'][1] item=wert}
     <tr>
@@ -211,14 +209,15 @@ $URL$
                 name="aktion"
                 value="delCast" /><img src="images/del.png"
             /></button>
+            <input type="hidden" name="sektion" value="film" />
             <input type="hidden" name="pid" value="{$wert['pid']}" />
             <input type="hidden" name="tid" value="{$wert['tid']}" />
             <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
         </form></td>
     </tr>
     {/foreach}{/if}
+
     <tr><form method='post'>
-        <input type="hidden" name="fid" value={$dialog['id'][1]} />
         <td>{html_options
                 name=tid
                 options=$dialog['taetigLi'][1]}
@@ -233,8 +232,10 @@ $URL$
                 value='addCast'>
             <img src="images/add.png" alt="add" />
             </button>
-            <input type="hidden" name="bereich" value="Cast" />
         </td>
+        <input type="hidden" name="sektion" value="film" />
+        <input type="hidden" name="aktion" value="addCast" />
+        <input type="hidden" name="fid" value={$dialog['id'][1]} />
     </form></tr>
   </table>
-</fieldset>
+</fieldset>{/if}

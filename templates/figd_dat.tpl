@@ -15,33 +15,10 @@ $Author$
 $Date$
 $URL$
 
-Array (
-    [id] =>
-    [titel] =>
-    [atitel] =>
-    [utitel] =>
-    [sfolge] =>
-    [stitel] =>
-    [sdescr] =>
-    [bild_id] =>
-    [prod_jahr] =>
-    [thema] =>
-    [quellen] =>
-    [inhalt] =>
-    [notiz] =>
-    [anmerk] =>
-    [gattung] =>
-    [prodtech] =>
-    [laenge] =>
-    [fsk] =>
-    [praedikat] =>
-    [mediaspezi] =>
-    [urrauff] =>
-
 ***** (c) DIAF e.V. *******************************************}
 
 <table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="100px"><col><col width="150px"></colgroup>
+    <colgroup><col width="100px"><col><col></colgroup>
 
 {* --Name-- *}
     <tr>
@@ -52,6 +29,9 @@ Array (
         {* --Bearbeitungssymbole-- *}
         <td style="text-align:right;">
             <form method="post">
+            <span class="note">
+                {$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+            </span>
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -74,6 +54,13 @@ Array (
             </form>
         </td>
     </tr>
+{* --Bild-- *}
+    {if !empty($dialog['bild_id'][1])}<tr><td colspan="2"></td>
+        <td rowspan="7">
+            <img src="images/platzhalter.png" width="200" height="150" alt="bild" />
+        </td>
+    <tr>{/if}
+
 
 {* --Untertitel-- *}
     {if !empty($dialog['utitel'][1])}<tr>
@@ -83,7 +70,6 @@ Array (
         <td>
             {if !empty($dialog['utitel'][1])}{$dialog['utitel'][1]}{/if}
         </td>
-        <td rowspan="7"><img src="images/platzhalter.png" width="200" height="150" alt="bild" /></td>
     </tr>{/if}
 
 {* --Arbeitstitel-- *}
@@ -119,7 +105,7 @@ Array (
 
 {* --prodtech-- *}
     {if !empty($dialog['prodtech'][1])}<tr>
-        <td class="re">{$dialog['prodtech'][2]}:</td>
+        <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
         <td>{foreach from=$dialog['prodtech'][1] item=wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
@@ -149,7 +135,7 @@ Array (
 
 {* --mediaspezi-- *}
     {if !empty($dialog['mediaspezi'][1])}<tr>
-        <td class="re">{$dialog['mediaspezi'][2]}:</td>
+        <td class="re" style="vertical-align:top">{$dialog['mediaspezi'][2]}:</td>
         <td>{foreach from=$dialog['mediaspezi'][1] item=wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
@@ -163,7 +149,7 @@ Array (
 
 {* --inhalt-- *}
     {if !empty($dialog['inhalt'][1])}<tr>
-        <td class="re">{$dialog['inhalt'][2]}:</td>
+        <td class="re" style="vertical-align:top">{$dialog['inhalt'][2]}:</td>
         <td colspan="2">{$dialog['inhalt'][1]|nl2br}</td>
     </tr>{/if}
 
@@ -175,13 +161,13 @@ Array (
 
 {* --anmerk-- *}
     {if !empty($dialog['anmerk'][1])}<tr>
-        <td class="re">{$dialog['anmerk'][2]}:</td>
+        <td class="re" style="vertical-align:top">{$dialog['anmerk'][2]}:</td>
         <td colspan="2">{$dialog['anmerk'][1]|nl2br}</td>
     </tr>{/if}
 
 {* --notiz-- letzter Eintrag *}
     {if !empty($dialog['notiz'][1])}<tr class="note">
-        <td class="re">{$dialog['notiz'][2]}:</td>
+        <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
         <td colspan="2">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
 </table>

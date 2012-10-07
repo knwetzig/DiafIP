@@ -92,10 +92,9 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
         break; // Ende --search--
 
         case "del" :
-            /* Voraussetzung: Überprüfung aller Abhängigkeiten. Dann kann erst
-                gelöscht werden. Im Moment noch nicht implementiert */
-                Person::delPerson($_POST['pid']);
-        break; // del
+            $pers = new Person($_POST['pid']);
+            $pers->del();
+        break;
 
         case "view" :
             $pers = new Person((int)$_POST['pid']);

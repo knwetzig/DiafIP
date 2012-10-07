@@ -14,13 +14,10 @@ $URL$
                        [2] label
                        [3] Tooltip (soweit vorhanden)
 
-ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
-        zeugt fehlerhaftes HTML.
-
 ***** (c) DIAF e.V. *******************************************}
 
 <table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="100px"><col><col width="150px"></colgroup>
+    <colgroup><col width="100px"><col><col></colgroup>
 
 {* --Name-- *}
     <tr>
@@ -38,6 +35,9 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
 {* --Bearbeitungssymbole-- *}
         <td style="text-align:right;">
             <form method="post">
+            <span class="note">
+                {$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+            </span>
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -118,13 +118,13 @@ ToDo:   Die isset() Verschachtelung ist noch nicht optimal und er-
 
 {* --Biografiezeile-- *}
     {if !empty($dialog['biogr'][1])}<tr>
-            <td class="re">{$dialog['biogr'][2]}:</td>
+            <td class="re" style="vertical-align:top">{$dialog['biogr'][2]}:</td>
             <td colspan="2" style="white-space:normal">{$dialog['biogr'][1]|nl2br}</td>
     </tr>{/if}
 
 {* --Notizfeld-- *}
     {if !empty($dialog['notiz'][1])}<tr>
-            <td class="re">{$dialog['notiz'][2]}:</td>
+            <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
             <td colspan="2" class="note" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
 </table>
