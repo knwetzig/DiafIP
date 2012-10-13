@@ -35,7 +35,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                 $film = new Film;        // Formular anfordern
                 $film->add(false);
             } else {
-                $film = new Film;
+                $film = unserialize($myauth->getAuthData('obj'));
                 $film->add(true);       // Auswertezweig
                 $film->view();
             }
@@ -48,11 +48,11 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
             } else {                // Auswertezweig
                 $film = unserialize($myauth->getAuthData('obj'));
                 $film->edit(true);
-                if($film->set()) :
-                    fehler(1);
+                $erg = $film->set();
+                if ($erg) :
+                    fehler($erg);
                     exit();
                 endif;
-                $film->refresh();
                 $film->view();
             }
         break;	// Ende edit

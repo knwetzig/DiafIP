@@ -12,263 +12,14 @@ $URL$
 
 
 /** ==========================================================================
-    (deprecated)               TITEL KLASSE
-========================================================================== **/
-abstract class Titel {
-/**********************************************************
-func: __construct($)
-      newTitel()
-      editTitel()
-      getTitel($!)    // holt db-felder ins Objekt
-      setTitel()      // schreibt objekt.titel -> db
-      delTitel()
-      protected::isLinked //prüft die Verknüpfung mit anderen Tabellen
-    ::searchTitel($!) // gibt array der ID's zurück
-      view()          // wird überladen von film
-
-- Variablennamen, die sich auf die db-Tabelle beziehen müssen identisch
-  mit den Spaltennamen sein, damit die Iteration gelingen kann.
-**********************************************************/
-    protected
-        $id     = null,
-        $titel  = null,   // Originaltitel
-        $atitel = null,   // Arbeitstitel
-        $utitel = null,   // Untertitel
-        $sid    = null,   // Serien - ID
-        $sfolge = null,   // Serienfolge
-        $stitel = null,   // Serientitel ->    diafip.f_stitel.titel
-        $sdescr = null;   // Beschreibung Serie
-
-    const
-        SQL_isLink  = 'SELECT COUNT(*) FROM public.f_film
-                           WHERE f_film.titel_id = ?;',
-        SQL_get     = 'SELECT * FROM f_titel WHERE id = ?;',
-        SQL_getST   = 'SELECT titel, descr FROM f_stitel WHERE sertitel_id = ?;',
-        SQL_search  = 'SELECT id FROM f_titel
-                            WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
-                            OR (atitel ILIKE ?) ORDER BY titel ASC;',
-        SQL_search2 = 'SELECT sertitel_id FROM f_stitel WHERE (titel ILIKE ?);',
-        SQL_search3 = 'SELECT id FROM f_titel WHERE sid = ?;';
-
-
-    abstract function addTitel($stat);
-
-    function editTitel($stat) {
-    /****************************************************************
-    Aufruf: 0   Formularaufruf
-            1   Auswertung
-    ****************************************************************/
-        global $db, $smarty, $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-
-        if($stat == false) {        // Formular anzeigen
-            // Menüpkt für Dialog
-            $data = a_display(array(
-                // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-                new d_feld('id', $this->id),
-                new d_feld('titel', $this->titel, EDIT, 500),
-                new d_feld('atitel', $this->atitel, EDIT, 503),
-                new d_feld('utitel', $this->utitel, EDIT, 501),
-                new d_feld('stitel', $this->stitel, EDIT, 504),
-                new d_feld('sfolge', $this->sfolge, EDIT, 505),
-                new d_feld('sid', $this->sid),
-                new d_feld('bereich', null, VIEW, 4025)
-            ));
-            $smarty->assign('dialog', $data);
-            // Array der Serientitel laden
-            $smarty->assign('serTitel', self::getSTitelList());
-            $smarty->display('figd_titel_dialog.tpl');
-            $myauth->setAuthData('obj', serialize($this));
-        } else {
-        // Formular auswerten
-            // Obj zurückspeichern wird im aufrufenden Teil erledigt
-            if (empty($this->titel) AND empty($_POST['titel'])) {
-                fehler(100);
-                die();
-            }
-            if ($_POST['titel']) $this->titel = normtext($_POST['titel']);
-            if ($_POST['atitel']) $this->atitel = normtext($_POST['atitel']);
-            if(is_numeric($_POST['sid'])) $this->sid = (int)($_POST['sid']);
-            if ($this->sid)  $this->sfolge = normzahl($_POST['sfolge']);
-            if ($_POST['utitel']) $this->utitel = normtext($_POST['utitel']);
-        } // Formularbereich
-    }
-
-
-    protected function getTitel($nr) {
-    /****************************************************************
-      Aufgabe: Holt Daten aus den db-Tabellen
-               wenn Serie -> Serientitel und Folgenummern
-       Aufruf: $nr = f_titel.id
-       Return: Fehlercode
-    ****************************************************************/
-        global $db;
-        $data = $db->extended->getRow(self::SQL_get, null, $nr);
-        IsDbError($data);
-        if (!$data) return 4;       // kein Datensatz vorhanden
-
-        // Ergebnis -> Objekt schreiben
-        foreach($data as $key => $val) {
-            $this->$key = $val;
-        }
-
-        // ermitteln Serientitel, soweit vorhanden
-        if ($this->sid) {
-            $data = $db->extended->getRow(self::SQL_getST, null, $this->sid);
-            IsDbError($data);
-            $this->stitel = $data['titel'];
-            $this->sdescr = $data['descr'];
-        }
-    }
-
-    function setTitel() {
-    /****************************************************************
-       Aufgabe: schreibt geänderte Werte in die db zurück
-        Return: Fehlercode
-    ****************************************************************/
-        global $db, $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
-
-        // abgespeckte Kopie von $this erstellen
-        $data = array();
-        foreach($this as $value) $data[] = $value;
-        $data = array_slice($data, 0, 6);   // liefert die ersten 7 Einträge
-
-        $quest =& $db->prepare('UPDATE ONLY f_titel SET
-            titel = ?, atitel = ?, sid = ?, sfolge = ?, utitel = ?
-            WHERE id = ?;',
-            array('text', 'text','integer', 'integer', 'text', 'integer'),
-            MDB2_PREPARE_MANIP);
-        IsDbError($quest);
-        $erg =& $quest->execute($data);
-        IsDbError($erg);
-
-        /** im Moment manuell ändern
-        // Serientitel schreiben
-        if ($this->sid) {
-            $sql =("UPDATE ONLY f_stitel
-                    SET titel = '".$this->stitel."',
-                        descr = '".$this->sdescr."'
-                    WHERE sertitel_id = ".$this->sid.";");
-            $erg =& $db->exec($sql);
-            IsDbError($erg);
-        }
-        **/
-    }
-
-    function delTitel() {
-    /****************************************************************
-    Unglaublich, hier wird der Titel gelöscht :) Löschung erfolgt
-    sofort ohne Papierkorbfunktion
-
-    Aufruf: ID des Titels
-    Return: O -> ok
-            1 -> Fehler
-    ****************************************************************/
-        global $db;
-        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
-        if($this->isLinked()) :
-            fehler(10006);
-            return;
-        endif;
-
-        IsDbError($db->extended->autoExecute(
-            'f_titel', null, MDB2_AUTOQUERY_DELETE,
-            'id ='.$db->quote($this->id, 'integer')));
-        unset($this);
-    }
-
-    static function searchTitel($s) {
-    /****************************************************************
-    *  Aufgabe: Suchfunktion in allen Titelspalten (außer Serientiteln)
-    *   Aufruf: ::string
-    *   Return: Array der gefunden Titel-ID's zurück
-    *           Fehlercode
-    *     Anm.: statisch
-    ****************************************************************/
-        global $db, $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
-        $s = "%".$s."%";
-        $data = $db->extended->getCol(self::SQL_search, null, array($s,$s,$s));
-        IsDbError($data);
-        $erg = $data;
-        //Weiter suche in Serientiteln
-        $stit = $db->extended->getCol(self::SQL_search2, null, $s);
-        IsDbError($stit);
-        foreach($stit as $wert) {
-            $data = $db->extended->getCol(self::SQL_search3, null, array($wert));
-            IsDbError($data);
-            $erg = array_merge($erg,$data);
-        }
-        if ($erg) {
-            return array_unique($erg);		// id's der gefundenen Titel
-        } else return 1;
-    }
-
-    protected function isLinked() {
-    // Gibt die Anzahl der verknüpften Datensätze zurück
-        global $db;
-        $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
-        IsDbError($data);
-        return $data['count'];
-    }
-
-    static function getSTitelList() {
-    /****************************************************************
-    *  Aufgabe: Ausgabe der Serientitelliste
-    *   Return: array, alles iO
-    *           Fehlercode
-    ****************************************************************/
-        global $db;
-        $ergebnis = array();
-        $erg =& $db->query(self::SQL_getSTLi);
-        IsDbError($erg);
-        while ($row =$erg->fetchRow()) {
-            $ergebnis[$row['sertitel_id']] = $row['titel'];
-        }
-        if ($ergebnis) {
-            return $ergebnis;     // Liste der Serientitel
-        } else return 1;
-    }
-
-    function view() {
-    /****************************************************************
-    *  Aufgabe: Ausgabe der Titeldaten an smarty
-    ****************************************************************/
-        global $smarty, $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-        $data = a_display(array(
-            // name, inhalt, opt -> rechte, label, tooltip, valstring
-            new d_feld('id', $this->id, VIEW),      // tid
-            new d_feld('titel', $this->titel , VIEW, 500),
-            new d_feld('atitel', $this->atitel , VIEW, 503),
-            new d_feld('utitel', $this->utitel , VIEW, 501),
-            new d_feld('stitel', $this->stitel , VIEW, 504),
-            new d_feld('sfolge', $this->sfolge , VIEW),
-            new d_feld('sdescr', $this->sdescr , VIEW), // Serienbeschreibung
-            new d_feld('edit', null, EDIT, null, 4022),
-            new d_feld('del', null, DELE, null, 4021),
-            new d_feld('addfilm', null, EDIT, null, 4024), // Neuanlage filmogr
-            new d_feld('addbibl', null, EDIT, null, 4026)  // Neuanlage biblio
-        ));
-        if($this->isLinked()) unset($data['del']);
-        $smarty->assign('dialog', $data);
-        $smarty->display('figd_titel_dat.tpl');
-    }
-
-}// Ende Titelclass
-
-
-/** ==========================================================================
                                MAIN CLASS
 ========================================================================== **/
 abstract class Main {
 /********************************************************************
 
     __construct(?int)
-    get(int $nr)        protected
+int ifDouble()          protected
+void    get(int $nr)        protected
     add(bool $stat)     abstract public
     edit(bool $stat)    abstract public
     set()               abstract public
@@ -308,6 +59,7 @@ abstract class Main {
         $sdescr     = null;   // Beschreibung Serie
 
     const
+        SQL_ifDouble = 'SELECT id FROM f_main WHERE titel = ? AND del = false;',
         SQL_getTaetigk = 'SELECT * FROM f_taetig;',
         SQL_getST   = 'SELECT titel, descr FROM f_stitel WHERE sertitel_id = ?;',
         SQL_getSTLi = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
@@ -341,6 +93,14 @@ abstract class Main {
         if (isset($nr)) self::get($nr);
     }
 
+    protected function ifDouble() {
+        global $db;
+        $data = $db->extended->getRow(self::SQL_ifDouble, null, $this->titel);
+        IsDbError($data);
+        return $data['id'];
+    }
+
+
     protected static function getTaetigList() {
     // gibt ein Array(num, text) der Taetigkeiten zurück
         global $db;
@@ -373,7 +133,10 @@ abstract class Main {
     }
 
     protected function get($nr) {
-    // Initialisiert das Objekt (auch gelöschte)
+    /****************************************************************
+    *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
+    *   Return: void
+    ****************************************************************/
         global $db;
         $types      = array(
             'integer',  // id
@@ -416,7 +179,10 @@ abstract class Main {
     }
 
     function del() {
-    // Setzt "NUR" das Flag für den Datensatz in der DB
+    /****************************************************************
+    *  Aufgabe: Setzt "NUR" das Löschflag für den Datensatz in der DB
+    *   Return: Fehlercode
+    ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
@@ -426,7 +192,12 @@ abstract class Main {
     }
 
     protected function existCast($p, $t) {
-    // Testet ob ein Castingeintrag vorhanden ist
+    /****************************************************************
+    *  Aufgabe: Testet ob ein Castingeintrag für fid vorhanden ist
+    *   Aufruf: int ($pid), int ($taetigkeit)
+    *   Return: int (Anzahl)
+    ****************************************************************/
+    //
         global $db;
         $data = $db->extended->getRow(
             self::SQL_exCast, null, array($this->id, $p, $t),
@@ -436,18 +207,26 @@ abstract class Main {
     }
 
     function addCast($p, $t) {
-    // fügt einen Castingdatensatz ein
-    // testen, das nix doppelt eingetragen wird!
+    /****************************************************************
+    *  Aufgabe: fügt einen Castingdatensatz ein
+    *   Aufruf: int ($pid), int ($taetigkeit)
+    *   Return: Fehlercode
+    ****************************************************************/
         global $db;
+        // testen, das nix doppelt eingetragen wird!
         if(self::existCast($p, $t)) return 8;
-        IsDbError($db->extended->autoExecute('f_cast',
-                        array('fid' => $this->id, 'pid' => $p, 'tid' => $t),
-                        MDB2_AUTOQUERY_INSERT, null,
-                        array('integer', 'integer', 'integer')));
+
+        IsDbError($db->extended->autoExecute(
+            'f_cast', array('fid' => $this->id, 'pid' => $p, 'tid' => $t),
+            MDB2_AUTOQUERY_INSERT, null, array('integer', 'integer', 'integer')));
     }
 
     function delCast($p, $t) {
-    // löscht einen Castingsatz für diesen Eintrag
+    /****************************************************************
+    *  Aufgabe: löscht einen Castingsatz für diesen Eintrag
+    *   Aufruf: int ($pid), int ($taetigkeit)
+    *   Return: Fehlercode
+    ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
@@ -458,8 +237,10 @@ abstract class Main {
     }
 
     protected function getCastList() {
-    // gibt die Besetzungsliste für diesen Eintrag aus:
-    // array(vname, name, tid, pid, job)
+    /****************************************************************
+    *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
+    *   Return: array(vname, name, tid, pid, job)
+    ****************************************************************/
         global $db;
         if (empty($this->id)) return;
         $data = $db->extended->getALL(
@@ -474,15 +255,11 @@ abstract class Main {
         return ($data);
     }
 
-    function viewCastList() {
-        global $smarty;
-        $data = self::getCastList();
-        $smarty->assign('CastList', $data);
-        $smarty->display('figd_castlist.tpl');
-    }
-
     protected function isDel() {
-    // Testet ob die Löschflagge gesetzt ist
+    /****************************************************************
+    *  Aufgabe: Testet ob die Löschflagge gesetzt ist
+    *   Return: bool
+    ****************************************************************/
         global $db;
         if(empty($this->id)) return;
         $data = $db->extended->getRow(
@@ -492,7 +269,11 @@ abstract class Main {
     }
 
     static function is_Del($nr) {
-    // Testet ob die Löschflagge gesetzt ist
+    /****************************************************************
+    *  Aufgabe: Testet ob Löschflaf für Eintrag $nr gesetzt ist
+    *   Aufruf: int $nr
+    *   Return: bool
+    ****************************************************************/
         global $db;
         $data = $db->extended->getRow(
             self::SQL_isDel, 'boolean', $nr, 'integer');
@@ -501,7 +282,10 @@ abstract class Main {
     }
 
     protected function isLinked() {
-    // Prüft ob der Datensatz verknüpft ist (0 = frei / Nr = Anzahl)
+    /****************************************************************
+    *  Aufgabe: Prüft ob der Datensatz verknüpft ist
+    *   Return: int $Anzahl
+    ****************************************************************/
         global $db;
         // Prüfkandidaten: f_cast.fid / ...?
         $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
@@ -510,7 +294,10 @@ abstract class Main {
     }
 
     function isVal() {
-    // Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
+    /****************************************************************
+    *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
+    *   Return: bool
+    ****************************************************************/
         global $db;
         $data = $db->extended->getRow(
             self::SQL_isVal, 'boolean', $this->id, 'integer');
@@ -522,9 +309,7 @@ abstract class Main {
     /****************************************************************
     *  Aufgabe: Suchfunktion in allen Titelspalten
     *   Param:  string
-    *   Return: Array der gefunden ID's
-    *           Fehlercode
-    *     Anm.: statisch
+    *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
@@ -538,19 +323,21 @@ abstract class Main {
         //Weiter suche in Serientiteln
         $stit = $db->extended->getCol(self::SQL_search2, null, $s);
         IsDbError($stit);
-        foreach($stit as $wert) {
+        foreach($stit as $wert) :
             $data = $db->extended->getCol(self::SQL_search3, null, array($wert));
             IsDbError($data);
             $erg = array_merge($erg,$data);
-        }
-        if ($erg) {
+        endforeach;
+        if ($erg) :
             // Ausfiltern gelöschter Datensätze
             $erg = array_unique($erg);
             foreach($erg as $key => $wert) :
                 if(self::is_Del($wert)) unset($erg[$key]);
             endforeach;
             return $erg;
-        } else return 1;
+        else :
+            return 1;
+        endif;
     }
 }// ende Main KLASSE
 
@@ -571,7 +358,6 @@ void delCast(pid,tid)   public      (inherit)
     isVal()             protected   (inherit)
     __construct(?int)               (inherit)
     get(int)            protected   (inherit)
-    refresh()           public
     getListGattung()    protected static -> Array(num, text) der Gattungen
     getListPraedikat()  protected static -> Array(num, text) der Praedikate
     getListMediaSpez()  protected static -> num. Liste der Mediaspezifikationen
@@ -592,24 +378,29 @@ void delCast(pid,tid)   public      (inherit)
         $prodtechnik = null,
         $laenge     = null,
         $fsk        = null,
-        $praedikat  = null,
+        $praedikat  = 0,
         $mediaspezi = 0,
-        $urauffuehr = null; // '1900-01-01';
+        $urauffuehr = null;
 
     const
-        SQL_get     = 'SELECT gattung, prodtechnik, laenge, fsk,
+        SQL_get      = 'SELECT gattung, prodtechnik, laenge, fsk,
                           praedikat, mediaspezi, urauffuehr
                        FROM ONLY f_film WHERE id = ?;',
-        SQL_getPraed = 'SELECT * FROM f_praed;',
+        SQL_getPraed = 'SELECT * FROM f_praed ORDER BY praed ASC;',
         SQL_getGattg = 'SELECT * FROM f_gatt;',
-        SQL_getPT   = 'SELECT * FROM f_prodtechnik;',
-        SQL_getMS   = 'SELECT * FROM f_mediaspezi;';
+        SQL_getPT    = 'SELECT * FROM f_prodtechnik;',
+        SQL_getMS    = 'SELECT * FROM f_mediaspezi;';
 
     function __construct($nr = NULL) {
         if (isset($nr)) self::get($nr);
     }
 
     protected function get($nr) {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
         parent::get($nr);
         global $db;
         $types      = array(
@@ -628,16 +419,15 @@ void delCast(pid,tid)   public      (inherit)
             exit;
         endif;
         // Ergebnis -> Objekt schreiben
-        foreach($data as $key => $wert) :
-            $this->$key = $wert;
-        endforeach;
-    }
-
-    function refresh() {
-        $this->get($this->id);
+        foreach($data as $key => $wert) $this->$key = $wert;
     }
 
     protected static function getListGattung() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt ein Array(num, text) der Gattungen zurück
         global $db;
         $list = $db->extended->getCol(self::SQL_getGattg, 'integer');
@@ -651,18 +441,26 @@ void delCast(pid,tid)   public      (inherit)
     }
 
     protected static function getListPraedikat() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt ein Array(num, text) der Praedikate zurück
         global $db;
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
         $data = array();
-        foreach($list as $wert) :
-            $data[$wert] = d_feld::getString($wert);
-        endforeach;
+        foreach($list as $wert) $data[$wert] = d_feld::getString($wert);
         return $data;
     }
 
     protected static function getListMediaSpez() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt eine numerische Liste der Mediaspezifikationen zurück
         global $db;
         $data = $db->extended->getCol(self::SQL_getMS, 'integer');
@@ -672,6 +470,11 @@ void delCast(pid,tid)   public      (inherit)
     }
 
     protected function getThisMediaSpez() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt ein Text-Array der verwendeten Produktionstechniken zurück
         $list = self::getListMediaSpez();
         $data = array();
@@ -682,6 +485,11 @@ void delCast(pid,tid)   public      (inherit)
     }
 
     protected static function getListProdTech() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt ein Text-Array der Produktionstechniken zurück
         global $db;
         $data = $db->extended->getCol(self::SQL_getPT, 'integer');
@@ -691,6 +499,11 @@ void delCast(pid,tid)   public      (inherit)
     }
 
     protected function getThisProdTech() {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
     // gibt ein Text-Array der verwendeten Produktionstechniken zurück
         $list = self::getListProdTech();
         $data = array();
@@ -702,15 +515,22 @@ void delCast(pid,tid)   public      (inherit)
 
     function add($stat) {
     /****************************************************************
-        Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
-        Aufruf:  Status
-        Return:  Fehlercode
+    *   Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
+    *   Aufruf:  Status
+    *   Return:  Fehlercode
     ****************************************************************/
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if ($stat == false) $this->edit(false);
-        else {
-            $this->edit(true);
+        if ($stat == false) :
+            $db->beginTransaction('newFilm'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getRow("SELECT nextval('f_main_id_seq');");
+            IsDbError($data);
+            $this->id = $data['nextval'];
+            $this->edit(false);
+            $myauth->setAuthData('obj', serialize($this));
+        else :
+            // Objekt wurde vom Eventhandler initiiert
             $types = array(
                 'integer',      // gattung
                 'integer',      // prodtechnik
@@ -719,6 +539,7 @@ void delCast(pid,tid)   public      (inherit)
                 'integer',      // praedikat
                 'integer',      // mediaspezi
                 'text',         // urauffuehr
+                'integer',      // id
                 'boolean',      // del
                 'integer',      // editfrom
                 'date',         // editdate
@@ -734,33 +555,30 @@ void delCast(pid,tid)   public      (inherit)
                 'text',         // atitel
                 'text',         // utitel
                 'integer',      // sid
-                'integer',      // sfolge
-            );
+                'integer');     // sfolge
 
-            // 1. Daten für f_film
-            // Typ und ID werden autom. generiert
+            $this->edit(true);
+            // Typ wird autom. generiert
             foreach($this as $key => $wert) $data[$key] = $wert;
-            // id löschen, wird vom DBMS vergeben
-            unset($data['stitel'], $data['sdescr'], $data['id']);
-            $data['editfrom'] = $myauth->getAuthData('uid');
-            $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
+            unset($data['stitel'], $data['sdescr']);
             $erg = $db->extended->autoExecute('f_film', $data,
                         MDB2_AUTOQUERY_INSERT, null, $types);
             IsDbError($erg);
-        }
+            $db->commit('newFilm'); IsDbError($db);
+            // ende Transaktion
+        endif;
     }
 
     function edit($stat) {
     /****************************************************************
-        Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
-        Aufruf: array, welches die zu ändernden Felder enthält
-        Return: none
+    *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
+    *   Aufruf: array, welches die zu ändernden Felder enthält
+    *   Return: none
     ****************************************************************/
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if($stat == false) {        // Formular anzeigen
-            // Menüpkt für Dialog
-            $data = a_display(array(
+        if($stat == false) :        // Formular anzeigen
+            $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('serTitel',  parent::getSTitelList(),    VIEW),
                 new d_feld('gattLi',    self::getListGattung(),     VIEW),
@@ -769,6 +587,7 @@ void delCast(pid,tid)   public      (inherit)
                 new d_feld('prodTecLi', self::getListProdTech(),    VIEW),
                 new d_feld('mediaSpezLi',self::getListMediaSpez(),  VIEW),
                 new d_feld('persLi',    person::getPersonLi(),      VIEW),
+                new d_feld('bereich',   null,               null, 4027),
                 new d_feld('id',        $this->id),
                 new d_feld('titel',     $this->titel,       EDIT, 500),
                 new d_feld('atitel',    $this->atitel,      EDIT, 503),
@@ -790,12 +609,15 @@ void delCast(pid,tid)   public      (inherit)
                 new d_feld('praedikat', $this->praedikat,   EDIT, 582),
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
-                new d_feld('cast',      $this->getCastList(), EDIT),
-            ));
-            $smarty->assign('dialog', $data);
+                new d_feld('isvalid',   $this->isvalid,     IEDIT, 10009),
+            );
+            // CastListe nur beim bearbeiten und nicht bei Neuanlage zeigen.
+            if ($this->titel) $data[] = new d_feld('cast', $this->getCastList(), EDIT);
+
+            $smarty->assign('dialog', a_display($data));
             $smarty->display('figd_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
-        } else {                        // Formular auswerten
+        else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             if (empty($this->titel) AND empty($_POST['titel'])) {
                 fehler(100);
@@ -897,13 +719,25 @@ void delCast(pid,tid)   public      (inherit)
                     $this->notiz = normtext($_POST['notiz']);
                 else $this->notiz = null;
             endif;
-        } // Formularbereich
+
+            $this->isvalid = false;
+            if(isset($_POST['isvalid'])) :
+                if ($_POST['isvalid']) $this->isvalid = true;
+            endif;
+
+            $this->editfrom = $myauth->getAuthData('uid');
+            $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
+
+            // doppelten Datensatz abfangen
+            $number = self::ifDouble();
+            if (!empty($number) AND $number != $this->id) warng('10008');
+        endif;  // Formularbereich
     }
 
     function set() {
     /****************************************************************
-        Aufgabe: schreibt die Daten in die Tabelle 'f_film' zurück (UPDATE)
-        Return: Fehlercode
+    *   Aufgabe: schreibt die Daten in die Tabelle 'f_film' zurück (UPDATE)
+    *    Return: Fehlercode
     ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
@@ -918,7 +752,7 @@ void delCast(pid,tid)   public      (inherit)
             'text',         // urauffuehr
             'boolean',      // del
             'integer',      // editfrom
-            'date',         // editdate
+            'timestamp',    // editdate
             'boolean',      // isvalid
             'integer',      // bild_id
             'text',         // prod_jahr
@@ -935,22 +769,30 @@ void delCast(pid,tid)   public      (inherit)
             'integer',      // typ (1 = film)
         );
         foreach($this as $key => $wert) $data[$key] = $wert;
-        // Bearbeitungsoptionen anhängen
         unset($data['stitel'], $data['sdescr'], $data['id']);
-        $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
-        $data['editfrom'] = $myauth->getAuthData('uid');
-
         $erg = $db->extended->autoExecute('f_film', $data,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
         IsDbError($erg);
         return;
+
+        /** im Moment manuell ändern
+        // Serientitel schreiben
+        if ($this->sid) {
+            $sql =("UPDATE ONLY f_stitel
+                    SET titel = '".$this->stitel."',
+                        descr = '".$this->sdescr."'
+                    WHERE sertitel_id = ".$this->sid.";");
+            $erg =& $db->exec($sql);
+            IsDbError($erg);
+        }
+        **/
+
     }
 
     function view() {
     /****************************************************************
-        Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
-        Aufruf:
-        Return: none
+    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
+    *    Return: none
     ****************************************************************/
         global $db, $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
@@ -984,8 +826,9 @@ void delCast(pid,tid)   public      (inherit)
             new d_feld('mediaspezi', self::getThisMediaSpez(), VIEW, 583),
             new d_feld('urrauff',   $this->urauffuehr,  VIEW, 584),
             new d_feld('cast',      $this->getCastList(), VIEW),
-            new d_feld('edit',   null, EDIT, null, 4013), // edit-Button
-            new d_feld('del',    null, DELE, null, 4020), // Lösch-Button
+            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
+            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
+            new d_feld('isVal',     $this->isvalid,     VIEW, 10009),
             new d_feld('chdatum',   $this->editdate),
             new d_feld('chname',    $bearbeiter[0]),
         ));
@@ -1027,6 +870,11 @@ class Biblio extends Main {
     }
 
     protected function get($nr) {
+    /****************************************************************
+    *  Aufgabe:
+    *   Aufruf:
+    *   Return: void
+    ****************************************************************/
         parent::get($nr);
         // ....
     }

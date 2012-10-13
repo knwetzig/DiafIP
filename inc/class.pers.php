@@ -65,13 +65,14 @@ class Alias {
 class Person extends Alias {
 /**********************************************************
 func: __construct($)
+      get($!)     // holt db-felder -> this
+      refresh
     getPersonLi()       // gibt die Liste aller Personen aus
-      getPerson($!)     // holt db-felder -> this
-      editPerson()
-      newPerson()
-      setPerson()       // schreibt objekt.person -> db
-    ::delPerson()       // löscht Personendatensatz
-    ::searchPerson($!)  // gibt array der ID's zurück
+      edit()
+      add()
+      set()       // schreibt objekt.person -> db
+    del()       // löscht Personendatensatz
+    ::search($!)  // gibt array der ID's zurück
       view()            // ausgabe
 
 - Variablennamen, die sich auf die db-Tabelle beziehen müssen identisch
@@ -97,10 +98,43 @@ func: __construct($)
 
     const
         SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?',
-        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person ORDER BY name ASC;';
+        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person ORDER BY name ASC;',
+        SQL_ifDouble    = 'SELECT id FROM p_person WHERE gtag = ? AND vname = ? AND name = ?;';
 
     function __construct($nr = NULL) {
-        if (isset($nr)) $this->getPerson($nr);
+        if (isset($nr)) $this->get($nr);
+    }
+
+    protected function get($nr) {
+    /****************************************************************
+    Aufgabe: Datensatz holen, in @self schreiben
+    Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
+    Return: none
+    ****************************************************************/
+        global $db;
+        $sql = 'SELECT * FROM p_person WHERE id = ?;';
+        $data = $db->extended->getRow($sql, null, $nr);
+        // Ergebnis -> Objekt schreiben
+        foreach($this as $key => &$wert) $wert = $data[$key];
+        unset($wert);
+        // -> Bildinitialisierung hinzufügen
+    }
+
+    protected function fiGtag() {
+        if (($this->gtag === '0001-01-01') OR ($this->gtag === '01.01.0001'))
+            return ; else return $this->gtag;
+    }
+
+    protected function fiVname() {
+        if ($this->vname === '-')
+            return ; else return $this->vname;
+    }
+
+    protected function ifDouble() {
+        global $db;
+        $data = $db->extended->getRow(
+            self::SQL_ifDouble, null, array($this->gtag, $this->vname, $this->name));
+        return $data['id'];
     }
 
     static function getPersonLi() {
@@ -124,23 +158,7 @@ func: __construct($)
         return $data['count'];
     }
 
-
-    protected function getPerson($nr) {
-    /****************************************************************
-    Aufgabe: Datensatz holen, in @self schreiben
-    Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
-    Return: none
-    ****************************************************************/
-        global $db;
-        $sql = 'SELECT * FROM p_person WHERE id = ?;';
-        $data = $db->extended->getRow($sql, null, $nr);
-        // Ergebnis -> Objekt schreiben
-        foreach($this as $key => &$wert) $wert = $data[$key];
-        unset($wert);
-        // -> Bildinitialisierung hinzufügen
-    }
-
-    function editPerson($stat) {
+    function edit($stat) {
     /****************************************************************
     Aufgabe:    Obj ändern
     Aufruf:     false   Formularanforderung
@@ -181,12 +199,16 @@ func: __construct($)
         } else {    // Status
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
             // Formular auswerten
-            if(isset($_POST['vname'])) $this->vname = normtext($_POST['vname']);
+
+            if(isset($_POST['vname']))
+                if (empty($_POST['vname'])) $this->vname = '-';
+                    else $this->vname = normtext($_POST['vname']);
+
             if(isset($_POST['name'])) {
                 if(!empty($_POST['name'])) $this->name = normtext($_POST['name']);
                 else {
                     fehler(107);
-                    die();
+                    exit();
                 }
             }
 
@@ -196,7 +218,7 @@ func: __construct($)
                 if($_POST['gtag']) {
                     if(isValid($_POST['gtag'], DATUM)) $this->gtag = $_POST['gtag'];
                     else fehler(103);
-                } else $this->gtag = '1900-01-01';
+                } else $this->gtag = '0001-01-01';
             }
 
             if(isset($_POST['gort'])) {
@@ -251,10 +273,19 @@ func: __construct($)
 
             if(isset($_POST['biogr'])) $this->biogr = normtext($_POST['biogr']);
             if(isset($_POST['notiz'])) $this->notiz = normtext($_POST['notiz']);
+            $this->editfrom = $myauth->getAuthData('uid');
+            $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
+
+            // doppelten Datensatz abfangen
+            $number = self::ifDouble();
+            if (!empty($number) AND $number != $this->id) :
+                fehler(128);
+                exit();
+            endif;
         }
     }
 
-    function newPerson($stat) {
+    function add($stat) {
     /****************************************************************
     Aufgabe: Neuanlage einer Person
     Aufruf: false   für Erstaufruf
@@ -276,46 +307,34 @@ func: __construct($)
                 'text',         // biogr
                 'integer',      // aliases
                 'integer',      // bild
+                'timestamp',    // Zeitstempel
+                'integer',      // uid des bearbeiters
                 'text',         // name (geerbt von Alias)
                 'text',         // notiz (geerbt von Alias)
-                'integer',      // uid des bearbeiters
+                'text'          // id
         );
 
         if ($stat == false) {
-    /* [1]
-        Alles Mist! Warum, sollte ich eine neue Id besorgen für einen
-        neu anzulegenden Datensatz, wo doch das DBMS die vergabe automatisch
-        für mich organisiert?
-        Aus diesem Grund fliegt der ganze Schmadder hinaus!
-
             // begin TRANSACTION anlage person
-            $db->beginTransaction('newPerson'); isDBError($db);
+            $db->beginTransaction('newPerson'); IsDbError($db);
             // neue id besorgen
             $data = $db->extended->getRow("SELECT nextval('p_alias_id_seq');");
             IsDbError($data);
             $this->id = $data['nextval'];
-
-        Antwort:
-            Bei Neuanlage ist es ein MUSS da man ja sonst das Objekt nicht wieder
-            referenzieren kann allerdings reicht es im Verwertungszweig..
-    */
-            $this->editPerson(false);
+            $this->edit(false);
+            $myauth->setAuthData('obj', serialize($this));
         } else {
-            $this->editPerson(true);
+            $this->edit(true);
             foreach($this as $key => $wert) $data[$key] = $wert;
-            unset($data['id']);            // id löschen, wird vom DBMS vergeben
-            $data['editfrom'] = $myauth->getAuthData('uid');
             $erg = $db->extended->autoExecute('p_person', $data,
                         MDB2_AUTOQUERY_INSERT, null, $types);
             IsDbError($erg);
-    /* [1]
-            $db->commit('newPerson'); isDBError($db);
+            $db->commit('newPerson'); IsDbError($db);
             // ende TRANSACTION
-    */
         }
     }
 
-    function setPerson(){
+    function set(){
     /****************************************************************
     Aufgabe: schreibt das Obj. via Update in die DB zurück
     Return: 0  alles ok
@@ -326,30 +345,27 @@ func: __construct($)
         if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
 
         $types = array(
-                'text',
-                'date',
-                'integer',
-                'date',
+                'text',         // vname
+                'date',         // gtag
+                'integer',      // gort
+                'date',         // ttag
                 'integer',      // tort
-                'text',
-                'text',
-                'integer',      /*wort*/
-                'text',
-                'text',
-                'text',
-                'integer',      /*aliases*/
-                'integer',      /*bild*/
-                'text',         // name
-                'text',         // notiz
-                'integer',      // id geerbt von Alias
-                'date',         // Zeitstempel
+                'text',         // str
+                'text',         // plz
+                'integer',      // wort
+                'text',         // tel
+                'text',         // mail
+                'text',         // biogr
+                'integer',      // aliases
+                'integer',      // bild
+                'timestamp',    // Zeitstempel
                 'integer',      // uid des bearbeiters
+                'text',         // name -> Alias
+                'text',         // notiz -> Alias
+                'integer',      // id -> Alias
         );
 
         foreach($this as $key => $wert) $data[$key] = $wert;
-        // Bearbeitungsoptionen anhängen
-        $data['editdate'] = date('c', $_SERVER['REQUEST_TIME']);
-        $data['editfrom'] = $myauth->getAuthData('uid');
 
         $erg = $db->extended->autoExecute('p_person', $data,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
@@ -369,11 +385,11 @@ func: __construct($)
         endif;
 
         IsDbError($db->extended->autoExecute('p_person', null,
-            MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($nr, 'integer')));
+            MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
         erfolg(); return 0;
     }
 
-    function searchPerson($s) {
+    function search($s) {
     /****************************************************************
     Aufgabe: Simple Suche nach Personen über Namen
     Aufruf: string
@@ -428,11 +444,11 @@ func: __construct($)
         $data = a_display(array(
         // name,inhalt optional-> $rechte,$label,$tooltip,valString
             new d_feld('id',     $this->id,                 VIEW),          // pid
-            new d_feld('vname',  $this->vname,              VIEW),          // vname
+            new d_feld('vname',  $this->fiVname(),          VIEW),          // vname
             new d_feld('name',   $this->name,               VIEW),          // name
             // alias (Liste)
             new d_feld('aliases', parent::getAlias($this->aliases), VIEW, 515),
-            new d_feld('gtag',   $this->gtag,               VIEW,   502),   // Geburtstag
+            new d_feld('gtag',   $this->fiGtag(),           VIEW,   502),   // Geburtstag
             new d_feld('gort',   Ort::getOrt($this->gort),  VIEW,  4014),   // GebOrt
             new d_feld('ttag',   $this->ttag,               VIEW,   509),   // Todestag
             new d_feld('tort',   Ort::getOrt($this->tort),  VIEW,  4014),   // Sterbeort

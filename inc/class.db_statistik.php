@@ -21,12 +21,12 @@ class db_stat {
 	global $db;
 
         // Anzahl filmogr. & bibl. Datensätze
-        $sql = 'SELECT COUNT(*) FROM f_main;';
+        $sql = 'SELECT COUNT(*) FROM f_main WHERE del = false;';
         $data = $db->extended->getRow($sql,'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4000)] = $data['count'];
 
-        $sql = 'SELECT COUNT(*) FROM ONLY f_film;';
+        $sql = 'SELECT COUNT(*) FROM ONLY f_film WHERE del = false;';
         $data = $db->extended->getRow($sql, 'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4001)] = $data['count'];
