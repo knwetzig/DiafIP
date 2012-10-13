@@ -123,6 +123,11 @@ function fehler($err) {
         echo "<div class='error'>".d_feld::getString((int)$err)."</div>";
     else echo '<div class="error">'.$err.'</div>';
 }
+function warng($warn) {
+    if(is_numeric($warn))
+        echo '<div class="warng">'.d_feld::getString((int)$warn).'</div>';
+    else echo '<div class="warng">'.$warn.'</div>';
+}
 
 function erfolg($s = null) {
     if (isset($s)) :

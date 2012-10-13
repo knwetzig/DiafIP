@@ -6,7 +6,7 @@ $Author$
 $Date: 2012-08-07 16:26:19 +0200 (#$
 $URL$
 
-ToDo:   Die Methode searchPerson in der Klassenbibliothek funktioniert nicht
+ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
         wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
 
         Löschanfrage via Datenfeld eintragen (Papierkorb). löschen als Cron-Job
@@ -39,29 +39,28 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
             if(isset($_POST['form'])) {
                 // neues Formular
                 $np = new Person;
-                $np->newPerson(false);
+                $np->add(false);
             } else {
                 $np = unserialize($myauth->getAuthData('obj'));
                 // Formular auswerten
-                $np->newPerson(true);
+                $np->add(true);
                 $np->view();
             }
         break; // Ende --add--
 
         case "edit" :
             if (isset($_POST['form'])) {
-                $ePer = new Person;
+                $ePer = new Person($_POST['pid']);
                 // Daten einlesen und Formular anzeigen
-                $ePer->getPerson($_POST['pid']);
-                $ePer->editPerson(false);
+                $ePer->edit(false);
             } else {
                 $ePer = unserialize($myauth->getAuthData('obj'));
-                $ePer->editPerson(true);
-                if($ePer->setPerson()) {
-                    fehler(1);
-                    die();
-                }
-                $ePer->getPerson($ePer->id);
+                $ePer->edit(true);
+                $erg = $ePer->set();
+                if ($erg) :
+                    fehler($erg);
+                    exit();
+                endif;
                 $ePer->view();
             }
         break; // Ende --edit --
@@ -75,7 +74,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
                 } else {
             */
                 $myauth->setAuthData('search', normtext($_POST['sstring']));
-                $plist = Person::searchPerson($myauth->getAuthData('search'));
+                $plist = Person::search($myauth->getAuthData('search'));
             // }
             if (!empty($plist) AND is_array($plist)) {
                 // Ausgabe

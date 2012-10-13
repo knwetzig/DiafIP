@@ -23,14 +23,14 @@ $URL$
 {* --Name-- *}
     <tr>
         <td colspan="2">
-            {if !empty($dialog['titel'][1])}<div style="white-space:normal" class="fett">{$dialog['titel'][1]}</div>{/if}
+            {if !empty($dialog['titel'][1])}<div style="white-space:nowrap" class="fett">{$dialog['titel'][1]}</div>{/if}
         </td>
 
         {* --Bearbeitungssymbole-- *}
         <td style="text-align:right;">
             <form method="post">
             <span class="note">
-                {$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                FID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
             </span>
                 {if isset($dialog['edit'])}
                     <button
@@ -170,4 +170,11 @@ $URL$
         <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
         <td colspan="2">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
+
+{* --isvalid-- Eintrag *}
+    {if !empty($dialog['isVal'][1])}<tr>
+        <td>&nbsp;</td>
+        <td colspan="2" class="re"><img src="images/ok.png" />&nbsp;{$dialog['isVal'][2]}</td>
+    </tr>{/if}
+
 </table>
