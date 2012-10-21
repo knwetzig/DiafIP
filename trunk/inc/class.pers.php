@@ -107,9 +107,9 @@ func: __construct($)
 
     protected function get($nr) {
     /****************************************************************
-    Aufgabe: Datensatz holen, in @self schreiben
-    Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
-    Return: none
+    * Aufgabe: Datensatz holen, in @self schreiben
+    *  Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
+    *  Return: none
     ****************************************************************/
         global $db;
         $sql = 'SELECT * FROM p_person WHERE id = ?;';
@@ -121,16 +121,28 @@ func: __construct($)
     }
 
     protected function fiGtag() {
+    /****************************************************************
+    * Aufgabe: Geburtstagsfilter
+    *  Return: (int Geburtstag | null)
+    ****************************************************************/
         if (($this->gtag === '0001-01-01') OR ($this->gtag === '01.01.0001'))
             return ; else return $this->gtag;
     }
 
     protected function fiVname() {
+    /****************************************************************
+    * Aufgabe: Ausfiltern des default-Wertes von Vorname
+    *  Return: string (null | vname)
+    ****************************************************************/
         if ($this->vname === '-')
             return ; else return $this->vname;
     }
 
     protected function ifDouble() {
+    /****************************************************************
+    * Aufgabe:
+    *  Return:
+    ****************************************************************/
         global $db;
         $data = $db->extended->getRow(
             self::SQL_ifDouble, null, array($this->gtag, $this->vname, $this->name));
@@ -138,19 +150,25 @@ func: __construct($)
     }
 
     static function getPersonLi() {
-    // return array([id] => vname+name)
+    /****************************************************************
+    * Aufgabe: Personenliste
+    *  Return: array([id] => vname+name)
+    ****************************************************************/
         global $db;
         $list = $db->extended->getAll(self::SQL_getPersLi);
         IsDbError($list);
         $data = array();
         foreach($list as $wert) :
-            $data[$wert['id']] = $wert['vname'].'&nbsp;'.$wert['name'];
+            if ($wert['vname'] !== '-') $data[$wert['id']] = $wert['vname'].'&nbsp;'.$wert['name']; else $data[$wert['id']] = $wert['name'];
         endforeach;
         return $data;
     }
 
     protected function isLinked() {
-    // Prüft ob der Datensatz verknüpft ist (0 = frei / Nr = Anzahl)
+    /****************************************************************
+    * Aufgabe: Prüft ob der Datensatz verknüpft ist
+    *  Return: 0 = frei / Nr = Anzahl
+    ****************************************************************/
         global $db;
         // Prüfkandidaten: f_cast.pid / ...?
         $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);

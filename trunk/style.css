@@ -65,7 +65,7 @@ td {
     font-family:sans-serif;
     vertical-align:middle;
     /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
-    /* border:1px dotted gray;  zu testzwecken */
+    /* border:1px dotted gray; /* zu testzwecken */
 }
 
 td.re {
@@ -128,6 +128,10 @@ textarea {
 
 input[type='text'],[type='password'] {
     width:250px;
+}
+
+input[type='text'].halb {
+    width:150px;
 }
 
 input[type='submit'],[type='button'] {

@@ -46,6 +46,7 @@ if ($myauth->checkAuth()) {     // erfolgreiche Anmeldung
     require_once 'class.s_location.php';
     require_once 'class.pers.php';
     require_once 'class.figd.php';
+    require_once 'class.media.php';
 //    require_once 'class.item.php';
     require_once 'class.db_statistik.php';
 
