@@ -3,8 +3,8 @@
 Smarty-Template für die Bearbeitung/Neuanlage von filmografischen Datensätzen
 
 $Rev$
-$Author: mortagir@gmail.com   		$
-$Date: 2012-07-31 22:11:39 +0#		$
+$Author$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
@@ -66,7 +66,7 @@ $URL$
         <td class="re" style="vertical-align:top">{$dialog['quellen'][2]}:</td>
         <td><textarea
             cols="40"
-            rows="1"
+            rows="3"
             name={$dialog['quellen'][0]}
             >{$dialog['quellen'][1]}</textarea>
         </td>
@@ -90,7 +90,7 @@ $URL$
 {* --- Produktionjahr --- *}
     {if isset($dialog['prod_jahr'])}<tr>
         <td class="re">{$dialog['prod_jahr'][2]}:</td>
-        <td><input type="text" name={$dialog['prod_jahr'][0]} value="{$dialog['prod_jahr'][1]}" /></td>
+        <td><input type="text" class="halb" name={$dialog['prod_jahr'][0]} value="{$dialog['prod_jahr'][1]}" /></td>
     </tr>{/if}
 
 {* --- Thema --- *}
@@ -136,7 +136,7 @@ $URL$
 {* --- Age --- *}
     {if isset($dialog['fsk'])}<tr>
         <td class="re">{$dialog['fsk'][2]}:</td>
-        <td><input type="text" name={$dialog['fsk'][0]} value="{$dialog['fsk'][1]}" /></td>
+        <td><input type="text" class="halb" name={$dialog['fsk'][0]} value="{$dialog['fsk'][1]}" /></td>
     </tr>{/if}
 
 {* --- Praedikat --- *}
@@ -155,8 +155,20 @@ $URL$
         <td class="re">{$dialog['urauff'][2]}:</td>
         <td><input
             type="text"
+            class="halb"
             name={$dialog['urauff'][0]}
             value="{$dialog['urauff'][1]}" /></td>
+    </tr>{/if}
+
+{* --- Bildformat --- *}
+    {if isset($dialog['bildformat'])}<tr>
+        <td class="re">{$dialog['bildformat'][2]}:</td>
+        <td>
+            {html_options
+                name=bildformat
+                options=$dialog['bildFormLi'][1]
+                selected=$dialog['bildformat'][1]}
+        </td>
     </tr>{/if}
 
 {* --- Mediaspezifikation --- *}
@@ -176,7 +188,7 @@ $URL$
             <span class="note">(intern)</span>
         </td>
         <td><textarea
-            cols="29"
+            cols="26"
             rows="8"
             wrap="soft"
             name={$dialog['notiz'][0]}
@@ -207,46 +219,73 @@ $URL$
     <input type='hidden' name='aktion' value='{$aktion}' />
 </fieldset></form>
 
-{* --- Besetzung --- *}
-{if isset($dialog['cast'])}<br />
-<fieldset><legend>Besetzung</legend>
-  <table>
-    {foreach from=$dialog['cast'][1] item=wert}
-    <tr>
-        <td class="re">{$wert['job']}:</td>
-        <td>{$wert['vname']}&nbsp;{$wert['name']}</td>
-        <td><form method="post"><button
-                class="small"
-                name="aktion"
-                value="delCast" /><img src="images/del.png"
-            /></button>
-            <input type="hidden" name="sektion" value="film" />
-            <input type="hidden" name="pid" value="{$wert['pid']}" />
-            <input type="hidden" name="tid" value="{$wert['tid']}" />
-            <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
-        </form></td>
-    </tr>
-    {/foreach}
+{**************************************************************
+    Hier folgt der 2. Block. Dieser wird nur beim editieren und
+    nicht bei der Neuanlage angezeigt.
+**************************************************************}
+{if isset($dialog['cast'])}
+<table{*für Casting/bild*}><tr><td>
 
-    <tr><form method='post'>
-        <td>{html_options
-                name=tid
-                options=$dialog['taetigLi'][1]}
-        </td>
-        <td>{html_options
-                name=pid
-                options=$dialog['persLi'][1]}
-        </td>
-        <td><button
-                class='small'
-                name='aktion'
-                value='addCast'>
-            <img src="images/add.png" alt="add" />
-            </button>
-        </td>
-        <input type="hidden" name="sektion" value="film" />
-        <input type="hidden" name="aktion" value="addCast" />
-        <input type="hidden" name="fid" value={$dialog['id'][1]} />
-    </form></tr>
-  </table>
-</fieldset>{/if}
+{* --- Besetzung --- *}
+    <fieldset><legend>????????</legend>
+    <table>
+        {foreach from=$dialog['cast'][1] item=wert}
+        <tr>
+            <td class="re">{$wert['job']}:</td>
+            <td>{$wert['vname']}&nbsp;{$wert['name']}</td>
+            <td><form method="post"><button
+                    class="small"
+                    name="aktion"
+                    value="delCast" /><img src="images/del.png"
+                /></button>
+                <input type="hidden" name="sektion" value="film" />
+                <input type="hidden" name="pid" value="{$wert['pid']}" />
+                <input type="hidden" name="tid" value="{$wert['tid']}" />
+                <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
+            </form></td>
+        </tr>
+        {/foreach}
+
+        <tr><form method='post'>
+            <td>{html_options
+                    name=tid
+                    options=$dialog['taetigLi'][1]}
+            </td>
+            <td>{html_options
+                    name=pid
+                    options=$dialog['persLi'][1]}
+            </td>
+            <td><button
+                    class='small'
+                    name='aktion'
+                    value='addCast'>
+                <img src="images/add.png" alt="add" />
+                </button>
+            </td>
+            <input type="hidden" name="sektion" value="film" />
+            <input type="hidden" name="aktion" value="addCast" />
+            <input type="hidden" name="fid" value={$dialog['id'][1]} />
+        </form></tr>
+    </table>
+    </fieldset>
+  </td>
+
+{* --- Bildansicht/Upload
+  <td style="vertical-align:bottom; padding-left:20px">
+    <fieldset><legend>{$dialog['bild_id'][1]}</legend>
+        <form method="post" enctype="multipart/form-data">
+            <table><tr>
+                <input type="text" name="titel" value="Titel"/>
+                <textarea rows="5" cols="29" name="descr">beschreibung</textarea>
+                <input type="hidden" name="MAX_FILE_SIZE" value="15000000" />
+                <input type="file" name="bild" />
+                <input type="submit" value="Upload Image" />
+            </tr></table>
+            <input type="hidden" name="sektion" value="film" />
+            <input type="hidden" name="aktion" value="addImage" />
+            <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
+        </form>
+    </fieldset>
+  </td>
+--- *}
+</tr></table>{/if}

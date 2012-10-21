@@ -42,8 +42,8 @@ Technische Informationen, wie aktuelle Release, Quelltext, &Auml;nderungen usw. 
 </p>
 <p><strong>Tipps:</strong><br />
     <ul>
-        <li>Das dr&uuml;cken von Enter in der Textzeile eines Formulars, bewirkt die Ausf&uuml;ng desselben.</li>
-        <li>Mit der Tabulatortaste kann man auf das n&auml;chste Eingabefeld navigieren. Strg+Tabulator kehrt diesen Vorgang um.</li>
+        <li>Das dr&uuml;cken von Enter in der Textzeile eines Formulars, bewirkt das absenden desselben.</li>
+        <li>Mit der Tabulatortaste kann man auf das n&auml;chste Eingabefeld navigieren. Shift+Tabulator kehrt diesen Vorgang um.</li>
     </ul>
 <p>
     W&uuml;nsche und Vorschl&auml;ge bitte (kurz) auf die Pinwand posten.

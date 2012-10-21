@@ -10,30 +10,47 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
+interface iMain {
+    const
+        SQL_getSTLi = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
+        SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;',
+        SQL_search1  = 'SELECT id FROM f_film
+                            WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
+                            OR (atitel ILIKE ?) ORDER BY titel ASC;',
+        SQL_search2 = 'SELECT sertitel_id FROM f_stitel WHERE (titel ILIKE ?);',
+        SQL_search3 = 'SELECT id FROM f_film WHERE sid = ?;';
+
+    public static function getSTitelList();
+    public function del();
+    public static function is_Del($nr);
+    public function addCast($p, $t);
+    public function delCast($p, $t);
+    public function isVal();
+    public static function search($s);
+}
+
+interface iTyp extends iMain {
+    public function add($stat);
+    public function edit($stat);
+    public function set();
+    public function view();
+}
 
 /** ==========================================================================
                                MAIN CLASS
 ========================================================================== **/
-abstract class Main {
+abstract class Main implements iMain {
 /********************************************************************
 
-    __construct(?int)
-int ifDouble()          protected
-void    get(int $nr)        protected
-    add(bool $stat)     abstract public
-    edit(bool $stat)    abstract public
-    set()               abstract public
-    existCast()         protected
-    addCast()           public
-    delCast()           public
-    getCastList()       protected
-    viewCastList()      public
-    isDel()             protected
-    is_Del()            static public
-    isLinked()          protected
-    isVal()             protected
-    search              static public
-    view()              abstract public
+interne Methoden:
+            __construct(?int)
+    int     ifDouble()
+            getTaetigList()     static
+    void    get(int $nr)
+            isDel()
+            existCast()
+            getCastList()
+            isLinked()
 
 ********************************************************************/
 
@@ -62,7 +79,6 @@ void    get(int $nr)        protected
         SQL_ifDouble = 'SELECT id FROM f_main WHERE titel = ? AND del = false;',
         SQL_getTaetigk = 'SELECT * FROM f_taetig;',
         SQL_getST   = 'SELECT titel, descr FROM f_stitel WHERE sertitel_id = ?;',
-        SQL_getSTLi = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
         SQL_get     = 'SELECT * FROM f_main WHERE id = ?;',
         SQL_exCast  = 'SELECT COUNT(*) FROM F_cast
                        WHERE fid = ? AND pid = ? AND tid = ?;',
@@ -76,33 +92,29 @@ void    get(int $nr)        protected
                        ORDER BY
                          p_person."name" ASC, p_person.vname ASC;',
         SQL_isDel   = 'SELECT del FROM f_main WHERE id = ?;',
-        SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?',
-        SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;',
-        SQL_search1  = 'SELECT id FROM f_film
-                            WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
-                            OR (atitel ILIKE ?) ORDER BY titel ASC;',
-        SQL_search2 = 'SELECT sertitel_id FROM f_stitel WHERE (titel ILIKE ?);',
-        SQL_search3 = 'SELECT id FROM f_film WHERE sid = ?;';
-
-    abstract function add($stat);
-    abstract function edit($stat);
-    abstract function set();
-    abstract function view();
+        SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?';
 
     function __construct($nr = NULL) {
         if (isset($nr)) self::get($nr);
     }
 
-    protected function ifDouble() {
+    final protected function ifDouble() {
+    /****************************************************************
+    *  Aufgabe: Ermitteln gleichlautender Titel
+    *   Return: int (ID des letzten Datensatzes | null )
+    ****************************************************************/
         global $db;
         $data = $db->extended->getRow(self::SQL_ifDouble, null, $this->titel);
         IsDbError($data);
         return $data['id'];
     }
 
-
-    protected static function getTaetigList() {
-    // gibt ein Array(num, text) der Taetigkeiten zurück
+    final protected static function getTaetigList() {
+    /****************************************************************
+    *  Aufgabe: gibt ein Array(num, text) der Taetigkeiten zurück
+    *   Return:
+    ****************************************************************/
+    //
         global $db;
         $list = $db->extended->getCol(self::SQL_getTaetigk, 'integer');
         $data = array();
@@ -114,7 +126,7 @@ void    get(int $nr)        protected
         return $data;
     }
 
-    static function getSTitelList() {
+    final public static function getSTitelList() {
     /****************************************************************
     *  Aufgabe: Ausgabe der Serientitelliste
     *   Return: array, alles iO
@@ -178,7 +190,7 @@ void    get(int $nr)        protected
         }
     }
 
-    function del() {
+    final public function del() {
     /****************************************************************
     *  Aufgabe: Setzt "NUR" das Löschflag für den Datensatz in der DB
     *   Return: Fehlercode
@@ -191,7 +203,33 @@ void    get(int $nr)        protected
             'id = '.$db->quote($this->id, 'integer'), 'boolean'));
     }
 
-    protected function existCast($p, $t) {
+    final protected function isDel() {
+    /****************************************************************
+    *  Aufgabe: Testet ob die Löschflagge gesetzt ist
+    *   Return: bool
+    ****************************************************************/
+        global $db;
+        if(empty($this->id)) return;
+        $data = $db->extended->getRow(
+            self::SQL_isDel, 'boolean', $this->id, 'integer');
+        IsDbError($data);
+        return $data['del'];
+    }
+
+    final public static function is_Del($nr) {
+    /****************************************************************
+    *  Aufgabe: Testet ob Löschflaf für Eintrag $nr gesetzt ist
+    *   Aufruf: int $nr
+    *   Return: bool
+    ****************************************************************/
+        global $db;
+        $data = $db->extended->getRow(
+            self::SQL_isDel, 'boolean', $nr, 'integer');
+        IsDbError($data);
+        return $data['del'];
+    }
+
+    final protected function existCast($p, $t) {
     /****************************************************************
     *  Aufgabe: Testet ob ein Castingeintrag für fid vorhanden ist
     *   Aufruf: int ($pid), int ($taetigkeit)
@@ -206,7 +244,7 @@ void    get(int $nr)        protected
         return $data['count'];
     }
 
-    function addCast($p, $t) {
+    final public function addCast($p, $t) {
     /****************************************************************
     *  Aufgabe: fügt einen Castingdatensatz ein
     *   Aufruf: int ($pid), int ($taetigkeit)
@@ -221,7 +259,7 @@ void    get(int $nr)        protected
             MDB2_AUTOQUERY_INSERT, null, array('integer', 'integer', 'integer')));
     }
 
-    function delCast($p, $t) {
+    final public function delCast($p, $t) {
     /****************************************************************
     *  Aufgabe: löscht einen Castingsatz für diesen Eintrag
     *   Aufruf: int ($pid), int ($taetigkeit)
@@ -236,7 +274,7 @@ void    get(int $nr)        protected
             ));
     }
 
-    protected function getCastList() {
+    final protected function getCastList() {
     /****************************************************************
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
     *   Return: array(vname, name, tid, pid, job)
@@ -250,38 +288,13 @@ void    get(int $nr)        protected
         // Übersetzung für die Tätigkeit holen
         foreach($data as &$wert) :
            $wert['job'] = d_feld::getString($wert['tid']);
+           if ($wert['vname'] === '-') $wert['vname'] = null;
         endforeach;
-
+        unset($wert);
         return ($data);
     }
 
-    protected function isDel() {
-    /****************************************************************
-    *  Aufgabe: Testet ob die Löschflagge gesetzt ist
-    *   Return: bool
-    ****************************************************************/
-        global $db;
-        if(empty($this->id)) return;
-        $data = $db->extended->getRow(
-            self::SQL_isDel, 'boolean', $this->id, 'integer');
-        IsDbError($data);
-        return $data['del'];
-    }
-
-    static function is_Del($nr) {
-    /****************************************************************
-    *  Aufgabe: Testet ob Löschflaf für Eintrag $nr gesetzt ist
-    *   Aufruf: int $nr
-    *   Return: bool
-    ****************************************************************/
-        global $db;
-        $data = $db->extended->getRow(
-            self::SQL_isDel, 'boolean', $nr, 'integer');
-        IsDbError($data);
-        return $data['del'];
-    }
-
-    protected function isLinked() {
+    final protected function isLinked() {
     /****************************************************************
     *  Aufgabe: Prüft ob der Datensatz verknüpft ist
     *   Return: int $Anzahl
@@ -293,7 +306,7 @@ void    get(int $nr)        protected
         return $data['count'];
     }
 
-    function isVal() {
+    final public function isVal() {
     /****************************************************************
     *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
     *   Return: bool
@@ -305,7 +318,7 @@ void    get(int $nr)        protected
         return $data['isvalid'];
     }
 
-    static function search($s) {
+    public static function search($s) {
     /****************************************************************
     *  Aufgabe: Suchfunktion in allen Titelspalten
     *   Param:  string
@@ -341,35 +354,21 @@ void    get(int $nr)        protected
     }
 }// ende Main KLASSE
 
-
 /** ==========================================================================
                                 FILM CLASS
 ========================================================================== **/
-class Film extends Main {
+final class Film extends Main implements iTyp {
 /********************************************************************
 
-    del()               public      (inherit)
-void addCast(pid,tid)   public      (inherit)
-void delCast(pid,tid)   public      (inherit)
-    getCastList()       protected   (inherit)
-    viewCastList()      public      (inherit)
-    isDel()             protected   (inherit)
-    isLinked()          protected   (inherit)
-    isVal()             protected   (inherit)
-    __construct(?int)               (inherit)
-    get(int)            protected   (inherit)
+Interne Methoden:
     getListGattung()    protected static -> Array(num, text) der Gattungen
     getListPraedikat()  protected static -> Array(num, text) der Praedikate
+    getListBildformat()   protected static -> array(string) der Bildformate
+    getBildformat()
     getListMediaSpez()  protected static -> num. Liste der Mediaspezifikationen
     getThisMediaSpez()  protected        -> dito für angewandte Mediaspezifikationen
     getListProdTech()   protected static -> array(txt)der Produktionstechniken
     getThisProdTech()   protected        -> dito für verwendete Produktionstechniken
-    set()               public
-    add(bool)           public
-    edit(bool)          public
-    search(str)         public static (inherit)
-    del()               public
-    view()              public
 
 ********************************************************************/
 
@@ -380,16 +379,19 @@ void delCast(pid,tid)   public      (inherit)
         $fsk        = null,
         $praedikat  = 0,
         $mediaspezi = 0,
+        $bildformat = 0,
         $urauffuehr = null;
 
     const
         SQL_get      = 'SELECT gattung, prodtechnik, laenge, fsk,
-                          praedikat, mediaspezi, urauffuehr
-                       FROM ONLY f_film WHERE id = ?;',
+                          praedikat, bildformat, mediaspezi, urauffuehr
+                       FROM f_film WHERE id = ?;',
         SQL_getPraed = 'SELECT * FROM f_praed ORDER BY praed ASC;',
-        SQL_getGattg = 'SELECT * FROM f_gatt;',
-        SQL_getPT    = 'SELECT * FROM f_prodtechnik;',
-        SQL_getMS    = 'SELECT * FROM f_mediaspezi;';
+        SQL_getGenre = 'SELECT * FROM f_genre;',
+        SQL_getBfLi  = 'SELECT * FROM f_bformat;',
+        SQL_getBF    = 'SELECT format FROM f_bformat WHERE id = ?;',
+        SQL_getMS    = 'SELECT * FROM f_mediaspezi;',
+        SQL_getPT    = 'SELECT * FROM f_prodtechnik;';
 
     function __construct($nr = NULL) {
         if (isset($nr)) self::get($nr);
@@ -409,6 +411,7 @@ void delCast(pid,tid)   public      (inherit)
             'text',     // laenge   (Sonderformat)
             'integer',  // fsk      (Altersempfehlung)
             'integer',  // praedikat
+            'integer',  // bildformat
             'integer',  // mediaspezi
             'date',     // urauffuehr
         );
@@ -424,13 +427,11 @@ void delCast(pid,tid)   public      (inherit)
 
     protected static function getListGattung() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt ein  der Gattungen zurück
+    *   Return: Array(num, text)
     ****************************************************************/
-    // gibt ein Array(num, text) der Gattungen zurück
         global $db;
-        $list = $db->extended->getCol(self::SQL_getGattg, 'integer');
+        $list = $db->extended->getCol(self::SQL_getGenre, 'integer');
         $data = array();
         IsDbError($list);
         foreach($list as $wert) :
@@ -442,11 +443,9 @@ void delCast(pid,tid)   public      (inherit)
 
     protected static function getListPraedikat() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt eine Liste der Praedikate zurück
+    *   Return: array(int, string)
     ****************************************************************/
-    // gibt ein Array(num, text) der Praedikate zurück
         global $db;
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
@@ -455,13 +454,34 @@ void delCast(pid,tid)   public      (inherit)
         return $data;
     }
 
+    protected static function getListBildformat() {
+    /****************************************************************
+    *  Aufgabe: gibt eine Liste der Filmformate zurück
+    *   Return: array(int,string)
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getAll(self::SQL_getBfLi);
+        IsDbError($list);
+        $data = array('');
+        foreach($list as $wert) $data[$wert['id']] = $wert['format'];
+        return $data;
+    }
+
+    protected function getBildformat() {
+    // gibt den string mit dem Bildformat zurück
+        global $db;
+        if (empty($this->bildformat)) return;
+        $data = $db->extended->getOne(
+            self::SQL_getBF, null, $this->bildformat);
+        IsDbError($data);
+        return $data;
+    }
+
     protected static function getListMediaSpez() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt eine Liste der Mediaspezifikationen zurück
+    *   Return: array(int)
     ****************************************************************/
-    // gibt eine numerische Liste der Mediaspezifikationen zurück
         global $db;
         $data = $db->extended->getCol(self::SQL_getMS, 'integer');
         IsDbError($data);
@@ -471,11 +491,9 @@ void delCast(pid,tid)   public      (inherit)
 
     protected function getThisMediaSpez() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt die Liste der verwendeten Produktionstechniken zurück
+    *   Return: array (string)
     ****************************************************************/
-    // gibt ein Text-Array der verwendeten Produktionstechniken zurück
         $list = self::getListMediaSpez();
         $data = array();
         foreach($list as $key => $wert) :
@@ -486,11 +504,9 @@ void delCast(pid,tid)   public      (inherit)
 
     protected static function getListProdTech() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt eine Liste der Produktionstechniken zurück
+    *   Return: array (string)
     ****************************************************************/
-    // gibt ein Text-Array der Produktionstechniken zurück
         global $db;
         $data = $db->extended->getCol(self::SQL_getPT, 'integer');
         IsDbError($data);
@@ -500,11 +516,9 @@ void delCast(pid,tid)   public      (inherit)
 
     protected function getThisProdTech() {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
-    *   Return: void
+    *  Aufgabe: gibt eine Liste der verwendeten Produktionstechniken zurück
+    *   Return: array (string)
     ****************************************************************/
-    // gibt ein Text-Array der verwendeten Produktionstechniken zurück
         $list = self::getListProdTech();
         $data = array();
         foreach($list as $key => $wert) :
@@ -513,7 +527,7 @@ void delCast(pid,tid)   public      (inherit)
         return $data;
     }
 
-    function add($stat) {
+    public function add($stat) {
     /****************************************************************
     *   Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
     *   Aufruf:  Status
@@ -532,12 +546,14 @@ void delCast(pid,tid)   public      (inherit)
         else :
             // Objekt wurde vom Eventhandler initiiert
             $types = array(
+                // ACHTUNG! Reihenfolge beachten !!!
                 'integer',      // gattung
                 'integer',      // prodtechnik
                 'text',         // laenge (Sonderformat))
                 'integer',      // fsk
                 'integer',      // praedikat
                 'integer',      // mediaspezi
+                'integer',      // bildformat
                 'text',         // urauffuehr
                 'integer',      // id
                 'boolean',      // del
@@ -569,7 +585,7 @@ void delCast(pid,tid)   public      (inherit)
         endif;
     }
 
-    function edit($stat) {
+    public function edit($stat) {
     /****************************************************************
     *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
     *   Aufruf: array, welches die zu ändernden Felder enthält
@@ -580,13 +596,14 @@ void delCast(pid,tid)   public      (inherit)
         if($stat == false) :        // Formular anzeigen
             $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-                new d_feld('serTitel',  parent::getSTitelList(),    VIEW),
-                new d_feld('gattLi',    self::getListGattung(),     VIEW),
-                new d_feld('praedLi',   self::getListPraedikat(),   VIEW),
-                new d_feld('taetigLi',  parent::getTaetigList(),    VIEW),
-                new d_feld('prodTecLi', self::getListProdTech(),    VIEW),
-                new d_feld('mediaSpezLi',self::getListMediaSpez(),  VIEW),
-                new d_feld('persLi',    person::getPersonLi(),      VIEW),
+                new d_feld('serTitel',  parent::getSTitelList()),
+                new d_feld('gattLi',    self::getListGattung()),
+                new d_feld('praedLi',   self::getListPraedikat()),
+                new d_feld('taetigLi',  parent::getTaetigList()),
+                new d_feld('prodTecLi', self::getListProdTech()),
+                new d_feld('bildFormLi',self::getListBildformat()),
+                new d_feld('mediaSpezLi',self::getListMediaSpez()),
+                new d_feld('persLi',    person::getPersonLi()),
                 new d_feld('bereich',   null,               null, 4027),
                 new d_feld('id',        $this->id),
                 new d_feld('titel',     $this->titel,       EDIT, 500),
@@ -595,7 +612,7 @@ void delCast(pid,tid)   public      (inherit)
                 new d_feld('stitel',    $this->stitel,      EDIT, 504),
                 new d_feld('sfolge',    $this->sfolge,      EDIT, 505),
                 new d_feld('sid',       $this->sid),
-                new d_feld('bild_id',   $this->bild_id),
+                new d_feld('bild_id',   'bilddaten array()', EDIT),
                 new d_feld('prod_jahr', $this->prod_jahr,   EDIT, 576),
                 new d_feld('thema',     $this->thema,       EDIT, 577), // Schlagwortliste
                 new d_feld('quellen',   $this->quellen,     EDIT, 578),
@@ -607,6 +624,7 @@ void delCast(pid,tid)   public      (inherit)
                 new d_feld('laenge',    $this->laenge,      EDIT, 580, 10007),
                 new d_feld('fsk',       $this->fsk,         EDIT, 581),
                 new d_feld('praedikat', $this->praedikat,   EDIT, 582),
+                new d_feld('bildformat',$this->bildformat,  EDIT, 608),
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
                 new d_feld('isvalid',   $this->isvalid,     IEDIT, 10009),
@@ -678,6 +696,7 @@ void delCast(pid,tid)   public      (inherit)
 
             if(isset($_POST['prodtech']))
                 $this->prodtechnik = bitArr2wert($_POST['prodtech']);
+            else $this->prodtechnik = null;
 
             if(isset($_POST['laenge'])) :
                 if ($_POST['laenge'])
@@ -710,8 +729,13 @@ void delCast(pid,tid)   public      (inherit)
                 } else $this->urauffuehr = null;
             endif;
 
+            if(isset($_POST['bildformat']))
+                if ($_POST['bildformat'])
+                    $this->bildformat = normzahl($_POST['bildformat']);
+
             if(isset($_POST['mediaspezi']))
                 $this->mediaspezi = bitArr2wert($_POST['mediaspezi']);
+            else $this->mediaspezi = null;
 
 
             if(isset($_POST['notiz'])) :
@@ -734,7 +758,7 @@ void delCast(pid,tid)   public      (inherit)
         endif;  // Formularbereich
     }
 
-    function set() {
+    public function set() {
     /****************************************************************
     *   Aufgabe: schreibt die Daten in die Tabelle 'f_film' zurück (UPDATE)
     *    Return: Fehlercode
@@ -743,12 +767,14 @@ void delCast(pid,tid)   public      (inherit)
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
         $types = array(
+        // ACHTUNG: Reihenfolge beachten!
             'integer',      // gattung
             'integer',      // prodtechnik
             'text',         // laenge (Sonderformat))
             'integer',      // fsk
             'integer',      // praedikat
             'integer',      // mediaspezi
+            'integer',      // bildformat
             'text',         // urauffuehr
             'boolean',      // del
             'integer',      // editfrom
@@ -789,7 +815,7 @@ void delCast(pid,tid)   public      (inherit)
 
     }
 
-    function view() {
+    public function view() {
     /****************************************************************
     *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
     *    Return: none
@@ -815,20 +841,21 @@ void delCast(pid,tid)   public      (inherit)
             new d_feld('prod_jahr', $this->prod_jahr,   VIEW, 576),
             new d_feld('thema',     $this->thema,       VIEW, 577), // Schlagwortliste
             new d_feld('quellen',   $this->quellen,     VIEW, 578),
-            new d_feld('inhalt',    changetext($this->inhalt), VIEW, 506),
-            new d_feld('notiz',     changetext($this->notiz),  EDIT, 514),
-            new d_feld('anmerk',    changetext($this->anmerk), VIEW, 572),
+            new d_feld('inhalt',    changetext($this->inhalt),  VIEW, 506),
+            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
+            new d_feld('anmerk',    changetext($this->anmerk),  VIEW, 572),
             new d_feld('gattung',   d_feld::getString($this->gattung), VIEW, 579),
-            new d_feld('prodtech',  self::getThisProdTech(), VIEW, 571),
-            new d_feld('laenge',    $this->laenge,      VIEW, 580),
-            new d_feld('fsk',       $this->fsk,         VIEW, 581),
+            new d_feld('prodtech',  self::getThisProdTech(),    VIEW, 571),
+            new d_feld('laenge',    $this->laenge,              VIEW, 580),
+            new d_feld('fsk',       $this->fsk,                 VIEW, 581),
             new d_feld('praedikat', d_feld::getString($this->praedikat), VIEW, 582),
-            new d_feld('mediaspezi', self::getThisMediaSpez(), VIEW, 583),
-            new d_feld('urrauff',   $this->urauffuehr,  VIEW, 584),
-            new d_feld('cast',      $this->getCastList(), VIEW),
+            new d_feld('bildformat', self::getBildformat(),    VIEW, 608),
+            new d_feld('mediaspezi', self::getThisMediaSpez(),  VIEW, 583),
+            new d_feld('urrauff',   $this->urauffuehr,          VIEW, 584),
+            new d_feld('cast',      $this->getCastList(),       VIEW),
             new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
             new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
-            new d_feld('isVal',     $this->isvalid,     VIEW, 10009),
+            new d_feld('isVal',     $this->isvalid,             VIEW, 10009),
             new d_feld('chdatum',   $this->editdate),
             new d_feld('chname',    $bearbeiter[0]),
         ));
@@ -841,23 +868,9 @@ void delCast(pid,tid)   public      (inherit)
 /** ==========================================================================
                                 BIBLIO CLASS
 ========================================================================== **/
-class Biblio extends Main {
+class Biblio extends Main implements iTyp {
 /********************************************************************
 
-    del()               public      (inherit)
-    addCast()           public      (inherit)
-    delCast()           public      (inherit)
-    getCastList()       protected   (inherit)
-    viewCastList()      public      (inherit)
-    isDel()             protected   (inherit)
-    isLinked()          protected   (inherit)
-    isVal()             protected   (inherit)
-    __construct(?int)               (inherit)
-    get(int)            protected   (inherit)
-    set()               public
-    add(bool)           public
-    edit(bool)          public
-    view()              public
 
 ********************************************************************/
 

@@ -18,20 +18,14 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="100px"><col><col></colgroup>
+    <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
-{* --Name-- *}
-    <tr>
-        <td colspan="2">
-            {if !empty($dialog['titel'][1])}<div style="white-space:nowrap" class="fett">{$dialog['titel'][1]}</div>{/if}
-        </td>
-
-        {* --Bearbeitungssymbole-- *}
-        <td style="text-align:right;">
-            <form method="post">
-            <span class="note">
+{* --- Name/Status/Bearbeitungssymbole --- *}
+    <tr><form method="post">
+        <td colspan="3">
+            {if !empty($dialog['titel'][1])}<span class="fett">{$dialog['titel'][1]}</span>{/if}
+        <span class="note" style="float:right;">
                 FID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
-            </span>
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -51,9 +45,9 @@ $URL$
                 <input type="hidden" name="sektion" value="film" />
                 <input type="hidden" name="form" value="true" />
                 <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
-            </form>
-        </td>
-    </tr>
+        </span></td>
+    </form></tr>
+
 {* --Bild-- *}
     {if !empty($dialog['bild_id'][1])}<tr><td colspan="2"></td>
         <td rowspan="7">
@@ -133,6 +127,12 @@ $URL$
         <td>{$dialog['urrauff'][1]}</td>
     </tr>{/if}
 
+{* --bildformat-- *}
+    {if !empty($dialog['bildformat'][1])}<tr>
+        <td class="re">{$dialog['bildformat'][2]}:</td>
+        <td>{$dialog['bildformat'][1]}</td>
+    <tr>{/if}
+
 {* --mediaspezi-- *}
     {if !empty($dialog['mediaspezi'][1])}<tr>
         <td class="re" style="vertical-align:top">{$dialog['mediaspezi'][2]}:</td>
@@ -143,7 +143,10 @@ $URL$
     {if !empty($dialog['cast'][1])}
     {foreach from=$dialog['cast'][1] item=cast}<tr>
         <td class="re">{$cast['job']}:</td>
-        <td>{$cast['vname']}&nbsp;{$cast['name']}</td>
+        <td>
+            {if !empty($cast['vname'])} {$cast['vname']}&nbsp;{/if}
+            {$cast['name']}
+        </td>
     </tr>{/foreach}
     {/if}
 
@@ -173,8 +176,7 @@ $URL$
 
 {* --isvalid-- Eintrag *}
     {if !empty($dialog['isVal'][1])}<tr>
-        <td>&nbsp;</td>
-        <td colspan="2" class="re"><img src="images/ok.png" />&nbsp;{$dialog['isVal'][2]}</td>
+        <td colspan="3" class="re"><img src="images/ok.png" />&nbsp;{$dialog['isVal'][2]}</td>
     </tr>{/if}
 
 </table>

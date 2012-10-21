@@ -98,6 +98,14 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
             $film->delCast($_POST['pid'], $_POST['tid']);
             $film->edit(false);
         break;
+
+        case 'addImage' :
+            /** --- BAUSTELLE --- **/
+            // aufruf von figd_dialog.tpl
+            $img = new Bild();
+            $img->add();
+        break;
+
     endswitch;
 endif;
 ?>
