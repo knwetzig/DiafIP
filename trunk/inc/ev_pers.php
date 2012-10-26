@@ -73,7 +73,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
                     break;
                 } else {
             */
-                $myauth->setAuthData('search', normtext($_POST['sstring']));
+                $myauth->setAuthData('search', $_POST['sstring']);
                 $plist = Person::search($myauth->getAuthData('search'));
             // }
             if (!empty($plist) AND is_array($plist)) {

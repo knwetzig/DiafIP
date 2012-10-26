@@ -143,20 +143,20 @@ function array_stripslashes($var) {
         $var = stripslashes($var);
     } else {
         if(is_array($var)) {
-            foreach($var AS $key => $value) {
-                array_stripslashes($var[$key]);
-            }
+            foreach($var AS $key => $value) array_stripslashes($var[$key]);
         }
     }
 }
 
-function normtext($str) {
-    // nur drei White-Spaces ist erlaubt.
-    $str = preg_replace('/(\s{3})\s+/', '\1', $str);
-    // wandelt Zeichen in Umschreibung ('>' --> '&gt;' usw. ) Anführungszeichen
-    // müssen für die db noch entfernt werden.
-    $str = trim(htmlspecialchars($str, ENT_NOQUOTES, 'UTF-8'));
-    return $str;
+function normtext($var) {
+    if(!is_array($var)) :
+        // max drei White-Spaces erlaubt
+        $var = preg_replace('/(\s{3})\s+/', '\1', $var);
+        // wandelt Zeichen in Umschreibung ('>' --> '&gt;' usw. )
+        return trim(htmlspecialchars($var, ENT_NOQUOTES, 'UTF-8'));
+    else :
+        return array_map('normtext', $var);
+    endif;
 }
 
 function normzahl($int) {
@@ -164,7 +164,6 @@ function normzahl($int) {
 }
 
 function changetext($str) {
-    normtext($str);
     /* Falls eine 60 Zeichen lange Nicht-Whitespace-Zeichenkette gefunden wird (\S{60}) wird diese Zeichenkette '\0' um ein Leerzeichen ' ' erweitert. Der Browser kann dann an dieser Stelle den Text umzubrechen. */
     $str = preg_replace('/\S{60}/', '\0 ', $str);
     /* BB-Code Umwandlungen:

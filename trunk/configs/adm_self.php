@@ -33,7 +33,7 @@ $smarty->assign('dialog', $data);
 $smarty->display('adm_setpass.tpl');
 
 if(isset($_POST['submit']) AND $_POST['submit'] === "speichern") {
-    if (normtext($_POST['password']) != "" AND (normtext($_POST['password']) !== normtext($_POST['password2']))) {
+    if ($_POST['password'] != "" AND ($_POST['password'] !== $_POST['password2'])) {
         fehler(110);
     } else {
         $data = $myauth->changePassword($myauth->getUsername(), $_POST['password']);

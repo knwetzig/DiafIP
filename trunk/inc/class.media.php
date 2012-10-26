@@ -100,8 +100,8 @@ class bild implements image {
         // wenn keine fehler dann einfügen
         if (count($fehler) == 0) {
             $this->img      = file_get_contents($image['tmp_name']);
-            $this->titel    = normtext($_POST['titel']);
-            $this->descr    = normtext($_POST['descr']);
+            $this->titel    = $_POST['titel'];
+            $this->descr    = $_POST['descr'];
 
             $db->beginTransaction('newImage'); IsDbError($db);
             // neue id besorgen

@@ -220,10 +220,10 @@ func: __construct($)
 
             if(isset($_POST['vname']))
                 if (empty($_POST['vname'])) $this->vname = '-';
-                    else $this->vname = normtext($_POST['vname']);
+                    else $this->vname = $_POST['vname'];
 
             if(isset($_POST['name'])) {
-                if(!empty($_POST['name'])) $this->name = normtext($_POST['name']);
+                if(!empty($_POST['name'])) $this->name = $_POST['name'];
                 else {
                     fehler(107);
                     exit();
@@ -262,7 +262,7 @@ func: __construct($)
                 $this->mail = null;
                 $this->tel = null;
             } else {
-                if(isset($_POST['strasse'])) $this->strasse = normtext($_POST['strasse']);
+                if(isset($_POST['strasse'])) $this->strasse = $_POST['strasse'];
                 if(isset($_POST['wort'])) {
                     if($_POST['wort'] == 0) $this->wort = null; else $this->wort = $_POST['wort'];
                 }
@@ -289,8 +289,8 @@ func: __construct($)
                 }
             }
 
-            if(isset($_POST['biogr'])) $this->biogr = normtext($_POST['biogr']);
-            if(isset($_POST['notiz'])) $this->notiz = normtext($_POST['notiz']);
+            if(isset($_POST['biogr'])) $this->biogr = $_POST['biogr'];
+            if(isset($_POST['notiz'])) $this->notiz = $_POST['notiz'];
             $this->editfrom = $myauth->getAuthData('uid');
             $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
 
