@@ -101,7 +101,7 @@ class Ort {
             // Formular auswerten und in Obj speichern
             if(isset($_POST['ort'])) {
                 if(isValid($_POST['ort'], NAMEN))
-                    $this->ort = normtext($_POST['ort']);
+                    $this->ort = $_POST['ort'];
                 else {
                     fehler(107);
                     die();

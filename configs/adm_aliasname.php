@@ -63,11 +63,11 @@ if(isset($_POST['submit'])) {
     case "addAlias" :
         // Auswertung auf die klassische Art
         $ali = array();
-        if($_POST['name'] !== "") $ali['name'] = normtext($_POST['name']); else {
+        if($_POST['name'] !== "") $ali['name'] = $_POST['name']; else {
             fehler(107);
             die();
         }
-        $ali['notiz'] = normtext($_POST['notiz']);
+        $ali['notiz'] = $_POST['notiz'];
         $data = $db->extended->autoExecute('p_alias', $ali,
                     MDB2_AUTOQUERY_INSERT, null, array('text','text'));
         IsDbError($data);
@@ -76,8 +76,8 @@ if(isset($_POST['submit'])) {
     case "edAlias" :
         $ali = unserialize($myauth->getAuthData('obj'));
         // Auswertung und DB-Update
-        if($_POST['name'] !== "") $ali->name = normtext($_POST['name']);
-        $ali->notiz = normtext($_POST['notiz']);
+        if($_POST['name'] !== "") $ali->name = $_POST['name'];
+        $ali->notiz = $_POST['notiz'];
         $data = $db->extended->autoExecute('p_alias', $ali,
                 MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('integer','text','text'));
         IsDbError($data);

@@ -640,56 +640,56 @@ Interne Methoden:
             if (empty($this->titel) AND empty($_POST['titel'])) {
                 fehler(100);
                 exit();
-            } else if ($_POST['titel']) $this->titel = normtext($_POST['titel']);
+            } else if ($_POST['titel']) $this->titel = $_POST['titel'];
 
             if(isset($_POST['atitel'])) :
-                if ($_POST['atitel']) $this->atitel = normtext($_POST['atitel']);
+                if ($_POST['atitel']) $this->atitel = $_POST['atitel'];
                 else $this->atitel = null;
             endif;
 
             if(isset($_POST['sid']) AND is_numeric($_POST['sid']))
-                $this->sid = (int)($_POST['sid']); else $this->sid = null;
-            if ($this->sid AND isset($_POST['sfolge']))
-                $this->sfolge = normzahl($_POST['sfolge']);
+                $this->sid = (int)$_POST['sid']; else $this->sid = null;
+            if ($this->sid AND isset($_POST['sfolge']) AND is_numeric($_POST['sfolge']))
+                $this->sfolge = (int)$_POST['sfolge'];
             else $this->sfolge = null;
 
             if(isset($_POST['utitel'])) :
-                if ($_POST['utitel']) $this->utitel = normtext($_POST['utitel']);
+                if ($_POST['utitel']) $this->utitel = $_POST['utitel'];
                 else $this->utitel = null;
             endif;
 
             if(isset($_POST['inhalt'])) :
-                if ($_POST['inhalt']) $this->inhalt = normtext($_POST['inhalt']);
+                if ($_POST['inhalt']) $this->inhalt = $_POST['inhalt'];
                 else $this->inhalt = null;
             endif;
 
             if(isset($_POST['quellen'])) :
-                if ($_POST['quellen']) $this->quellen = normtext($_POST['quellen']);
+                if ($_POST['quellen']) $this->quellen = $_POST['quellen'];
                 else $this->quellen = null;
             endif;
 
             if(isset($_POST['anmerk'])) :
-                if ($_POST['anmerk']) $this->anmerk = normtext($_POST['anmerk']);
+                if ($_POST['anmerk']) $this->anmerk = $_POST['anmerk'];
                 else $this->anmerk = null;
             endif;
 
             if(isset($_POST['prod_jahr'])) :
                 if ($_POST['prod_jahr']) {
                     if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
-                        $this->prod_jahr = normzahl($_POST['prod_jahr']);
+                        $this->prod_jahr = (int)$_POST['prod_jahr'];
                     else fehler(103);
                 } else $this->prod_jahr = null;
             endif;
 
             if(isset($_POST['thema'])) :
-                if ($_POST['thema']) $this->thema = normtext($_POST['thema']);
+                if ($_POST['thema']) $this->thema = $_POST['thema'];
                 else $this->thema = null;
             endif;
 
             if(isset($_POST['gattung'])) :
                 if ($_POST['gattung'] AND is_numeric($_POST['gattung'])) {
                     if(isvalid($_POST['gattung'], ANZAHL))
-                        $this->gattung = normzahl($_POST['gattung']);
+                        $this->gattung = (int)$_POST['gattung'];
                     else fehler(4);
                 } else $this->gattung = null;
             endif;
@@ -700,15 +700,15 @@ Interne Methoden:
 
             if(isset($_POST['laenge'])) :
                 if ($_POST['laenge'])
-                    $this->laenge = normtext($_POST['laenge']);
+                    $this->laenge = $_POST['laenge'];
                 else $this->laenge = null;
             endif;
 
 
             if(isset($_POST['fsk'])) :
-                if ($_POST['fsk']) {
+                if (!empty($_POST['fsk']) AND is_numeric($_POST['fsk'])) {
                     if(isvalid($_POST['fsk'], ANZAHL))
-                        $this->fsk = normzahl($_POST['fsk']);
+                        $this->fsk = (int)$_POST['fsk'];
                     else fehler(4);
                 } else $this->fsk = null;
             endif;
@@ -716,7 +716,7 @@ Interne Methoden:
             if(isset($_POST['praedikat'])) :
                 if ($_POST['praedikat']) {
                     if(isvalid($_POST['praedikat'], ANZAHL))
-                        $this->praedikat = normtext($_POST['praedikat']);
+                        $this->praedikat = (int)$_POST['praedikat'];
                     else fehler(4);
                 } else $this->praedikat = null;
             endif;
@@ -724,14 +724,14 @@ Interne Methoden:
             if(isset($_POST['urauff'])) :
                 if ($_POST['urauff']) {
                     if(isvalid($_POST['urauff'], DATUM))
-                        $this->urauffuehr = normtext($_POST['urauff']);
+                        $this->urauffuehr = $_POST['urauff'];
                     else fehler(103);
                 } else $this->urauffuehr = null;
             endif;
 
             if(isset($_POST['bildformat']))
-                if ($_POST['bildformat'])
-                    $this->bildformat = normzahl($_POST['bildformat']);
+                if ($_POST['bildformat'] AND is_numeric($_POST['bildformat']))
+                    $this->bildformat = (int)$_POST['bildformat'];
 
             if(isset($_POST['mediaspezi']))
                 $this->mediaspezi = bitArr2wert($_POST['mediaspezi']);
@@ -740,7 +740,7 @@ Interne Methoden:
 
             if(isset($_POST['notiz'])) :
                 if ($_POST['notiz'])
-                    $this->notiz = normtext($_POST['notiz']);
+                    $this->notiz = $_POST['notiz'];
                 else $this->notiz = null;
             endif;
 

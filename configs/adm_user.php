@@ -86,10 +86,10 @@ if(isset($_POST['submit'])) {
                 $_POST['rechte'] = array();
             endif;
             $data = array(
-                'username'  => normtext($_POST['username']),
-                'realname'  => normtext($_POST['realname']),
+                'username'  => $_POST['username'],
+                'realname'  => $_POST['realname'],
                 'rechte'    => bitArr2wert($_POST['rechte']),
-                'notiz'     => normtext($_POST['notiz']),
+                'notiz'     => $_POST['notiz'],
                 'editdate'  => date('c', $_SERVER['REQUEST_TIME']),
                 'editfrom'  => $myauth->getAuthData('uid')
             );
@@ -101,7 +101,7 @@ if(isset($_POST['submit'])) {
 
         case "addUser" :
             if($_POST['username'] != "" AND $_POST['pwd'] != "")
-                $erg = $myauth->addUser(normtext($_POST['username']), normtext($_POST['pwd']));
+                $erg = $myauth->addUser($_POST['username'], $_POST['pwd']);
             if(!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
     endswitch;
 }

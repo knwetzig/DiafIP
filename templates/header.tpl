@@ -1,9 +1,9 @@
 {config_load file="mc.conf" section="setup"}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 {**************************************************************
 
-$Rev:: 19                      		$:  Revision der letzten Übertragung
-$Author:: knwetzig             		$:  Autor der letzten Übertragung
-$Date:: 2012-08-09 19:41:46 +0#		$:  Datum der letzten Übertragung
+$Rev: 19                      		$
+$Author: knwetzig             		$
+$Date: 2012-08-09 19:41:46 +0#		$
 $URL$
 
 ToDo:   Freischaltung der JScript-bereich nach Bedarf
@@ -33,6 +33,6 @@ ToDo:   Freischaltung der JScript-bereich nach Bedarf
     <script language="javascript" src="inc/overlib/overlib_centerpopup.js"></script>
 
     <script type="text/javascript">
-        var ol_width = '300px';
+        var ol_width = '250px';
     </script>
 *}

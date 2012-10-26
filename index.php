@@ -7,64 +7,64 @@ $Date: 2012-08-09 19:41:46 +0200 (#$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
+
 require_once	'configs/config.php';
+$_POST = normtext($_POST); // Filter für htmlentities
 
 $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
-if ($myauth->checkAuth()) {     // erfolgreiche Anmeldung
-    if (isset($_POST['aktion']) AND ($_POST['aktion'] === "logout")) {
-        $myauth->logout();
-        $myauth->start();
-        die();
-    }
-    // $lang muß über die Benutzerobefläche aquiriert werden
-    // im Moment noch nicht implementiert
-    $lang = $myauth->getAuthData('lang');
-    $smarty->assign('lang', $lang);
+if (!$myauth->checkAuth()) exit;     // erfolglose Anmeldung
 
-    $db = &MDB2::factory(DSN);
-    isDbError($db);
-    $db->setFetchMode(MDB2_FETCHMODE_ASSOC);
-    switch($lang) {
-        case 'de' :
-            $db->query("SET datestyle TO German");
-            break;
-        case 'us' :
-            $db->query("SET datestyle TO US");
-            break;
-        case 'eu' :
-            $db->query("SET datestyle TO European");
-            break;
-        default :
-            $db->query("SET datestyle TO ISO");
-    }
-    isDbError($db);
-    $db->loadModule('Extended'); isDbError($db);
+if (isset($_POST['aktion']) AND ($_POST['aktion'] === "logout")) :
+    $myauth->logout();
+    $myauth->start();
+    exit;
+endif;
+// $lang muß über die Benutzerobefläche aquiriert werden - noch nicht implementiert
+$lang = $myauth->getAuthData('lang');
+$smarty->assign('lang', $lang);
 
-    // ab hier steht die Verbindung zur DB
-    require_once 'class.view.php';
-    require_once 'class.s_location.php';
-    require_once 'class.pers.php';
-    require_once 'class.figd.php';
-    require_once 'class.media.php';
-//    require_once 'class.item.php';
-    require_once 'class.db_statistik.php';
+// Datenbankanbindung
+$db = &MDB2::factory(DSN);
+isDbError($db);
+$db->setFetchMode(MDB2_FETCHMODE_ASSOC); isDbError($db);
+$db->loadModule('Extended'); isDbError($db);
+switch($lang) :
+    case 'de' :
+        $db->query("SET datestyle TO German");
+        break;
+    case 'us' :
+        $db->query("SET datestyle TO US");
+        break;
+    case 'eu' :
+        $db->query("SET datestyle TO European");
+        break;
+    default :
+        $db->query("SET datestyle TO ISO");
+endswitch;
+// ab hier steht die Verbindung zur DB
 
-//_________________________________________________________________________
-//_v($_POST, 'Zentraler POST-eingang');
-//_________________________________________________________________________
+require_once 'class.view.php';
+require_once 'class.s_location.php';
+require_once 'class.pers.php';
+require_once 'class.figd.php';
+require_once 'class.media.php';
+require_once 'class.item.php';
+require_once 'class.db_statistik.php';
 
-    $stat = new db_stat();      // laden Statistikanzeige
-    $smarty->assign('stat', $stat->view());
-    $data = getStringList(array(4008,4001,4000,4003,4007,4005,4006,4009));
-    $data[] = $myauth->getAuthData('realname');
-    $smarty->assign('dlg', $data);
-    $smarty->display('menue.tpl');
+// laden Statistikanzeige
+$stat = new db_stat();
+$smarty->assign('stat', $stat->view());
 
-    include 'main.php';
+// laden Menübereich
+$data = getStringList(array(4008,4001,4000,4003,4007,4005,4006,4009));
+$data[] = $myauth->getAuthData('realname');
+$smarty->assign('dlg', $data);
+$smarty->display('menue.tpl');
 
-    $db->disconnect();
-}   // ende nutzbereich
+include 'main.php';
+
+$db->disconnect();
 ?>
 </body>
 </html>

@@ -43,8 +43,8 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
                 break;
             }
             $a = array(
-                'titel'     => normtext($_POST['titel']),
-                'inhalt'    => normtext($_POST['text']),
+                'titel'     => $_POST['titel'],
+                'inhalt'    => $_POST['text'],
                 'editfrom'  => $myauth->getAuthData('uid')
             );
             $data = $db->extended->autoExecute('s_news', $a,
@@ -80,8 +80,8 @@ EDITFORM;
                 break;
             }
             $a = array(
-                'titel'  => normtext($_POST['titel']),
-                'inhalt' => normtext($_POST['text'])
+                'titel'  => $_POST['titel'],
+                'inhalt' => $_POST['text']
             );
             $data = $db->extended->autoExecute('s_news', $a,
                 MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($_POST['news'],'integer'), array('text', 'text'));

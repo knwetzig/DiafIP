@@ -41,8 +41,8 @@ const
     IEDIT   =  3,       // editieren interner Daten (Personaldaten etc)
     SEDIT   =  4,       // kann Presets bearbeiten
     DELE    =  5,       // Löschberechtigung
+    ARCHIV  =  6,
 /*
-    _xxx_   =  6,
     .
 siehe auch configs/adm_user.php */
     ADMIN   = 15,
@@ -51,9 +51,10 @@ siehe auch configs/adm_user.php */
 // Sektion für 'sektion'
 $datei = array(
     'admin' => "configs/admin.php",
-    'film'	=> "inc/ev_figd.php",		 // filmografische Daten
-    'person'=> "inc/ev_pers.php",		 // Personenverzeichnis
-    'news'  => "inc/news.php",           // Pinwand
+    'film'	=> "inc/ev_figd.php",		// filmografische Daten
+    'person'=> "inc/ev_pers.php",		// Personenverzeichnis
+    'item'  => 'inc/ev_item.php',       // Eventhandler Gegenstände
+    'news'  => "inc/news.php",          // Pinwand
     'changes' => 'changes.txt'
 );
 
