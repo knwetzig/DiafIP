@@ -16,7 +16,7 @@ $URL$
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <p style='text-align:center; font-weight:bold'>{$dlg[0]}
         <button name='sektion' value='film'>{$dlg[1]}</button>
-        <button name='sektion' value='item'>{$dlg[2]}</button>
+        <button name='sektion' value='i_planar'>{$dlg[2]}</button>
         <button name='sektion' value='person'>{$dlg[3]}</button></p>
         <p style='text-align:center; font-weight:bold'>{$dlg[4]}
         <button name='sektion'  value='admin'>{$dlg[6]}</button>

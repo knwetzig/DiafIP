@@ -7,13 +7,18 @@ $Author$
 $Date: 2012-08-12 23:05:36 +0200 (#$
 $URL$
 
+ToDo: Das Löschen von Personen ist noch auf die Papierkorb-Mechanik umzustellen.
+        Siehe dazu auch f_main.class. Das Löschprivileg in der DB ist nach
+        Fertigstellung zu entziehen.
+        Die Person-Class ist mit einem Interface zu versehen.
+
 ***** (c) DIAF e.V. *******************************************/
 
 
 /** =================================================================
-                                PERSON ALIAS
+                                ALIAS
 ================================================================= **/
-class Alias {
+abstract class Alias {
     public
         $name   = null,
         $notiz  = null,
@@ -120,6 +125,17 @@ func: __construct($)
         // -> Bildinitialisierung hinzufügen
     }
 
+    function getName() {
+    /****************************************************************
+    *  Aufgabe: Testet ob die Löschflagge gesetzt ist
+    *   Return: bool
+    ****************************************************************/
+        if(empty($this->id)) return;
+            $data = $this->fiVname().$this->name;
+        return $data;
+    }
+
+
     protected function fiGtag() {
     /****************************************************************
     * Aufgabe: Geburtstagsfilter
@@ -134,8 +150,7 @@ func: __construct($)
     * Aufgabe: Ausfiltern des default-Wertes von Vorname
     *  Return: string (null | vname)
     ****************************************************************/
-        if ($this->vname === '-')
-            return ; else return $this->vname;
+        if ($this->vname === '-') return; else return $this->vname.' ';
     }
 
     protected function ifDouble() {

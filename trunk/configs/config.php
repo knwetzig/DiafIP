@@ -11,17 +11,17 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 set_include_path('/pear/lib:/smarty:inc');
 date_default_timezone_set('Europe/Berlin');
 require_once	'service.php';
-@require_once	'Auth.php';
-@require_once	'MDB2.php';
+require_once	'Auth.php';
+require_once	'MDB2.php';
 require_once	'Smarty.class.php';
 require_once    '../../conf/dsn';
 
-// RegExpressions
 const
+    // RegExpressions
     NAMEN =     '^[^`{}"-,:-@[-^]+$',
     NAME_LEER = '[^`{}"-,:-@[-^]*',
     ANZAHL =    '[1-9]+[\d]*',
@@ -34,7 +34,7 @@ const
         31.12/19 German/Euro/US (Sehr locker)
     */
 
-// Rechte-Zuweisung Änderungen auch in der Smarty-Konfig aktualisieren
+    // Rechte-Zuweisung
     VIEW    =  0,       // sieht alle allgemein zugängl. Daten
     IVIEW   =  1,       // sieht auch interne Daten
     EDIT    =  2,       // kann allg. Daten editieren
@@ -42,20 +42,24 @@ const
     SEDIT   =  4,       // kann Presets bearbeiten
     DELE    =  5,       // Löschberechtigung
     ARCHIV  =  6,
-/*
+    /*
     .
-siehe auch configs/adm_user.php */
+    siehe auch configs/adm_user.php */
     ADMIN   = 15,
-    SU      = 16;
+    SU      = 16,
+
+    WERT_QUOT = 0.05;   // Wertsteigerungsquotient zur Berechnung der Vers.Summe
 
 // Sektion für 'sektion'
 $datei = array(
-    'admin' => "configs/admin.php",
-    'film'	=> "inc/ev_figd.php",		// filmografische Daten
-    'person'=> "inc/ev_pers.php",		// Personenverzeichnis
-    'item'  => 'inc/ev_item.php',       // Eventhandler Gegenstände
-    'news'  => "inc/news.php",          // Pinwand
-    'changes' => 'changes.txt'
+    'admin'     => "configs/admin.php",
+    'film'	    => "inc/ev_figd.php",		    // filmografische Daten
+    'person'    => "inc/ev_pers.php",           // Personenverzeichnis
+    'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
+    'i_3d'      => '',
+    'i_media'   => '',
+    'news'      => "inc/news.php",              // Pinwand
+    'changes'   => 'changes.txt'
 );
 
 // Admin-Array
@@ -75,11 +79,4 @@ $smarty->cache_dir      = '/tmp';
 $smarty->force_compile  = true;
 $smarty->debugging      = true;
 $smarty->display('header.tpl'); // Schreibt den Header und damit html
-
-$params = array(
-    "dsn"           => DSN,
-    "table"         => "s_auth",
-    "sessionName"   => "diafip",
-    "db_fields"     => "rechte, lang, uid, realname, notiz"
-);
 ?>
