@@ -68,10 +68,21 @@ td {
     /* border:1px dotted gray; /* zu testzwecken */
 }
 
+td.top {
+    vertical-align:top;
+}
+
 td.re {
     text-align:right;
     padding-right:10px;
 }
+
+td.reTop {
+    text-align:right;
+    padding-right:10px;
+    vertical-align:top;
+}
+
 
 td.uline {
     border-bottom: 1px solid #F1FFC9;

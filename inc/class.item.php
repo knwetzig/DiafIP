@@ -11,15 +11,12 @@ $URL$
 ***** (c) DIAF e.V. ************************************************/
 
 interface iItem {
-    const
-        SQL_isdel   = 'SELECT del FROM i_item WHERE id = ?;';
-
     public function del();
     public static function is_Del($nr);
     public static function search($s);
 }
 
-interface iexTyp extends iItem {
+interface iPlanar extends iItem {
     public function add($stat);
     public function edit($stat);
     public function set();
@@ -31,7 +28,7 @@ interface iexTyp extends iItem {
 ========================================================================== **/
 abstract class Item implements iItem {
 /*      interne Methoden:
-            __construct(?int)
+            __construct($nr = null)
     int     ifDouble()
     void    get(int $nr)
             isDel()
@@ -45,15 +42,15 @@ abstract class Item implements iItem {
         $editdate       = null,
         $bild_id        = array(),
         $notiz          = null,
-        $lagerort       = null,
-        $bezeichn       = null,
+        $lagerort       = null, // -> lagerort
+        $bezeichner     = null,
         $eigner         = null, // -> Person
         $leihbar        = false,
-        $x              = null, // in mm
+        $x              = null, // in mm (max 32757)
         $y              = null,
         $kollo          = 1,
         $akt_ort        = null, // aktueller Aufenthaltsort des Gegenstandes....
-        $wert_idx       = null, // Index * Konst * Zeit = Versicherungswert
+        $a_wert         = null, // Index * Konst * Zeit = Versicherungswert
         $oldsig         = null, // alte Signatur
         $herkunft       = null, // -> Person
         $in_date        = null, // Zugangsdatum...
@@ -63,9 +60,11 @@ abstract class Item implements iItem {
 
     const
         // für protected Funktionen
-//        SQL_ifDouble = 'SELECT id FROM f_main WHERE titel = ? AND del = false;',
-        SQL_get     = 'SELECT * FROM i_item WHERE id = ?;';
-//        SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?';
+//        SQL_ifDouble = 'SELECT id FROM i_main WHERE oldsig = ? AND del = false;',
+        SQL_get     = 'SELECT * FROM i_main WHERE id = ?;',
+        SQL_getLOrt = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
+        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;';
+//        SQL_isLink  = 'SELECT COUNT(*) FROM ____ WHERE fid = ?';
 
     function __construct($nr = NULL) {
         if (isset($nr)) self::get($nr);
@@ -77,29 +76,52 @@ abstract class Item implements iItem {
     *   Return: void
     ****************************************************************/
         global $db;
-/**
         $types      = array(
             'integer',  // id
+            'text',     // notiz
+            'integer',  // eigner
+            'boolean',  // verleihfähig
+            'integer',  // x
+            'integer',  // y
+            'integer',  // kollo
+            'text',     // akt_ort
+            'integer',  // a_wert
+            'text',     // oldsig
+            'integer',  // herkunft
+            'date',     // in_date
+            'text',     // descr
+            'text',     // rest_report
+            'text',     // images[]     Korrektur nötig
+            'integer',  // obj_typ
             'boolean',  // del          true wenn gelöscht
+            'integer',  // lagerort
+            'text',     // bezeichner
             'integer',  // editfrom
             'date',     // editdate
-            'integer',  // bild_id
-            'text',     // notiz        (intern)
         );
-**/
-        $data = $db->extended->getRow(self::SQL_get, null/*$types*/, $nr, 'integer');
+        $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
+
         if (empty($data)) :   // kein Datensatz vorhanden
             fehler(4);
             exit;
         endif;
-_v($data);
-/**
+
         // Ergebnis -> Objekt schreiben
-        foreach($data as $key => $wert) :
-            $this->$key = $wert;
-        endforeach;
-**/
+        foreach($data as $key => $wert) $this->$key = $wert;
+    }
+
+    final protected function getLOrt() {
+    /****************************************************************
+    *  Aufgabe: liefert den Texteintrag zum Lagerort
+    *   Return: string
+    ****************************************************************/
+        global $db;
+        if(empty($this->lagerort)) return;
+        $data = $db->extended->getOne(
+            self::SQL_getLOrt, 'text', $this->lagerort, 'integer');
+        IsDbError($data);
+        return $data;
     }
 
     final protected function ifDouble() {
@@ -124,7 +146,7 @@ _v($data);
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
         IsDbError($db->extended->autoExecute(
-            'i_objekt', array('del' => true), MDB2_AUTOQUERY_UPDATE,
+            'i_main', array('del' => true), MDB2_AUTOQUERY_UPDATE,
             'id = '.$db->quote($this->id, 'integer'), 'boolean'));
     }
 
@@ -135,10 +157,10 @@ _v($data);
     ****************************************************************/
         global $db;
         if(empty($this->id)) return;
-        $data = $db->extended->getRow(
+        $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $this->id, 'integer');
         IsDbError($data);
-        return $data['del'];
+        return $data;
     }
 
     final public static function is_Del($nr) {
@@ -148,10 +170,10 @@ _v($data);
     *   Return: bool
     ****************************************************************/
         global $db;
-        $data = $db->extended->getRow(
+        $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $nr, 'integer');
         IsDbError($data);
-        return $data['del'];
+        return $data;
     }
 
     final protected function isLinked() {
@@ -161,14 +183,14 @@ _v($data);
     ****************************************************************/
         global $db;
         // Prüfkandidaten:  ...?
-        $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
+        $data = $db->extended->getOne(self::SQL_isLink, null, $this->id);
         IsDbError($data);
-        return $data['count'];
+        return $data;
     }
 
     public static function search($s) {
     /****************************************************************
-    *  Aufgabe: Suchfunktion in allen Titelspalten
+    *  Aufgabe: Suchfunktion in .......
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
@@ -202,14 +224,76 @@ _v($data);
         endif;
 **/
     }
-}// ende Obj KLASSE
 
+    protected function VWert() {
+    /****************************************************************
+    *  Aufgabe: Errechnet den Versicherungswert eines Gegenstandes
+    *           Ausgangswert * (quotient) hoch Jahre = Zeitwert
+    *           Anschliessend auf volle 10 € aufrunden.
+    *   Return: Integer
+    ****************************************************************/
+        $begin = new DateTime($this->in_date);
+        $interval = $begin->diff(new DateTime("now"));
+        $jahre =(int) $interval->format('%y');
+
+        $VWert = $this->a_wert * pow((WERT_QUOT+1), $jahre);
+        return round($VWert,-1);
+    }
+
+    protected function view() {
+    /****************************************************************
+    *  Aufgabe: Prototyp der Ausgabefunktion
+    *   Param:  string
+    *   Return: Array der gefunden ID's | Fehlercode
+    ****************************************************************/
+        global $db, $myauth;
+        if(!empty($this->editfrom)) :
+            $bearbeiter = $db->extended->getOne(
+                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
+            IsDbError($bearbeiter);
+        else : $bearbeiter = null;
+        endif;
+        $besitzer = new Person($this->eigner);
+        $vbesitz  = new Person($this->herkunft);
+
+        $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
+            new d_feld('id',        $this->id),
+//          new d_feld('bild_id',   $this->bild_id),
+            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
+            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
+            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
+            new d_feld('chdatum',   $this->editdate,    VIEW),
+            new d_feld('chname',    $bearbeiter,       IVIEW),
+            new d_feld('bezeichner', $this->bezeichner, VIEW),
+            new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
+            new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
+            new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
+            new d_feld('x',         $this->x,           VIEW, 469),
+            new d_feld('y',         $this->y,           VIEW, 470),
+            new d_feld('kollo',     $this->kollo,      IVIEW, 475),
+            new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
+            new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
+            new d_feld('oldsig',    $this->oldsig,     IVIEW, 479),
+            new d_feld('herkunft',  $vbesitz->getName(), IVIEW, 480),
+            new d_feld('in_date',   $this->in_date,    IVIEW, 481),
+            new d_feld('descr',     changetext($this->descr), VIEW, 506),
+            new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
+        ));
+        return $data;
+    }
+}
 
 
 /** ==========================================================================
-                                ?FIGUREN CLASS
+                                PLANAR CLASS
 ========================================================================== **/
-final class exItem extends Item implements iexTyp {
+final class Planar extends Item implements iPlanar {
+
+    protected
+        $art    = null;         // Dokument, Plakat oder was auch immer
+
+    const
+        SQL_get = 'SELECT art FROM ONLY i_planar WHERE id = ?;';
 
     function __construct($nr = NULL) {
         if (isset($nr)) self::get($nr);
@@ -223,8 +307,8 @@ final class exItem extends Item implements iexTyp {
     ****************************************************************/
         parent::get($nr);
         global $db;
-        $types      = array(
-        );
+        $types = array('integer'
+                      );
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) :   // kein Datensatz vorhanden
@@ -298,27 +382,15 @@ final class exItem extends Item implements iexTyp {
     *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
     *    Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-        if(!empty($this->editfrom)) :
-            $bearbeiter = $db->extended->getCol(
-                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
-            IsDbError($bearbeiter);
-        else : $bearbeiter = null;
-        endif;
-        $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
-            new d_feld('id',        $this->id,          VIEW),   // fid
-            new d_feld('bild_id',   $this->bild_id),
-            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
-            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
-            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
-            new d_feld('chdatum',   $this->editdate),
-            new d_feld('chname',    $bearbeiter[0]),
-        ));
+        $data = parent::view();
+        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $data['art'] = $a->display();
+
         $smarty->assign('dialog', $data);
+        $smarty->display('item_planar_dat.tpl');
     }
-} // endclass
-
-
+}
 ?>

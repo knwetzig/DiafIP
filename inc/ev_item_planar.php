@@ -1,13 +1,13 @@
 <?php
-/***************************************************************
-    Eventhandler für Aktionen der Objekte
+/*****************************************************************************
+    Eventhandler für Aktionen der Planen-Objekte (Plakate/ Dok usw.))
 
 $Rev$
 $Author$
 $Date$
 $URL$
 
-***** (c) DIAF e.V. *******************************************/
+***** (c) DIAF e.V. *********************************************************/
 
 if(!$myauth->checkAuth()) :
     fehler(108);
@@ -19,7 +19,7 @@ $data = a_display(array(
         // name,inhalt,rechte, optional-> $label,$tooltip,valString
         new d_feld('bereich', d_feld::getString(4000)),
         new d_feld('sstring', d_feld::getString(4011)),
-        new d_feld('sektion', 'item'),
+        new d_feld('sektion', 'i_planar'),
         new d_feld('add', true, EDIT, null)
     ));
 $smarty->assign('dialog', $data);

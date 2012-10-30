@@ -1,9 +1,9 @@
 {**************************************************************
 Smarty-Template für die Ansicht von Personendaten
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev::                              $
+$Author::                           $
+$Date::                           $
 $URL$
 
     call:   pers_class.php
@@ -36,7 +36,7 @@ $URL$
         <td style="text-align:right;">
             <form method="post">
             <span class="note">
-                {$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
             </span>
                 {if isset($dialog['edit'])}
                     <button

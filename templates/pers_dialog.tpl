@@ -137,7 +137,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 <!-- Biografie -->
 {if isset($dialog['biogr'])}
         <tr>
-          <td>{$dialog['biogr'][2]}</td>
+          <td class="top">{$dialog['biogr'][2]}</td>
           <td colspan=3>
             <textarea
               name="{$dialog['biogr'][0]}"
@@ -152,7 +152,7 @@ param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 <!-- Notiz -->
 {if isset($dialog['notiz'])}
         <tr class="darkBG">
-          <td>{$dialog['notiz'][2]}</td>
+          <td class="top">{$dialog['notiz'][2]}</td>
           <td colspan=3>
             <textarea
               name="{$dialog['notiz'][0]}"
