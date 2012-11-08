@@ -1,5 +1,5 @@
 ﻿#summary Interne Programmstruktur und Besonderheiten
-#labels Phase-Requirements
+#labels Phase-Implementation
 
 =Programmstruktur=
 ==Anwenderhinweise==
@@ -9,14 +9,14 @@
 ==Datenbankstruktur==
 ===Tabellen===
 Alle Tabellennamen beginnen mit einem Kennbuchstaben gefolgt von einem Unterstrich und dem eigentlichen Tabellennamen. Hier die wichtigsten Tabellen
-*s_ Servicetabellen
-    string || id || de || en || ... enthält alle verwendeten Strings zur Interaktion mit dem Benutzer.
-*f_ Tabellen für Biblio-/Filmografische Angaben
-* i_ Tabellen für gegenständliche Daten
-* m_ Mediadaten (Bilder etc)
-* p_ Tabellen für Personaldaten
+    * s -> Servicetabellen
+        string (id, de [,en]...) enthält alle verwendeten Strings zur Interaktion mit dem Benutzer.
+    * f -> Tabellen für Biblio-/Filmografische Angaben
+    * i -> Tabellen für gegenständliche Daten
+    * m -> Mediadaten (Bilder etc)
+    * p -> Tabellen für Personaldaten
 ===Sequenzen===
-    * id_seq => p_alias, f_main, i_main
-    * service_id_seq => s_orte, s_land, s_news, 
+    * id_seq => benutzt von p_alias, f_main, i_main
+    * service_id_seq => benutzt von s_orte, s_land, s_news, 
 ===Sichten===
     * orte =>  gibt eine sortierte Liste (Ort, Land, Bundesland, oid, lid) aus.
