@@ -538,11 +538,10 @@ Interne Methoden:
         if ($stat == false) :
             $db->beginTransaction('newFilm'); IsDbError($db);
             // neue id besorgen
-            $data = $db->extended->getRow("SELECT nextval('f_main_id_seq');");
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
             IsDbError($data);
-            $this->id = $data['nextval'];
+            $this->id = $data;
             $this->edit(false);
-            $myauth->setAuthData('obj', serialize($this));
         else :
             // Objekt wurde vom Eventhandler initiiert
             $types = array(

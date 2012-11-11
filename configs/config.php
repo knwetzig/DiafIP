@@ -6,13 +6,13 @@ Lädt den Header!
 
 $Rev$
 $Author$
-$Date: 2012-08-11 18:40:41 +0200 (#$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
 error_reporting(E_ALL & ~E_DEPRECATED);
-set_include_path('/pear/lib:/smarty:inc');
+set_include_path('/pear/lib:/smarty/libs:inc');
 date_default_timezone_set('Europe/Berlin');
 require_once	'service.php';
 require_once	'Auth.php';
@@ -41,7 +41,7 @@ const
     IEDIT   =  3,       // editieren interner Daten (Personaldaten etc)
     SEDIT   =  4,       // kann Presets bearbeiten
     DELE    =  5,       // Löschberechtigung
-    ARCHIV  =  6,
+    ARCHIV  =  6,       // Depotverwaltung
     /*
     .
     siehe auch configs/adm_user.php */

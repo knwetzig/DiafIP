@@ -351,11 +351,10 @@ func: __construct($)
             // begin TRANSACTION anlage person
             $db->beginTransaction('newPerson'); IsDbError($db);
             // neue id besorgen
-            $data = $db->extended->getRow("SELECT nextval('p_alias_id_seq');");
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
             IsDbError($data);
-            $this->id = $data['nextval'];
+            $this->id = $data;
             $this->edit(false);
-            $myauth->setAuthData('obj', serialize($this));
         } else {
             $this->edit(true);
             foreach($this as $key => $wert) $data[$key] = $wert;
