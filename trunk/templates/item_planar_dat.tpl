@@ -26,7 +26,7 @@
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}<span class="fett">{$dialog['bezeichner'][1]}</span>{/if}
         <span class="note" style="float:right;">
-                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}

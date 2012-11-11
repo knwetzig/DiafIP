@@ -23,18 +23,18 @@ if(!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
     exit();
 endif;
 
-function getUserList(){
-// Nutzerauswahlliste erstellen
-    global $db;
-    $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
-    $data = $db->extended->getAll($sql);
-    IsDbError($data);
-    $ul = array();
-    foreach ($data as $wert) :
-        $ul[$wert['uid']] = $wert['realname'];
-    endforeach;
-    return $ul;
-}
+    function getUserList(){
+    // Nutzerauswahlliste erstellen
+        global $db;
+        $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
+        $data = $db->extended->getAll($sql);
+        IsDbError($data);
+        $ul = array();
+        foreach ($data as $wert) :
+            $ul[$wert['uid']] = $wert['realname'];
+        endforeach;
+        return $ul;
+    }
 
 // Ausgabe: Neuen Nutzer anlegen
 $smarty->display('adm_userneu.tpl');
@@ -46,7 +46,7 @@ $data = new d_feld('user', $seluid, null, 4016);
 $smarty->assign("dialog", $data->display());
 $smarty->display('adm_selekt.tpl');
 
-if(isset($_POST['submit'])) {
+if(isset($_POST['submit'])) :
     switch ($_POST['submit']) :
         case "selekt" :
             // Formularauswertung von Nutzerauswahl
@@ -64,8 +64,8 @@ if(isset($_POST['submit'])) {
                     'Interne Daten bearbeiten',
                     'Listen/Presets bearbeiten',
                     'Daten l&ouml;schen',
+                    'Depotverwaltung'
                     /*
-                    '6',
                     '7',
                     ...
                     '15',   reserviert für ADMIN */
@@ -104,6 +104,7 @@ if(isset($_POST['submit'])) {
                 $erg = $myauth->addUser($_POST['username'], $_POST['pwd']);
             if(!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
     endswitch;
-}
+endif;
+
 unset($_POST);
 ?>

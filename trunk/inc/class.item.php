@@ -70,6 +70,46 @@ abstract class Item implements iItem {
         if (isset($nr)) self::get($nr);
     }
 
+    final protected function ea_struct() {
+    /****************************************************************
+    *  Aufgabe: gibt den Ein-/Ausgaberecord zurück
+    *   Return: array
+    ****************************************************************/
+        global $db;
+        if(!empty($this->editfrom)) :
+            $bearbeiter = $db->extended->getOne(
+                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
+            IsDbError($bearbeiter);
+        else : $bearbeiter = null;
+        endif;
+        $besitzer = new Person($this->eigner);
+        $vbesitz  = new Person($this->herkunft);
+        return array( // name, inhalt, opt -> rechte, label,tooltip
+            new d_feld('id',        $this->id),
+//          new d_feld('bild_id',   $this->bild_id),
+            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
+            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
+            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
+            new d_feld('chdatum',   $this->editdate,    VIEW),
+            new d_feld('chname',    $bearbeiter,        VIEW),
+            new d_feld('bezeichner', $this->bezeichner, VIEW),
+            new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
+            new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
+            new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
+            new d_feld('x',         $this->x,           VIEW, 469),
+            new d_feld('y',         $this->y,           VIEW, 470),
+            new d_feld('kollo',     $this->kollo,      IVIEW, 475),
+            new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
+            new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
+            new d_feld('oldsig',    $this->oldsig,     IVIEW, 479),
+            new d_feld('herkunft',  $vbesitz->getName(), IVIEW, 480),
+            new d_feld('in_date',   $this->in_date,    IVIEW, 481),
+            new d_feld('descr',     changetext($this->descr), VIEW, 506),
+            new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
+        );
+    }
+
+
     protected function get($nr) {
     /****************************************************************
     *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
@@ -110,6 +150,7 @@ abstract class Item implements iItem {
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) $this->$key = $wert;
     }
+
 
     final protected function getLOrt() {
     /****************************************************************
@@ -195,8 +236,8 @@ abstract class Item implements iItem {
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
         global $db, $myauth;
-/**
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+/*
         $s = "%".$s."%";
 
         // Suche in titel, atitel, utitel
@@ -222,7 +263,7 @@ abstract class Item implements iItem {
         else :
             return 1;
         endif;
-**/
+*/
     }
 
     protected function VWert() {
@@ -243,10 +284,10 @@ abstract class Item implements iItem {
     protected function view() {
     /****************************************************************
     *  Aufgabe: Prototyp der Ausgabefunktion
-    *   Param:  string
-    *   Return: Array der gefunden ID's | Fehlercode
+    *   Return: array mit Daten
     ****************************************************************/
-        global $db, $myauth;
+/*
+        global $db;
         if(!empty($this->editfrom)) :
             $bearbeiter = $db->extended->getOne(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
@@ -256,14 +297,14 @@ abstract class Item implements iItem {
         $besitzer = new Person($this->eigner);
         $vbesitz  = new Person($this->herkunft);
 
-        $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
+        $data = array( // name, inhalt, opt -> rechte, label,tooltip
             new d_feld('id',        $this->id),
 //          new d_feld('bild_id',   $this->bild_id),
             new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
             new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
             new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
             new d_feld('chdatum',   $this->editdate,    VIEW),
-            new d_feld('chname',    $bearbeiter,       IVIEW),
+            new d_feld('chname',    $bearbeiter,        VIEW),
             new d_feld('bezeichner', $this->bezeichner, VIEW),
             new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
             new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
@@ -278,8 +319,10 @@ abstract class Item implements iItem {
             new d_feld('in_date',   $this->in_date,    IVIEW, 481),
             new d_feld('descr',     changetext($this->descr), VIEW, 506),
             new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
-        ));
+        );
         return $data;
+*/
+        return self::struct();
     }
 }
 
@@ -301,13 +344,13 @@ final class Planar extends Item implements iPlanar {
 
     protected function get($nr) {
     /****************************************************************
-    *  Aufgabe:
-    *   Aufruf:
+    *  Aufgabe: Aufruf der Elternklasse zur Initialisierung und Ergänzung
+    *           um eigene Felder
     *   Return: void
     ****************************************************************/
         parent::get($nr);
         global $db;
-        $types = array('integer'
+        $types = array('integer'        // $art
                       );
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
@@ -328,7 +371,13 @@ final class Planar extends Item implements iPlanar {
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if ($stat == false) :
-        else :
+            $db->beginTransaction('new2Ditem'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
+            IsDbError($data);
+            $this->id = $data;
+            $this->edit($stat);
+       else :
             // Objekt wurde vom Eventhandler initiiert
             $types = array(
                 // ACHTUNG! Reihenfolge beachten !!!
@@ -343,16 +392,16 @@ final class Planar extends Item implements iPlanar {
     public function edit($stat) {
     /****************************************************************
     *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
-    *   Aufruf: array, welches die zu ändernden Felder enthält
     *   Return: none
     ****************************************************************/
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if($stat == false) :        // Formular anzeigen
-            $data = array(
-                // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-            );
-
+            $data = parent::ea_struct();
+//            $data[] = new d_feld();
+_v($data);
+            $smarty->assign('dialog', a_display($data));
+            $smarty->display('item_planar_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
@@ -375,6 +424,8 @@ final class Planar extends Item implements iPlanar {
         // ACHTUNG: Reihenfolge beachten!
         );
         foreach($this as $key => $wert) $data[$key] = $wert;
+
+// commit->'new2Ditem'
     }
 
     public function view() {
@@ -383,13 +434,12 @@ final class Planar extends Item implements iPlanar {
     *    Return: none
     ****************************************************************/
         global $myauth, $smarty;
-        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-        $data = parent::view();
-        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
-        $data['art'] = $a->display();
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+        $data = parent::ea_struct();
+        $data[] = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
 
-        $smarty->assign('dialog', $data);
+        $smarty->assign('dialog', a_display($data));
         $smarty->display('item_planar_dat.tpl');
     }
 }

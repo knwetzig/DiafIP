@@ -17,7 +17,7 @@ endif;
 // Überschrift
 $data = a_display(array(
         // name,inhalt,rechte, optional-> $label,$tooltip,valString
-        new d_feld('bereich', d_feld::getString(4000)),
+        new d_feld('bereich', d_feld::getString(4028)),
         new d_feld('sstring', d_feld::getString(4011)),
         new d_feld('sektion', 'i_planar'),
         new d_feld('add', true, EDIT, null)
@@ -31,17 +31,15 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
     // switch:action => add | edit | search | del | view
     switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
         case "add":
-/**
-       if (isset($_POST['form'])) {
-                $film = new Film;        // Formular anfordern
-                $film->add(false);
-            } else {
-                $film = unserialize($myauth->getAuthData('obj'));
-                $film->add(true);       // Auswertezweig
-                $film->view();
-            }
-**/
-        break; // Ende add
+            if (isset($_POST['form'])) :
+                $i2d = new Planar;        // Formular anfordern
+                $i2d->add(false);
+            else :
+                $i2d = unserialize($myauth->getAuthData('obj'));
+                $i2d->add(true);       // Auswertezweig
+                $i2d->view();
+            endif;
+            break; // Ende add
 
         case "edit" :
 /**
