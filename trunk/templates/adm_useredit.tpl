@@ -7,9 +7,9 @@ section:    admin
 site:       user
 
     Für diesen Bereich ist keine Internationalisierung vorgesehen
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
@@ -40,9 +40,9 @@ $URL$
                 <td class='re'>Rechte:</td>
                 <td>
                     {html_checkboxes
-                        name= "rechte"
-                        options="{$dialog['rightboxes']}"
-                        selected="{$dialog['rightSel']}"
+                        name=rechte
+                        options=$dialog['rightboxes']
+                        selected=$dialog['rightSel']
                         separator= "<br />"}
                 </td>
             <tr>

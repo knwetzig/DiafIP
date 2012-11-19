@@ -28,7 +28,7 @@ $smarty->display('main_bereich.tpl');
 
 if (isset($_POST['aktion'])?$_POST['aktion']:'') :
     $smarty->assign('aktion', $_POST['aktion']);
-    // switch:action => add | edit | search | del | view
+
     switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
         case "add":
             if (isset($_POST['form'])) :
@@ -39,7 +39,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                 $i2d->add(true);       // Auswertezweig
                 $i2d->view();
             endif;
-            break; // Ende add
+            break;
 
         case "edit" :
 /**
@@ -60,24 +60,22 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         break;	// Ende edit
 
         case "search" :
-/**
             if (isset($_POST['sstring'])) :
                 $str = $_POST['sstring'];
                 $myauth->setAuthData('search', $str);
-                $tlist = Film::search($str);
-                if (!empty($tlist) AND is_array($tlist)) :
+                $list = Planar::search($str);
+                if (!empty($list) AND is_array($list)) :
                     // Ausgabe
                     $bg = 1;
-                    foreach(($tlist) as $nr) :
+                    foreach(($list) as $nr) :
                         ++$bg; $smarty->assign('darkBG', $bg % 2);
-                        $film = new Film($nr);
-                        $film->view();
+                        $item = new Planar($nr);
+                        $item->view();
                     endforeach;
                 else :
                     fehler(102); // kein Erg.
                 endif;
             endif;
-**/
         break;
 
         case "del" :

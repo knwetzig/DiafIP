@@ -1,21 +1,31 @@
 /***************************************************************
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 ***** (c) DIAF e.V. *******************************************/
 
 #menue {
-    position:fixed;
-    width:120px;
-    height:350px;
+    float:left;
+    width:15%;
+    height:400px;
     font-size:0.9em;
+    text-align:center;
 }
 
 #main {
-    position:absolute;
+    float:right;
+    width:83%;
     margin-right:10px;
     left:150px;
+}
+
+#bereichssuche {
+    float:left;
+}
+
+#bereichssymbole {
+    float:right;
 }
 
 #status {
@@ -28,7 +38,7 @@ $URL$
     top:100px;
     left:100px;
     text-align:center;
-    z-index:100;
+    z-index:1000;
 }
 
 /* Vorläufig so wie im Browser eingestellt
@@ -62,61 +72,15 @@ tr.darkBG {
 }
 
 td {
-    font-family:sans-serif;
     vertical-align:middle;
     /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
     /* border:1px dotted gray; /* zu testzwecken */
 }
 
-td.top {
-    vertical-align:top;
-}
-
-td.re {
-    text-align:right;
-    padding-right:10px;
-}
-
-td.reTop {
-    text-align:right;
-    padding-right:10px;
-    vertical-align:top;
-}
-
-
-td.uline {
-    border-bottom: 1px solid #F1FFC9;
-    padding-bottom:5px
-}
-
-td.buline {
-    border-bottom: 2px ridge #F1FFC9;
-    padding-bottom:5px;
-    font-weight: bold
-}
-
-td.rline {
-    border-right: 1px solid #F1FFC9;
-    padding-right:5px
-}
-
-td.brline {
-    border-right: 2px ridge #F1FFC9;
-    padding-right:5px;
-    font-weight: bold
-}
-
 /***** Formularelemente ***********************************************/
 fieldset {
-  /*  border:solid 1px #800040;*/
     border:groove 2px #E7E4E0;
     padding:10px;
-}
-
-fieldset input[type='image'] {
-    border:none;
-/*    background-color:#303000; */
-    vertical-align:middle
 }
 
 legend {
@@ -126,8 +90,6 @@ legend {
 }
 
 input {
-    background-color:#ffffff;
-    color: #000000;
     border:1px inset #cccc99;
     margin:2px;
     vertical-align:middle
@@ -137,25 +99,38 @@ textarea {
     border:inset 1px;
 }
 
+textarea.big {
+    width:440px;
+    height:300px;
+}
+
+textarea.medium {
+    width:350px;
+    height:220px;
+}
+
+textarea.small {
+    width:350px;
+    height:150px;
+}
+
 input[type='text'],[type='password'] {
     width:250px;
 }
 
 input[type='text'].halb {
-    width:150px;
+    width:125px;
 }
 
 input[type='submit'],[type='button'] {
     background-color:#c0c0c0;
     color:black;
     border:1px outset #303000;
-    width:150px;
+    width:125px;
     margin:2px
 }
 
 select {
-    background-color:#ffffff;
-    color: #000000;
     border:1px inset #cccc99;
     width:250px; margin:2px
 }
@@ -185,7 +160,16 @@ button.small_dk {
 
 
 /***** Eigene Klassen ***********************************************/
-p.mittig {
+.top {
+    vertical-align:top;
+}
+
+.re {
+    text-align:right;
+    padding-right:10px;
+}
+
+.mittig {
     text-align:justify;
 }
 
@@ -232,9 +216,15 @@ p.mittig {
     font-size:20px;
     font-weight:bold;
     color:#0080ff;
-    border:1px solid #0080ff;
     padding:10px;
     margin-bottom:10px;
+}
+
+.bereich_fuss {
+    clear:both;
+    border-bottom:1px solid #0080ff;
+    margin-bottom:10px;
+    padding-bottom:5px;
 }
 
 .warng {

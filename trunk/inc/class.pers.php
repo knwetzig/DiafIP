@@ -14,11 +14,25 @@ ToDo: Das Löschen von Personen ist noch auf die Papierkorb-Mechanik umzustellen
 
 ***** (c) DIAF e.V. *******************************************/
 
+interface iPerson {
+    const
+        SQL = '';
+
+    public function getName();
+    public static function getPersonLi();
+    public function edit($stat);
+    public function add($stat);
+    public function set();
+    public function del();
+    public function search($s);
+    public function view();
+}
+
 
 /** =================================================================
                                 ALIAS
 ================================================================= **/
-abstract class Alias {
+class Alias {
     public
         $name   = null,
         $notiz  = null,
@@ -67,7 +81,7 @@ abstract class Alias {
 /** =================================================================
                                 PERSON CLASS
 ================================================================= **/
-class Person extends Alias {
+class Person extends Alias implements iPerson {
 /**********************************************************
 func: __construct($)
       get($!)     // holt db-felder -> this
@@ -127,7 +141,7 @@ func: __construct($)
 
     function getName() {
     /****************************************************************
-    *  Aufgabe: Testet ob die Löschflagge gesetzt ist
+    *  Aufgabe: Liefert den zusammngesetzten Namen zurück
     *   Return: bool
     ****************************************************************/
         if(empty($this->id)) return;
@@ -164,7 +178,7 @@ func: __construct($)
         return $data['id'];
     }
 
-    static function getPersonLi() {
+    public static function getPersonLi() {
     /****************************************************************
     * Aufgabe: Personenliste
     *  Return: array([id] => vname+name)
@@ -318,7 +332,7 @@ func: __construct($)
         }
     }
 
-    function add($stat) {
+    public function add($stat) {
     /****************************************************************
     Aufgabe: Neuanlage einer Person
     Aufruf: false   für Erstaufruf

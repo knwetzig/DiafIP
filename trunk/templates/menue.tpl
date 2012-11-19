@@ -14,16 +14,13 @@ $URL$
 <div id='menue'>
     <form method='post'>
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
-        <p style='text-align:center; font-weight:bold'>{$dlg[0]}
+        <br /><br />
+        <button name='sektion' value='person'>{$dlg[3]}</button>
         <button name='sektion' value='film'>{$dlg[1]}</button>
         <button name='sektion' value='i_planar'>{$dlg[2]}</button>
-        <button name='sektion' value='person'>{$dlg[3]}</button></p>
-        <p style='text-align:center; font-weight:bold'>{$dlg[4]}
         <button name='sektion'  value='admin'>{$dlg[6]}</button>
-        <button name='sektion' value='news'>Pinnwand</button>
-        <button name='sektion' value='changes'>ChangeLog</button></p>
-    <div class='note' style='text-align:center;'>{$dlg[8]}</div>
-        <button name='aktion' value='logout'>logout</button>
+        <span class='note' style='padding-top:15px;'><br /><br />{$dlg[8]}<br /></span>
+        <button name='aktion' value='logout'>{$dlg[5]}</button>
     </form>
 </div>
 

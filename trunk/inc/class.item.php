@@ -11,6 +11,8 @@ $URL$
 ***** (c) DIAF e.V. ************************************************/
 
 interface iItem {
+    public static function getLOrtLi();
+    public function edit($stat);
     public function del();
     public static function is_Del($nr);
     public static function search($s);
@@ -18,7 +20,6 @@ interface iItem {
 
 interface iPlanar extends iItem {
     public function add($stat);
-    public function edit($stat);
     public function set();
     public function view();
 }
@@ -29,6 +30,8 @@ interface iPlanar extends iItem {
 abstract class Item implements iItem {
 /*      interne Methoden:
             __construct($nr = null)
+            ea_struct($set)         // Vorgaben der einzelnen Felder
+                                    // für Ein-/Ausgabe
     int     ifDouble()
     void    get(int $nr)
             isDel()
@@ -44,7 +47,7 @@ abstract class Item implements iItem {
         $notiz          = null,
         $lagerort       = null, // -> lagerort
         $bezeichner     = null,
-        $eigner         = null, // -> Person
+        $eigner         = 2,    // -> DIAF
         $leihbar        = false,
         $x              = null, // in mm (max 32757)
         $y              = null,
@@ -52,70 +55,13 @@ abstract class Item implements iItem {
         $akt_ort        = null, // aktueller Aufenthaltsort des Gegenstandes....
         $a_wert         = null, // Index * Konst * Zeit = Versicherungswert
         $oldsig         = null, // alte Signatur
-        $herkunft       = null, // -> Person
-        $in_date        = null, // Zugangsdatum...
+        $herkunft       = 1, // -> DEFA Studio für Trickfilme
+        $in_date        = '1993-11-16', // Zugangsdatum...
         $descr          = null, // Beschreibung des Gegenstandes
         $rest_report    = null, // Restaurierungsbericht
         $obj_typ        = 1;
 
-    const
-        // für protected Funktionen
-//        SQL_ifDouble = 'SELECT id FROM i_main WHERE oldsig = ? AND del = false;',
-        SQL_get     = 'SELECT * FROM i_main WHERE id = ?;',
-        SQL_getLOrt = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
-        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;';
-//        SQL_isLink  = 'SELECT COUNT(*) FROM ____ WHERE fid = ?';
-
-    function __construct($nr = NULL) {
-        if (isset($nr)) self::get($nr);
-    }
-
-    final protected function ea_struct() {
-    /****************************************************************
-    *  Aufgabe: gibt den Ein-/Ausgaberecord zurück
-    *   Return: array
-    ****************************************************************/
-        global $db;
-        if(!empty($this->editfrom)) :
-            $bearbeiter = $db->extended->getOne(
-                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
-            IsDbError($bearbeiter);
-        else : $bearbeiter = null;
-        endif;
-        $besitzer = new Person($this->eigner);
-        $vbesitz  = new Person($this->herkunft);
-        return array( // name, inhalt, opt -> rechte, label,tooltip
-            new d_feld('id',        $this->id),
-//          new d_feld('bild_id',   $this->bild_id),
-            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
-            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
-            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
-            new d_feld('chdatum',   $this->editdate,    VIEW),
-            new d_feld('chname',    $bearbeiter,        VIEW),
-            new d_feld('bezeichner', $this->bezeichner, VIEW),
-            new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
-            new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
-            new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
-            new d_feld('x',         $this->x,           VIEW, 469),
-            new d_feld('y',         $this->y,           VIEW, 470),
-            new d_feld('kollo',     $this->kollo,      IVIEW, 475),
-            new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
-            new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
-            new d_feld('oldsig',    $this->oldsig,     IVIEW, 479),
-            new d_feld('herkunft',  $vbesitz->getName(), IVIEW, 480),
-            new d_feld('in_date',   $this->in_date,    IVIEW, 481),
-            new d_feld('descr',     changetext($this->descr), VIEW, 506),
-            new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
-        );
-    }
-
-
-    protected function get($nr) {
-    /****************************************************************
-    *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
-    *   Return: void
-    ****************************************************************/
-        global $db;
+    protected
         $types      = array(
             'integer',  // id
             'text',     // notiz
@@ -139,7 +85,94 @@ abstract class Item implements iItem {
             'integer',  // editfrom
             'date',     // editdate
         );
-        $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
+
+    const
+        // für protected Funktionen
+//        SQL_ifDouble = 'SELECT id FROM i_main WHERE oldsig = ? AND del = false;',
+        SQL_get     = 'SELECT * FROM i_main WHERE id = ?;',
+        SQL_getLOrt = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
+        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;';
+//        SQL_isLink  = 'SELECT COUNT(*) FROM ____ WHERE id = ?';
+
+    function __construct($nr = NULL) {
+        if (isset($nr)) self::get($nr);
+    }
+
+    final protected function ea_struct($set) {
+    /****************************************************************
+    *  Aufgabe: gibt den Ein-/Ausgaberecord zurück
+    *   Return: array
+    ****************************************************************/
+        global $db;
+
+        switch ($set) :
+          case 'edit' :
+            $data = array(
+                new d_feld('persLi', Person::getPersonLi()),    // Personenliste
+                new d_feld('lortLi', self::getLOrtLi()),        // Liste Lagerorte
+                new d_feld('bezeichner', $this->bezeichner, EDIT, 4029),
+                new d_feld('x',  $this->x,                  EDIT,  469, ANZAHL),
+                new d_feld('y',  $this->y,                  EDIT,  470, ANZAHL),
+                new d_feld('kollo',  $this->kollo,          EDIT,  475, ANZAHL),
+                new d_feld('lagerort',  $this->lagerort,  ARCHIV,  472, ANZAHL),
+                new d_feld('akt_ort',  $this->akt_ort,      EDIT,  476),
+                new d_feld('eigner',  $this->eigner,        IEDIT, 473, ANZAHL),
+                new d_feld('herkunft',  $this->herkunft,    IEDIT, 480, ANZAHL),
+                new d_feld('in_date',  $this->in_date,      IEDIT, 481, DATUM),
+                new d_feld('leihbar',  $this->leihbar,    ARCHIV,  474, BOOL),
+                new d_feld('a_wert',  $this->a_wert,       IEDIT, 4031, DZAHL),
+                new d_feld('rest_report',  $this->rest_report, EDIT, 482),
+                new d_feld('descr',  $this->descr,          EDIT,  506),
+                new d_feld('notiz', $this->notiz,           EDIT,  514)
+            );
+            if(empty($this->oldsig))
+                        $data[] = new d_feld('oldsig', null, EDIT, 479, NAMEN);
+            break;
+
+          case 'view' :
+            if(!empty($this->editfrom)) :
+                $bearbeiter = $db->extended->getOne(
+                    'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
+                IsDbError($bearbeiter);
+            else : $bearbeiter = null; endif;
+
+            $besitzer = new Person($this->eigner);
+            $vbesitz  = new Person($this->herkunft);
+            $data = array( // name, inhalt, opt -> rechte, label,tooltip
+                new d_feld('id',        $this->id),
+    //          new d_feld('bild_id',   $this->bild_id),
+                new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
+                new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
+                new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
+                new d_feld('chdatum',   $this->editdate,    VIEW),
+                new d_feld('chname',    $bearbeiter,        VIEW),
+                new d_feld('bezeichner', $this->bezeichner, VIEW),
+                new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
+                new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
+                new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
+                new d_feld('x',         $this->x,           VIEW, 469),
+                new d_feld('y',         $this->y,           VIEW, 470),
+                new d_feld('kollo',     $this->kollo,      IVIEW, 475),
+                new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
+                new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
+                new d_feld('oldsig',    $this->getOSig(),  IVIEW, 479),
+                new d_feld('herkunft',  $vbesitz->getName(),IVIEW, 480),
+                new d_feld('in_date',   $this->in_date,    IVIEW, 481),
+                new d_feld('descr',     changetext($this->descr), VIEW, 506),
+                new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
+            );
+
+        endswitch;
+        return $data;
+    }
+
+    protected function get($nr) {
+    /****************************************************************
+    *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
+    *   Return: void
+    ****************************************************************/
+        global $db;
+        $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
 
         if (empty($data)) :   // kein Datensatz vorhanden
@@ -151,6 +184,66 @@ abstract class Item implements iItem {
         foreach($data as $key => $wert) $this->$key = $wert;
     }
 
+    public function edit($stat) {
+    /****************************************************************
+    *  Aufgabe: Validiert und setzt die Eingaben (basics). Wird nur vom
+    *           Auswertungszweig benötigt
+    *   Return: void
+    ****************************************************************/
+
+        try {
+            if (empty($this->bezeichner) AND empty($_POST['bezeichner']))
+                throw new Exception(null, 100);
+            if ($_POST['bezeichner']) $this->titel = $_POST['bezeichner'];
+
+            if (!empty($_POST['x']) AND is_numeric($_POST['x']))
+                $this->x = (int)$_POST('x');
+
+            if (!empty($_POST['y']) AND is_numeric($_POST['y']))
+                $this->x = (int)$_POST('y');
+
+            if (!empty($_POST['lagerort'])) $this->lagerort = (int)$_POST['lagerort'];
+
+            // Überschreiben prüfen
+            if (!empty($_POST['akt_ort'])) $this->akt_ort = $_POST['akt_ort'];
+
+            if (!empty($_POST['kollo']) AND is_numeric($_POST['kollo']))
+                $this->x = (int)$_POST('kollo');
+
+            if (!empty($_POST['a_wert']) AND is_numeric($_POST['a_wert']))
+                $this->x = (int)$_POST('a_wert');
+
+            if (!empty($_POST['eigner']) AND is_numeric($_POST['eigner']))
+                $this->x = (int)$_POST('eigner');
+
+            if (!empty($_POST['herkunft']) AND is_numeric($_POST['herkunft']))
+                $this->x = (int)$_POST('herkunft');
+
+            if (!empty($_POST['in_date'])) {
+            }
+
+            // leihbar
+            if (!empty($_POST['leihbar'])) $this->leihbar = (bool)$_POST['leihbar'];
+
+            if (!empty($_POST['oldsig']) AND !$this->oldsig)
+                $this->oldsig = $_POST['oldsig'];
+            // Alte Signatur sperren
+            if(empty($this->oldsig)) $this->oldsig = 'NIL';
+
+            if (!empty($_POST['descr'])) $this->descr = $_POST['descr'];
+            if (!empty($_POST['rest_report'])) $this->descr = $_POST['rest_report'];
+            if (!empty($_POST['notiz'])) $this->descr = $_POST['notiz'];
+            $this->editfrom = $myauth->getAuthData('uid');
+            $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
+
+
+            if (empty($this->x) OR empty($this->Y)) throw new Exception('Maße fehlen');
+        }
+
+        catch (Exception $e) {
+            fehler($e->getCode());
+        }
+    }
 
     final protected function getLOrt() {
     /****************************************************************
@@ -163,6 +256,30 @@ abstract class Item implements iItem {
             self::SQL_getLOrt, 'text', $this->lagerort, 'integer');
         IsDbError($data);
         return $data;
+    }
+
+    final public static function getLOrtLi() {
+    /****************************************************************
+    *  Aufgabe: liefert die Liste mit den möglichen Lagerorten
+    *   Return: string
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getAll(
+            'SELECT * FROM i_lagerort', array('integer', 'text'));
+        IsDbError($list);
+        $data = array();
+        foreach($list as $wert) $data[$wert['id']] = $wert['lagerort'];
+        natcasesort($data);
+        return $data;
+    }
+
+    final public function getOSig() {
+    /****************************************************************
+    *  Aufgabe: liefert die alte Signatur zurück, wenn nicht 'NIL' gesetzt ist
+    *   Return: string
+    ****************************************************************/
+        if($this->oldsig !== 'NIL' OR !empty($this->oldsig))
+            return $this->oldsig;
     }
 
     final protected function ifDouble() {
@@ -237,6 +354,8 @@ abstract class Item implements iItem {
     ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        warng('- Nicht implementiert -');
 /*
         $s = "%".$s."%";
 
@@ -286,43 +405,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Prototyp der Ausgabefunktion
     *   Return: array mit Daten
     ****************************************************************/
-/*
-        global $db;
-        if(!empty($this->editfrom)) :
-            $bearbeiter = $db->extended->getOne(
-                'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
-            IsDbError($bearbeiter);
-        else : $bearbeiter = null;
-        endif;
-        $besitzer = new Person($this->eigner);
-        $vbesitz  = new Person($this->herkunft);
-
-        $data = array( // name, inhalt, opt -> rechte, label,tooltip
-            new d_feld('id',        $this->id),
-//          new d_feld('bild_id',   $this->bild_id),
-            new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
-            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
-            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
-            new d_feld('chdatum',   $this->editdate,    VIEW),
-            new d_feld('chname',    $bearbeiter,        VIEW),
-            new d_feld('bezeichner', $this->bezeichner, VIEW),
-            new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
-            new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
-            new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
-            new d_feld('x',         $this->x,           VIEW, 469),
-            new d_feld('y',         $this->y,           VIEW, 470),
-            new d_feld('kollo',     $this->kollo,      IVIEW, 475),
-            new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
-            new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
-            new d_feld('oldsig',    $this->oldsig,     IVIEW, 479),
-            new d_feld('herkunft',  $vbesitz->getName(), IVIEW, 480),
-            new d_feld('in_date',   $this->in_date,    IVIEW, 481),
-            new d_feld('descr',     changetext($this->descr), VIEW, 506),
-            new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
-        );
-        return $data;
-*/
-        return self::struct();
+        return self::ea_struct('view');
     }
 }
 
@@ -333,7 +416,8 @@ abstract class Item implements iItem {
 final class Planar extends Item implements iPlanar {
 
     protected
-        $art    = null;         // Dokument, Plakat oder was auch immer
+        $art    = 460;      // Dokument, Plakat oder was auch immer
+                            // Vorgabe: 460 = Dokument
 
     const
         SQL_get = 'SELECT art FROM ONLY i_planar WHERE id = ?;';
@@ -362,6 +446,22 @@ final class Planar extends Item implements iPlanar {
         foreach($data as $key => $wert) $this->$key = $wert;
     }
 
+    protected static function getArtLi() {
+    /****************************************************************
+    *  Aufgabe: Liefert eine Array der Arten (dok/plakat etc)
+    *   Return: array()
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getCol('SELECT id FROM i_planar_art;', 'integer');
+        IsDbError($list);
+        $data = array();
+        foreach($list as $wert) :
+            $data[$wert] = d_feld::getString($wert);
+        endforeach;
+        asort($data);
+        return $data;
+    }
+
     public function add($stat) {
     /****************************************************************
     *   Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
@@ -382,7 +482,6 @@ final class Planar extends Item implements iPlanar {
             $types = array(
                 // ACHTUNG! Reihenfolge beachten !!!
             );
-
             $this->edit(true);
             // Typ wird autom. generiert
             //    .....
@@ -397,15 +496,16 @@ final class Planar extends Item implements iPlanar {
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if($stat == false) :        // Formular anzeigen
-            $data = parent::ea_struct();
-//            $data[] = new d_feld();
-_v($data);
+            $data = self::ea_struct('edit');
+            $data[] = new d_feld('art', $this->art, EDIT, 4030);
+            $data[] = new d_feld('artLi', self::getArtLi());
             $smarty->assign('dialog', a_display($data));
             $smarty->display('item_planar_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
-
+            parent::edit(true);
+_v($this);
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
             if (!empty($number) AND $number != $this->id) warng('10008');
@@ -420,10 +520,11 @@ _v($data);
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
-        $types = array(
-        // ACHTUNG: Reihenfolge beachten!
-        );
+
+        // Uhrzeit und User setzen
+
         foreach($this as $key => $wert) $data[$key] = $wert;
+        // !! Achtung hier hängt types hintendran ?!
 
 // commit->'new2Ditem'
     }
@@ -436,7 +537,7 @@ _v($data);
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
-        $data = parent::ea_struct();
+        $data = parent::view();
         $data[] = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
 
         $smarty->assign('dialog', a_display($data));
