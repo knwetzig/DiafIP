@@ -14,7 +14,7 @@ $URL$
 
 if (!$myauth->getAuth()) :
     fehler(108);
-    die();           // Fremdaufruf!
+    exit;           // Fremdaufruf!
 endif;
 
 if(!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
@@ -79,20 +79,25 @@ if(isset($_POST['submit'])) :
 
         case "edUser" :
             $sql = 'SELECT rechte FROM S_auth WHERE uid = ?;';
-            $ore = $db->extended->getCol($sql, null, $myauth->getAuthData('selUser'));
+            $ore = $db->extended->getOne($sql, null, $myauth->getAuthData('selUser'));
             IsDbError($ore);
+            // Alle LSB löschen
+            for ($i = 0; $i < 15; $i++) clearBit($ore, $i);
+
             if(!isset($_POST['rechte'])) :
                 warng(10004);
                 $_POST['rechte'] = array();
             endif;
+
             $data = array(
                 'username'  => $_POST['username'],
                 'realname'  => $_POST['realname'],
-                'rechte'    => bitArr2wert($_POST['rechte']),
+                'rechte'    => array2wert($ore, $_POST['rechte']),
                 'notiz'     => $_POST['notiz'],
                 'editdate'  => date('c', $_SERVER['REQUEST_TIME']),
                 'editfrom'  => $myauth->getAuthData('uid')
             );
+
             $types = array('text','text','integer','text','date','integer');
             $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
                 'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);

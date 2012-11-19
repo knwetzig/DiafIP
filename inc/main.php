@@ -14,8 +14,6 @@ Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' AND NOT 'action'!!!
 
     echo "<div id='main'>";
 
-if(isset($_POST['aktion'])) warng('sektion:&nbsp;<b>'.$_POST['sektion'].'</b>&nbsp;&nbsp;aktion:&nbsp;<b>'.$_POST['aktion'].'</b>&nbsp;');
-
     if(isset($_POST['sektion']) AND isset($datei[$_POST['sektion']]))
         include $datei[$_POST['sektion']]; else include 'default.php';
     echo "</div>";

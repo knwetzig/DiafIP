@@ -31,7 +31,7 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
 }
 
 /** **** Bitfeldfunktionen / Checkboxen **************************************/
-function setBit(&$bitFeld,$n) {
+function setBit(&$bitFeld, $n) {
 	// Ueberprueft, ob der Wert zwischen 0-31 liegt
 	// $n ist die Position (0 beginnend)
 	if(($n < 0) or ($n > 31)) return false;
@@ -43,14 +43,14 @@ function setBit(&$bitFeld,$n) {
 	return true;
 }
 
-function clearBit(&$bitFeld,$n) {
+function clearBit(&$bitFeld, $n) {
 	// Loescht ein Bit oder ein Bitfeld
 	// & ist nicht das logische UND sondern das BIT-and
 	$bitFeld &= ~(0x01 << ($n));
 	return true;
 }
 
-function isBit($bitFeld,$n) {
+function isBit($bitFeld, $n) {
 	// Ist die x-te Stelle eine 1?
 	return (bool)($bitFeld & (0x01 << ($n)));
 }
@@ -63,13 +63,11 @@ function bit2array($wert) {
     return $a;
 }
 
-function bitArr2wert($arr) {
-    $wert = null;
-    for ($i = 0; $i < sizeof($arr); $i++) :
-        setBit($wert,$arr[$i]);
-    endfor;
+function array2wert($wert, $arr) {
+    foreach($arr as $k) setBit($wert,$k);
     return $wert;
 }
+
 /** **** ALLGEMEINE FUNKTIONEN ***********************************************/
 // Die beiden folgenden Function sind "deprecated" und sollten"
 // durch das View-Objekt ersetzt werden

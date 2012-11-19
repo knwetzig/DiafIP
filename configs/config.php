@@ -22,12 +22,14 @@ require_once    '../../conf/dsn';
 
 const
     // RegExpressions
-    NAMEN =     '^[^`{}"-,:-@[-^]+$',
+    NAMEN     = '^[^`{}"-,:-@[-^]+$',
     NAME_LEER = '[^`{}"-,:-@[-^]*',
-    ANZAHL =    '[1-9]+[\d]*',
-    TELNR =     '^[+\d][\d\s]*$',              // +49 351 123456
-    EMAIL =     '[\w].*[@].*[.][\w]{2,3}',   //xxx@yyy.zzz
-    DATUM =     '[\d]{4,4}[\D\W][\d]{1,2}[\D\W][\d]{1,2}|[\d]{4,4}[0-1][\d][0-3][\d]|[\d]{1,2}[\D\W][\d]{1,2}[\D\W][\d]{2,4}',
+    ANZAHL    = '([1-9]+[\d]*){1,1}',
+    DZAHL     = '^[-+]?[\d]*[.,]?[\d]+([eE][-+]?[\d]+)?',
+    BOOL      = '(^(true|[1]|false|[0])\b){1,1}',
+    TELNR     = '^[+\d][\d\s]*$',              // +49 351 123456
+    EMAIL     = '[\w].*[@].*[.][\w]{2,3}',   //xxx@yyy.zzz
+    DATUM     =     '[\d]{4,4}[\D\W][\d]{1,2}[\D\W][\d]{1,2}|[\d]{4,4}[0-1][\d][0-3][\d]|[\d]{1,2}[\D\W][\d]{1,2}[\D\W][\d]{2,4}',
     /* Vorsicht nicht Narrensicher! Kann nur der groben Prüfung dienen
         1999-2.31 ISO (Trenner kann alles ausser Buchtabe/Ziffer sein)
         19991231  ISO
@@ -58,7 +60,6 @@ $datei = array(
     'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
     'i_3d'      => '',
     'i_media'   => '',
-    'news'      => "inc/news.php",              // Pinwand
     'changes'   => 'changes.txt'
 );
 

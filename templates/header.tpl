@@ -1,13 +1,10 @@
-{config_load file="mc.conf" section="setup"}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-{**************************************************************
+{config_load file="mc.conf" section="setup"}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+{**************************************************************
 $Rev: 19                      		$
 $Author: knwetzig             		$
 $Date: 2012-08-09 19:41:46 +0#		$
 $URL$
-
-ToDo:   Freischaltung der JScript-bereich nach Bedarf
-
 ***** (c) DIAF e.V. *******************************************}
 
 <html xmlns="http://www.w3.org/1999/xhtml">

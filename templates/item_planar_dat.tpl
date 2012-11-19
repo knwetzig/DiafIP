@@ -169,7 +169,7 @@
 
 {* -- Beschreibung -- *}
     {if !empty($dialog['descr'][1])}<tr>
-        <td class="reTop">
+        <td class="re top">
             {if !empty($dialog['descr'][2])}{$dialog['descr'][2]}:{/if}
         </td>
         <td>
@@ -179,7 +179,7 @@
 
 {* -- Zustandsbericht -- *}
     {if !empty($dialog['rest_report'][1])}<tr>
-        <td class="reTop">
+        <td class="re top">
             {if !empty($dialog['rest_report'][2])}{$dialog['rest_report'][2]}:{/if}
         </td>
         <td>
@@ -199,7 +199,7 @@
 
 {* -- notiz -- *}
     {if !empty($dialog['notiz'][1])}<tr class='note'>
-        <td class="reTop">
+        <td class="re top">
             {if !empty($dialog['notiz'][2])}{$dialog['notiz'][2]}:{/if}
         </td>
         <td>
