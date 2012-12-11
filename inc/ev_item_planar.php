@@ -42,21 +42,19 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
             break;
 
         case "edit" :
-/**
-            if (isset($_POST['form'])) {
-                $film = new Film($_POST['fid']);
-                $film->edit(false); // Formular anfordern
-            } else {                // Auswertezweig
-                $film = unserialize($myauth->getAuthData('obj'));
-                $film->edit(true);
-                $erg = $film->set();
+            if (isset($_POST['form'])) :
+                $i2d = new Planar($_POST['id']);
+                $i2d->edit(false); // Formular anfordern
+            else :                 // Auswertezweig
+                $i2d = unserialize($myauth->getAuthData('obj'));
+                $i2d->edit(true);
+                $erg = $i2d->set();
                 if ($erg) :
                     fehler($erg);
                     exit;
                 endif;
-                $film->view();
-            }
-**/
+                $i2d->view();
+            endif;
         break;	// Ende edit
 
         case "search" :
@@ -79,29 +77,18 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         break;
 
         case "del" :
-            //$film = new Film($_POST['fid']);
-            //$erg = $film->del();
-            //if(empty($erg)) erfolg(); else fehler($erg);
+            $i2d = new Planar($_POST['id']);
+            $erg = $i2d->del();
+            if(empty($erg)) erfolg(); else fehler($erg);
         break;
 
         case 'view' :
-            //$item = new xxx((int)$_POST['fid']);
-            //$item->view();
-        break;
-
-        case 'addFid' :
-            $smarty->assign('aktion','edit');
-            $film->edit(false);
-        break;
-
-        case 'delFid' :
-            $smarty->assign('aktion','edit');
-            $film->edit(false);
+            $i2d = new PLanar((int)$_REQUEST['id']);
+            $i2d->view();
         break;
 
         case 'addImage' :
             /** --- BAUSTELLE --- **/
-            // aufruf von figd_dialog.tpl
             $img = new Bild();
             $img->add();
         break;

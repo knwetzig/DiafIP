@@ -13,6 +13,7 @@ $URL$
 interface iMain {
     const
         SQL_getSTLi = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
+        SQL_getTLi  = 'SELECT id, titel FROM f_main ORDER BY titel ASC',
         SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;',
         SQL_search1  = 'SELECT id FROM f_film
                             WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
@@ -21,6 +22,8 @@ interface iMain {
         SQL_search3 = 'SELECT id FROM f_film WHERE sid = ?;';
 
     public static function getSTitelList();
+    public static function getTitelList();
+    public static function getTitel($nr);
     public function del();
     public static function is_Del($nr);
     public function addCast($p, $t);
@@ -117,11 +120,9 @@ interne Methoden:
     //
         global $db;
         $list = $db->extended->getCol(self::SQL_getTaetigk, 'integer');
-        $data = array();
         IsDbError($list);
-        foreach($list as $wert) :
-            $data[$wert] = d_feld::getString($wert);
-        endforeach;
+        $data = array();
+        foreach($list as $wert) $data[$wert] = d_feld::getString($wert);
         asort($data);
         return $data;
     }
@@ -142,6 +143,32 @@ interne Methoden:
         if ($ergebnis) {
             return $ergebnis;     // Liste der Serientitel
         } else return 1;
+    }
+
+    final public static function getTitelList() {
+    /****************************************************************
+    *  Aufgabe: Ausgabe der Titelliste (Filme/Bücher)
+    *   Return: array, alles iO
+    *           Fehlercode
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getAll(self::SQL_getTLi);
+        IsDbError($list);
+        $data = array(0 => null);
+        foreach($list as $wert) $data[$wert['id']] = $wert['titel'];
+        return $data;
+    }
+
+    public static function getTitel($nr) {
+    /****************************************************************
+    *  Aufgabe: Ausgabe des Titels
+    *   Return: String / Fehlercode
+    ****************************************************************/
+        global $db;
+        $erg = $db->extended->getOne(
+            'SELECT titel FROM f_main WHERE id = ?;', null, (int)$nr);
+        IsDbError($erg);
+        return $erg;
     }
 
     protected function get($nr) {
@@ -450,6 +477,7 @@ Interne Methoden:
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
         $data = array();
+        // TODO: Überdenken den Einsatz von getStringList !
         foreach($list as $wert) $data[$wert] = d_feld::getString($wert);
         return $data;
     }
@@ -823,7 +851,7 @@ Interne Methoden:
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         if(!empty($this->editfrom)) :
-            $bearbeiter = $db->extended->getCol(
+            $bearbeiter = $db->extended->getOne(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
             IsDbError($bearbeiter);
         else : $bearbeiter = null;
@@ -856,7 +884,7 @@ Interne Methoden:
             new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
             new d_feld('isVal',     $this->isvalid,             VIEW, 10009),
             new d_feld('chdatum',   $this->editdate),
-            new d_feld('chname',    $bearbeiter[0]),
+            new d_feld('chname',    $bearbeiter)
         ));
         $smarty->assign('dialog', $data);
         $smarty->display('figd_dat.tpl');

@@ -133,6 +133,7 @@ func: __construct($)
         global $db;
         $sql = 'SELECT * FROM p_person WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $nr);
+        IsDbError($data);
         // Ergebnis -> Objekt schreiben
         foreach($this as $key => &$wert) $wert = $data[$key];
         unset($wert);
