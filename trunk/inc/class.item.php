@@ -38,28 +38,30 @@ abstract class Item implements iItem {
             isLinked()
 */
 
-    protected
+    protected                       // entspricht Reihenfolge in der DB
         $id             = null,
-        $del            = false,
-        $editfrom       = null,
-        $editdate       = null,
-        $bild_id        = array(),
         $notiz          = null,
-        $lagerort       = null, // -> lagerort
-        $bezeichner     = null,
-        $eigner         = 2,    // -> DIAF
+        $eigner         = 2,        // -> DIAF
         $leihbar        = false,
-        $x              = null, // in mm (max 32757)
+        $x              = null,     // in mm (max 32757)
         $y              = null,
         $kollo          = 1,
         $akt_ort        = null, // aktueller Aufenthaltsort des Gegenstandes....
-        $a_wert         = null, // Index * Konst * Zeit = Versicherungswert
-        $oldsig         = null, // alte Signatur
-        $herkunft       = 1, // -> DEFA Studio für Trickfilme
+        $a_wert         = 10,       // Anschaffungswert zur Zeit des Zugangs
+        $oldsig         = null,     // alte Signatur
+        $herkunft       = 1,        // -> DEFA Studio für Trickfilme
         $in_date        = '1993-11-16', // Zugangsdatum...
-        $descr          = null, // Beschreibung des Gegenstandes
-        $rest_report    = null, // Restaurierungsbericht
-        $obj_typ        = 1;
+        $descr          = null,     // Beschreibung des Gegenstandes
+        $rest_report    = null,     // Restaurierungsbericht
+        $bild_id        = '{}',
+        $obj_typ        = 1,
+        $del            = false,
+        $lagerort       = null,     // -> lagerort
+        $bezeichner     = null,
+        $editfrom       = null,
+        $editdate       = null,
+        $zu_film        = null;     // Verweis auf bibl./filmogr. Daten
+
 
     protected
         $types      = array(
@@ -84,6 +86,7 @@ abstract class Item implements iItem {
             'text',     // bezeichner
             'integer',  // editfrom
             'date',     // editdate
+            'integer'  // zu_film
         );
 
     const
@@ -91,7 +94,8 @@ abstract class Item implements iItem {
 //        SQL_ifDouble = 'SELECT id FROM i_main WHERE oldsig = ? AND del = false;',
         SQL_get     = 'SELECT * FROM i_main WHERE id = ?;',
         SQL_getLOrt = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
-        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;';
+        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;',
+        SQL_search1 = 'SELECT id FROM i_main WHERE (bezeichner ILIKE ?) AND (del != TRUE);';
 //        SQL_isLink  = 'SELECT COUNT(*) FROM ____ WHERE id = ?';
 
     function __construct($nr = NULL) {
@@ -110,20 +114,22 @@ abstract class Item implements iItem {
             $data = array(
                 new d_feld('persLi', Person::getPersonLi()),    // Personenliste
                 new d_feld('lortLi', self::getLOrtLi()),        // Liste Lagerorte
+                new d_feld('filmLi', Film::getTitelList()),     // Liste filmogr.
                 new d_feld('bezeichner', $this->bezeichner, EDIT, 4029),
-                new d_feld('x',  $this->x,                  EDIT,  469, ANZAHL),
-                new d_feld('y',  $this->y,                  EDIT,  470, ANZAHL),
-                new d_feld('kollo',  $this->kollo,          EDIT,  475, ANZAHL),
+                new d_feld('x',         $this->x,           EDIT,  469, ANZAHL),
+                new d_feld('y',         $this->y,           EDIT,  470, ANZAHL),
+                new d_feld('kollo',     $this->kollo,       EDIT,  475, ANZAHL),
                 new d_feld('lagerort',  $this->lagerort,  ARCHIV,  472, ANZAHL),
-                new d_feld('akt_ort',  $this->akt_ort,      EDIT,  476),
-                new d_feld('eigner',  $this->eigner,        IEDIT, 473, ANZAHL),
-                new d_feld('herkunft',  $this->herkunft,    IEDIT, 480, ANZAHL),
-                new d_feld('in_date',  $this->in_date,      IEDIT, 481, DATUM),
-                new d_feld('leihbar',  $this->leihbar,    ARCHIV,  474, BOOL),
-                new d_feld('a_wert',  $this->a_wert,       IEDIT, 4031, DZAHL),
-                new d_feld('rest_report',  $this->rest_report, EDIT, 482),
-                new d_feld('descr',  $this->descr,          EDIT,  506),
-                new d_feld('notiz', $this->notiz,           EDIT,  514)
+                new d_feld('akt_ort',   $this->akt_ort,     EDIT,  476),
+                new d_feld('zu_film',   $this->zu_film,     EDIT,   5, ANZAHL),
+                new d_feld('eigner',    $this->eigner,     IEDIT, 473, ANZAHL),
+                new d_feld('herkunft',  $this->herkunft,   IEDIT, 480, ANZAHL),
+                new d_feld('in_date',   $this->in_date,    IEDIT, 481, DATUM),
+                new d_feld('leihbar',   true,             ARCHIV,  474, BOOL),
+                new d_feld('a_wert',    $this->a_wert,     IEDIT, 4031, DZAHL),
+                new d_feld('rest_report',$this->rest_report, EDIT, 482),
+                new d_feld('descr',     $this->descr,       EDIT,  506),
+                new d_feld('notiz',     $this->notiz,       EDIT,  514)
             );
             if(empty($this->oldsig))
                         $data[] = new d_feld('oldsig', null, EDIT, 479, NAMEN);
@@ -144,20 +150,21 @@ abstract class Item implements iItem {
                 new d_feld('notiz',     changetext($this->notiz),   EDIT, 514),
                 new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
                 new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
-                new d_feld('chdatum',   $this->editdate,    VIEW),
-                new d_feld('chname',    $bearbeiter,        VIEW),
+                new d_feld('chdatum',   $this->editdate,   IVIEW),
+                new d_feld('chname',    $bearbeiter,       IVIEW),
                 new d_feld('bezeichner', $this->bezeichner, VIEW),
-                new d_feld('lagerort',  $this->getLOrt(),  IVIEW, 472),
+                new d_feld('lagerort',  $this->getLOrt(),   IVIEW, 472),
                 new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
                 new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
                 new d_feld('x',         $this->x,           VIEW, 469),
                 new d_feld('y',         $this->y,           VIEW, 470),
-                new d_feld('kollo',     $this->kollo,      IVIEW, 475),
-                new d_feld('akt_ort',   $this->akt_ort,    IVIEW, 476),
+                new d_feld('kollo',     $this->kollo,       IVIEW, 475),
+                new d_feld('zu_film',   Film::getTitel($this->zu_film), VIEW, 5),
+                new d_feld('akt_ort',   $this->akt_ort,     IVIEW, 476),
                 new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
-                new d_feld('oldsig',    $this->getOSig(),  IVIEW, 479),
+                new d_feld('oldsig',    $this->getOSig(),   IVIEW, 479),
                 new d_feld('herkunft',  $vbesitz->getName(),IVIEW, 480),
-                new d_feld('in_date',   $this->in_date,    IVIEW, 481),
+                new d_feld('in_date',   $this->in_date,     IVIEW, 481),
                 new d_feld('descr',     changetext($this->descr), VIEW, 506),
                 new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
             );
@@ -174,7 +181,6 @@ abstract class Item implements iItem {
         global $db;
         $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
-
         if (empty($data)) :   // kein Datensatz vorhanden
             fehler(4);
             exit;
@@ -190,40 +196,46 @@ abstract class Item implements iItem {
     *           Auswertungszweig benötigt
     *   Return: void
     ****************************************************************/
+        global $myauth;
 
         try {
             if (empty($this->bezeichner) AND empty($_POST['bezeichner']))
                 throw new Exception(null, 100);
-            if ($_POST['bezeichner']) $this->titel = $_POST['bezeichner'];
+            if ($_POST['bezeichner']) $this->bezeichner = $_POST['bezeichner'];
 
             if (!empty($_POST['x']) AND is_numeric($_POST['x']))
-                $this->x = (int)$_POST('x');
+                $this->x = (int)$_POST['x'];
 
             if (!empty($_POST['y']) AND is_numeric($_POST['y']))
-                $this->x = (int)$_POST('y');
+                $this->y = (int)$_POST['y'];
 
             if (!empty($_POST['lagerort'])) $this->lagerort = (int)$_POST['lagerort'];
 
             // Überschreiben prüfen
-            if (!empty($_POST['akt_ort'])) $this->akt_ort = $_POST['akt_ort'];
+            if (!empty($_POST['akt_ort']))
+                $this->akt_ort = $_POST['akt_ort']; else $this->akt_ort = null;
 
             if (!empty($_POST['kollo']) AND is_numeric($_POST['kollo']))
-                $this->x = (int)$_POST('kollo');
+                $this->kollo = (int)$_POST['kollo'];
 
             if (!empty($_POST['a_wert']) AND is_numeric($_POST['a_wert']))
-                $this->x = (int)$_POST('a_wert');
+                $this->a_wert = (int)$_POST['a_wert'];
 
             if (!empty($_POST['eigner']) AND is_numeric($_POST['eigner']))
-                $this->x = (int)$_POST('eigner');
+                $this->eigner = (int)$_POST['eigner'];
 
             if (!empty($_POST['herkunft']) AND is_numeric($_POST['herkunft']))
-                $this->x = (int)$_POST('herkunft');
+                $this->herkunft = (int)$_POST['herkunft'];
 
-            if (!empty($_POST['in_date'])) {
-            }
+            if (!empty($_POST['in_date']))
+                if(isvalid($_POST['in_date'], DATUM))
+                    $this->in_date = $_POST['in_date'];
+                else throw new Exception(null, 103);
 
-            // leihbar
-            if (!empty($_POST['leihbar'])) $this->leihbar = (bool)$_POST['leihbar'];
+            if (!empty($_POST['leihbar'])) $this->leihbar = true;
+
+            // Zuordnung zu Film
+            if (!empty($_POST['zu_film'])) $this->zu_film = (int)$_POST['zu_film'];
 
             if (!empty($_POST['oldsig']) AND !$this->oldsig)
                 $this->oldsig = $_POST['oldsig'];
@@ -231,13 +243,12 @@ abstract class Item implements iItem {
             if(empty($this->oldsig)) $this->oldsig = 'NIL';
 
             if (!empty($_POST['descr'])) $this->descr = $_POST['descr'];
-            if (!empty($_POST['rest_report'])) $this->descr = $_POST['rest_report'];
-            if (!empty($_POST['notiz'])) $this->descr = $_POST['notiz'];
+            if (!empty($_POST['rest_report'])) $this->rest_report = $_POST['rest_report'];
+            if (!empty($_POST['notiz'])) $this->notiz = $_POST['notiz'];
             $this->editfrom = $myauth->getAuthData('uid');
             $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
 
-
-            if (empty($this->x) OR empty($this->Y)) throw new Exception('Maße fehlen');
+            if (empty($this->x) OR empty($this->y)) throw new Exception(null, 111);
         }
 
         catch (Exception $e) {
@@ -270,6 +281,8 @@ abstract class Item implements iItem {
         $data = array();
         foreach($list as $wert) $data[$wert['id']] = $wert['lagerort'];
         natcasesort($data);
+        // $data[0] = getString(xxx); <-- keine gute Idee, das hebelt die Verpflichtung
+        //                                zur Eingabe eines Lagerorts aus..
         return $data;
     }
 
@@ -355,34 +368,13 @@ abstract class Item implements iItem {
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
-        warng('- Nicht implementiert -');
-/*
         $s = "%".$s."%";
 
-        // Suche in titel, atitel, utitel
-        $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s));
+        // Suche in Bezeichner (rudimentär)
+        $data = $db->extended->getCol(self::SQL_search1, null, $s);
         IsDbError($data);
         $erg = $data;
-
-        //Weiter suche in Serientiteln
-        $stit = $db->extended->getCol(self::SQL_search2, null, $s);
-        IsDbError($stit);
-        foreach($stit as $wert) :
-            $data = $db->extended->getCol(self::SQL_search3, null, array($wert));
-            IsDbError($data);
-            $erg = array_merge($erg,$data);
-        endforeach;
-        if ($erg) :
-            // Ausfiltern gelöschter Datensätze
-            $erg = array_unique($erg);
-            foreach($erg as $key => $wert) :
-                if(self::is_Del($wert)) unset($erg[$key]);
-            endforeach;
-            return $erg;
-        else :
-            return 1;
-        endif;
-*/
+        if ($erg) return array_unique($erg); else return 1;
     }
 
     protected function VWert() {
@@ -434,16 +426,16 @@ final class Planar extends Item implements iPlanar {
     ****************************************************************/
         parent::get($nr);
         global $db;
-        $types = array('integer'        // $art
-                      );
-        $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
+
+        $data = $db->extended->getOne(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
         if (empty($data)) :   // kein Datensatz vorhanden
             fehler(4);
             exit;
         endif;
+
         // Ergebnis -> Objekt schreiben
-        foreach($data as $key => $wert) $this->$key = $wert;
+        $this->art = $data;
     }
 
     protected static function getArtLi() {
@@ -479,12 +471,21 @@ final class Planar extends Item implements iPlanar {
             $this->edit($stat);
        else :
             // Objekt wurde vom Eventhandler initiiert
-            $types = array(
-                // ACHTUNG! Reihenfolge beachten !!!
-            );
             $this->edit(true);
             // Typ wird autom. generiert
-            //    .....
+            foreach($this as $key => $wert) $data[$key] = $wert;
+            unset($data['types']);
+
+            $types = $this->types;
+            array_unshift($types, 'integer');
+
+            $erg = $db->extended->autoExecute('i_planar', $data,
+                        MDB2_AUTOQUERY_INSERT, null, $types);
+            IsDbError($erg);
+
+            $db->commit('new2Ditem'); IsDbError($db);
+            // ende Transaktion
+
         endif;
     }
 
@@ -495,6 +496,7 @@ final class Planar extends Item implements iPlanar {
     ****************************************************************/
         global $db, $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
         if($stat == false) :        // Formular anzeigen
             $data = self::ea_struct('edit');
             $data[] = new d_feld('art', $this->art, EDIT, 4030);
@@ -505,7 +507,8 @@ final class Planar extends Item implements iPlanar {
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             parent::edit(true);
-_v($this);
+            $this->art = (int)$_POST['art'];
+
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
             if (!empty($number) AND $number != $this->id) warng('10008');
@@ -514,7 +517,7 @@ _v($this);
 
     public function set() {
     /****************************************************************
-    *   Aufgabe: schreibt die Daten in die Tabelle '?????' zurück (UPDATE)
+    *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
     *    Return: Fehlercode
     ****************************************************************/
         global $db, $myauth;
@@ -524,9 +527,13 @@ _v($this);
         // Uhrzeit und User setzen
 
         foreach($this as $key => $wert) $data[$key] = $wert;
-        // !! Achtung hier hängt types hintendran ?!
+        unset($data['types']);
+        $types = $this->types;
+        array_unshift($types, 'integer');
 
-// commit->'new2Ditem'
+        $erg = $db->extended->autoExecute('i_planar', $data,
+            MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
+        IsDbError($erg);
     }
 
     public function view() {

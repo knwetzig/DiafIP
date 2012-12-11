@@ -26,7 +26,7 @@
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}<span class="fett">{$dialog['bezeichner'][1]}</span>{/if}
         <span class="note" style="float:right;">
-                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
+                ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -62,9 +62,7 @@
         <td class="re">
             {if !empty($dialog['art'][2])}{$dialog['art'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['art'][1])}{$dialog['art'][1]}{/if}
-        </td>
+        <td>{$dialog['art'][1]}</td>
     </tr>{/if}
 
 {* -- Breite -- *}
@@ -72,9 +70,7 @@
         <td class="re">
             {if !empty($dialog['x'][2])}{$dialog['x'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['x'][1])}{$dialog['x'][1]}&nbsp;mm{/if}
-        </td>
+        <td>{$dialog['x'][1]}&nbsp;mm</td>
     </tr>{/if}
 
 {* -- Höhe -- *}
@@ -82,9 +78,7 @@
         <td class="re">
             {if !empty($dialog['y'][2])}{$dialog['y'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['y'][1])}{$dialog['y'][1]}&nbsp;mm{/if}
-        </td>
+        <td>{$dialog['y'][1]}&nbsp;mm</td>
     </tr>{/if}
 
 {* -- lagerort -- *}
@@ -92,9 +86,7 @@
         <td class="re">
             {if !empty($dialog['lagerort'][2])}{$dialog['lagerort'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['lagerort'][1])}{$dialog['lagerort'][1]}{/if}
-        </td>
+        <td>{$dialog['lagerort'][1]}</td>
     </tr>{/if}
 
 {* -- akt_ort -- *}
@@ -102,9 +94,7 @@
         <td class="re">
             {if !empty($dialog['akt_ort'][2])}{$dialog['akt_ort'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['akt_ort'][1])}{$dialog['akt_ort'][1]}{/if}
-        </td>
+        <td>{$dialog['akt_ort'][1]}</td>
     </tr>{/if}
 
 {* -- Stückzahl -- *}
@@ -112,9 +102,14 @@
         <td class="re">
             {if !empty($dialog['kollo'][2])}{$dialog['kollo'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['kollo'][1])}{$dialog['kollo'][1]}{/if}
-        </td>
+        <td>{$dialog['kollo'][1]}</td>
+    </tr>{/if}
+
+{* -- Zuordnung zu Film -- *}
+    {if !empty($dialog['zu_film'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['zu_film'][2])}{$dialog['zu_film'][2]}:{/if}
+        <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
 {* -- leihbar -- *}
@@ -122,9 +117,7 @@
         <td class="re">
             {if !empty($dialog['leihbar'][2])}{$dialog['leihbar'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['leihbar'][1])}{$dialog['leihbar'][1]}{/if}
-        </td>
+        <td>{$dialog['leihbar'][1]}</td>
     </tr>{/if}
 
 {* -- vers_wert -- *}
@@ -132,9 +125,7 @@
         <td class="re">
             {if !empty($dialog['vers_wert'][2])}{$dialog['vers_wert'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['vers_wert'][1])}{$dialog['vers_wert'][1]}&nbsp;&euro;{/if}
-        </td>
+        <td>{$dialog['vers_wert'][1]}&nbsp;&euro;</td>
     </tr>{/if}
 
 {* -- Eigentümer -- *}
@@ -142,9 +133,7 @@
         <td class="re">
             {if !empty($dialog['eigner'][2])}{$dialog['eigner'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['eigner'][1])}{$dialog['eigner'][1]}{/if}
-        </td>
+        <td>{$dialog['eigner'][1]}</td>
     </tr>{/if}
 
 {* -- Herkunft -- *}
@@ -152,9 +141,7 @@
         <td class="re">
             {if !empty($dialog['herkunft'][2])}{$dialog['herkunft'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['herkunft'][1])}{$dialog['herkunft'][1]}{/if}
-        </td>
+        <td>{$dialog['herkunft'][1]}</td>
     </tr>{/if}
 
 {* -- Eingangsdatum -- *}
@@ -162,9 +149,7 @@
         <td class="re">
             {if !empty($dialog['in_date'][2])}{$dialog['in_date'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['in_date'][1])}{$dialog['in_date'][1]}{/if}
-        </td>
+        <td>{$dialog['in_date'][1]}</td>
     </tr>{/if}
 
 {* -- Beschreibung -- *}
@@ -172,9 +157,7 @@
         <td class="re top">
             {if !empty($dialog['descr'][2])}{$dialog['descr'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['descr'][1])}{$dialog['descr'][1]}{/if}
-        </td>
+        <td>{$dialog['descr'][1]}</td>
     </tr>{/if}
 
 {* -- Zustandsbericht -- *}
@@ -182,19 +165,15 @@
         <td class="re top">
             {if !empty($dialog['rest_report'][2])}{$dialog['rest_report'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['rest_report'][1])}{$dialog['rest_report'][1]}{/if}
-        </td>
+        <td>{$dialog['rest_report'][1]}</td>
     </tr>{/if}
 
 {* -- oldsig -- *}
-    {if !empty($dialog['oldsig'][1])}<tr class='note'>
+    {if !empty($dialog['oldsig'][1]) AND $dialog['oldsig'][1] !== 'NIL'}<tr class='note'>
         <td class="re">
             {if !empty($dialog['oldsig'][2])}{$dialog['oldsig'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['oldsig'][1])}{$dialog['oldsig'][1]}{/if}
-        </td>
+        <td>{$dialog['oldsig'][1]}</td>
     </tr>{/if}
 
 {* -- notiz -- *}
@@ -202,20 +181,7 @@
         <td class="re top">
             {if !empty($dialog['notiz'][2])}{$dialog['notiz'][2]}:{/if}
         </td>
-        <td>
-            {if !empty($dialog['notiz'][1])}{$dialog['notiz'][1]}{/if}
-        </td>
+        <td>{$dialog['notiz'][1]}</td>
     </tr>{/if}
-
-{* --  -- *}
-    {if !empty($dialog[''][1])}<tr>
-        <td class="re">
-            {if !empty($dialog[''][2])}{$dialog[''][2]}:{/if}
-        </td>
-        <td>
-            {if !empty($dialog[''][1])}{$dialog[''][1]}{/if}
-        </td>
-    </tr>{/if}
-
 
 </table>

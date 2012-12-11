@@ -17,7 +17,15 @@
     float:right;
     width:83%;
     margin-right:10px;
-    left:150px;
+}
+
+#test {
+    float:right;
+    width:84%;
+    margin-right:10px;
+    background:#ffffe6;
+    color:#400010;
+    border:1px dotted #400010;
 }
 
 #bereichssuche {

@@ -69,8 +69,6 @@ function array2wert($wert, $arr) {
 }
 
 /** **** ALLGEMEINE FUNKTIONEN ***********************************************/
-// Die beiden folgenden Function sind "deprecated" und sollten"
-// durch das View-Objekt ersetzt werden
 
 function getStringList($sl) {
     if (!is_array($sl)) return 1;
