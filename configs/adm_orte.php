@@ -7,9 +7,9 @@ site:       orte
 
 Für diese Seite ist keine Internationalisierung vorgesehen
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ToDo:
@@ -18,17 +18,21 @@ ToDo:
     Das gleiche für das Dialog-Template in der Klassendefinition
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
+if(!$myauth->getAuth()) :
     fehler(108);
-    die();           // Fremdaufruf!
-}
+    exit;           // Fremdaufruf!
+endif;
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) :
     fehler(2);
-    die();
-}
-// Überschrift
-echo '<div class="bereich">Verwaltung&nbsp;der&nbsp;Ortsnamen</div>';
+    exit;
+endif;
+
+$smarty->assign('dialog', array(
+    'bereich' => array( 1 => 'Verwaltung&nbsp;der&nbsp;Ortsnamen')
+));
+$smarty->display('main_bereich.tpl');
+
 
 // Ausgabe: Ort bearbeiten
 $smarty->assign('olist', Ort::getOrtList());

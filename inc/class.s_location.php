@@ -5,13 +5,135 @@ Lagermöglichkeiten)
 
 $Rev$
 $Author$
-$Date: 2012-08-12 23:05:36 +0#$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
 /** =================================================================
-                            ORTE KLASSE
+                            Lagerorte
+================================================================= **/
+interface iLOrt {
+    public function __construct($nr);
+    public static function getLOrtList();   // listet alle Orte in einem Array
+    public function getLOrt();              // liefert den Ort zur id
+    public function add($st);
+    public function edit($t);
+    public function del();
+    public function view();                 // listet alle Artikel für diesn Ort
+}
+
+/***** interne routinen **********************************
+      get()         // --dito-- schreibt dies aber ins Objekt
+      upd()         // eigentl. editroutine
+      is_linked     // prüft auf eine Verknüpfung
+**********************************************************/
+class LOrt implements iLOrt {
+    const
+        SQL_get = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
+        SQL_islinked = 'SELECT id FROM i_main WHERE lagerort = ?;';
+    protected
+        $id     = null,
+        $lort   = null;
+
+    public function __construct($nr = null) {
+        if (isset($nr) AND is_numeric($nr)) self::get((int)$nr);
+    }
+
+    protected function get($nr) {
+        global $db;
+        $data = $db->extended->getOne(self::SQL_get, null, $nr, 'integer');
+        IsDbError($data);
+
+        if (empty($data)) :   // kein Datensatz vorhanden
+            fehler(4);
+            exit;
+        endif;
+
+        $this->id = (int)$nr;
+        $this->lort = $data;
+    }
+
+    final public function getLOrt() {
+    /****************************************************************
+    *  Aufgabe: liefert den Texteintrag zum Lagerort
+    *   Return: string
+    ****************************************************************/
+        return $this->lort;
+    }
+
+    final public static function getLOrtList() {
+    /****************************************************************
+    *  Aufgabe: liefert die Liste mit den möglichen Lagerorten
+    *   Return: string
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getAll(
+            'SELECT * FROM i_lagerort', array('integer', 'text'));
+        IsDbError($list);
+        $data = array();
+        foreach($list as $wert) $data[$wert['id']] = $wert['lagerort'];
+        natcasesort($data);
+        // $data[0] = getString(xxx); <-- keine gute Idee, das hebelt die Verpflichtung
+        //                                zur Eingabe eines Lagerorts aus..
+        return $data;
+    }
+
+    public function add($st) {
+        if ($st) :
+
+        else :
+
+        endif;
+    }
+
+    public function edit($st) {
+        if ($st) :
+
+        else :
+
+        endif;
+    }
+
+    protected function upd($st) {
+        if ($st) :
+
+        else :
+
+        endif;
+    }
+
+    final protected function is_linked() {
+        global $db;
+        $list = $db->extended->getCol(
+            self::SQL_islinked, 'integer', $this->id, 'integer');
+        IsDbError($list);
+_v($list,'Liste mit den verknüpften Lagerorten');
+        return $list;
+    }
+
+    public function del() {
+        global $myauth, $db;
+        if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
+
+        if ($this->is_linked()) Fehler(10006); else {
+            // löschen in Tabelle
+
+/*
+        IsDbError($db->extended->autoExecute('p_person', null,
+            MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
+        erfolg(); return 0;
+*/
+        }
+    }
+
+    public function view() {            // Zeigt den Inhalt des Lagerorts
+    }
+}
+
+
+/** =================================================================
+                            Orte
 ================================================================= **/
 /**********************************************************
 func: __construct($)
@@ -25,9 +147,8 @@ func: __construct($)
 
 Anm.:
     Die Liste mit den Staaten und Ländern wird händisch geflegt
+    Überarbeitung dieser Klasse zwingend erforderlich!
 
-    Orte die nicht verknüpft sind werden automatisch nach einer gewissen
-    Zeit gelöscht. -- muss noch implementiert werden --
 **********************************************************/
 class Ort {
     protected
@@ -99,14 +220,14 @@ class Ort {
             $smarty->display('adm_ortedialog.tpl');
         } else {
             // Formular auswerten und in Obj speichern
-            if(isset($_POST['ort'])) {
+            if(isset($_POST['ort'])) :
                 if(isValid($_POST['ort'], NAMEN))
                     $this->ort = $_POST['ort'];
                 else {
                     fehler(107);
-                    die();
+                    exit;
                 }
-            }
+            endif;
             $this->lid = (int)$_POST['land'];
         }
     }

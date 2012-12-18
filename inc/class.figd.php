@@ -199,10 +199,8 @@ interne Methoden:
 
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) :   // kein Datensatz vorhanden
-            fehler(4);
-            exit;
-        endif;
+        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
+
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) :
             $this->$key = $wert;
@@ -339,10 +337,10 @@ interne Methoden:
     *   Return: bool
     ****************************************************************/
         global $db;
-        $data = $db->extended->getRow(
+        $data = $db->extended->getOne(
             self::SQL_isVal, 'boolean', $this->id, 'integer');
         IsDbError($data);
-        return $data['isvalid'];
+        return $data;
     }
 
     public static function search($s) {
@@ -444,10 +442,7 @@ Interne Methoden:
         );
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) :   // kein Datensatz vorhanden
-            fehler(4);
-            exit;
-        endif;
+        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) $this->$key = $wert;
     }
@@ -664,10 +659,8 @@ Interne Methoden:
             $myauth->setAuthData('obj', serialize($this));
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
-            if (empty($this->titel) AND empty($_POST['titel'])) {
-                fehler(100);
-                exit();
-            } else if ($_POST['titel']) $this->titel = $_POST['titel'];
+            if (empty($this->titel) AND empty($_POST['titel'])) fehler(100);
+            else if ($_POST['titel']) $this->titel = $_POST['titel'];
 
             if(isset($_POST['atitel'])) :
                 if ($_POST['atitel']) $this->atitel = $_POST['atitel'];
@@ -704,7 +697,7 @@ Interne Methoden:
                 if ($_POST['prod_jahr']) {
                     if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
                         $this->prod_jahr = (int)$_POST['prod_jahr'];
-                    else fehler(103);
+                    else warng(103);
                 } else $this->prod_jahr = null;
             endif;
 
@@ -752,7 +745,7 @@ Interne Methoden:
                 if ($_POST['urauff']) {
                     if(isvalid($_POST['urauff'], DATUM))
                         $this->urauffuehr = $_POST['urauff'];
-                    else fehler(103);
+                    else warng(103);
                 } else $this->urauffuehr = null;
             endif;
 

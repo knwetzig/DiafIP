@@ -157,6 +157,20 @@
         </div>
     {/if}
 
+{* --- isvalid --- *}
+    {if isset($dialog['isvalid'])}<tr>
+        <td>&nbsp;</td>
+        <td>
+            <input
+                type="checkbox"
+                name="isvalid"
+                {if $dialog['isvalid'][1]}
+                    checked="checked"
+                {/if}
+                value="isvalid" /> {$dialog['isvalid'][2]}
+        </td>
+    </tr>{/if}
+
     <div class="re">
         <input type='submit' name='submit' />
         <input type='hidden' name='sektion' value='i_planar' />

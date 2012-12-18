@@ -9,6 +9,7 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <div class='bereich'>{$dialog['bereich'][1]}</div>
+{if isset($dialog['sstring'])}
 <div id='bereichssuche'>
     <form method='post'>
         <input
@@ -29,6 +30,7 @@ $URL$
         />
     </form>
 </div>
+{/if}
 
 {if isset($dialog['add'])}
 <div id='bereichssymbole'>

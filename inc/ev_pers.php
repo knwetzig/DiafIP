@@ -14,10 +14,7 @@ ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) {
-    fehler(108);
-    die();
-}
+if(!$myauth->checkAuth()) fehler(108);
 
 // Überschrift
 $data = a_display(array(
@@ -57,10 +54,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
                 $ePer = unserialize($myauth->getAuthData('obj'));
                 $ePer->edit(true);
                 $erg = $ePer->set();
-                if ($erg) :
-                    fehler($erg);
-                    exit();
-                endif;
+                if ($erg) fehler($erg);
                 $ePer->view();
             }
         break; // Ende --edit --

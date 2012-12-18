@@ -1,31 +1,35 @@
 <?php
 /*****************************************************************************
-Eventhandler für Verwaltung von Aliasnamen
+Eventhandler für Verwaltung von Lagerorten
 
-section:    admin
-site:       alias
+    section:    admin
+    site:       lort
 
-Für diese Seite ist keine Internationalisierung vorgesehen
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-$Rev$
-$Author$
-$Date$
-$URL$
-
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
+if(!$myauth->getAuth()) :
     fehler(108);
     exit;           // Fremdaufruf!
+endif;
+
+if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) {
+    fehler(2);
+    die();
 }
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
-    fehler(2);
-    exit;
-}
-// Überschrift
-echo '<div class="bereich">Alias-/K&uuml;nstlernamen</div>';
+    $smarty->assign('dialog', array(
+        'bereich' => array( 1 => 'Lagerort')
+    ));
+    $smarty->display('main_bereich.tpl');
+?>
+
+
+<!--
 $dialog = array(
         0 => array('alias', null, 'neuen&nbsp;Alias&nbsp;erstellen'),
         2 => array('name', null, 'Aliasname'),
@@ -89,6 +93,4 @@ if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !=
     $ali = new Alias();
     $myauth->setAuthData('obj', serialize(new Alias()));
 }
-unset($_POST);
-
-?>
+unset($_POST); -->

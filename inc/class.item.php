@@ -11,10 +11,14 @@ $URL$
 ***** (c) DIAF e.V. ************************************************/
 
 interface iItem {
-    public static function getLOrtLi();
+    const
+        SQL_isVal   = 'SELECT isvalid FROM i_main WHERE id = ?;',
+        SQL_search1 =
+            'SELECT id FROM i_main WHERE (bezeichner ILIKE ?) AND (del != TRUE);';
     public function edit($stat);
     public function del();
     public static function is_Del($nr);
+    public function isVal();
     public static function search($s);
 }
 
@@ -60,7 +64,8 @@ abstract class Item implements iItem {
         $bezeichner     = null,
         $editfrom       = null,
         $editdate       = null,
-        $zu_film        = null;     // Verweis auf bibl./filmogr. Daten
+        $zu_film        = null,     // Verweis auf bibl./filmogr. Daten
+        $isvalid        = false;    // Bearbeitung abgeschlossen
 
 
     protected
@@ -86,16 +91,15 @@ abstract class Item implements iItem {
             'text',     // bezeichner
             'integer',  // editfrom
             'date',     // editdate
-            'integer'  // zu_film
+            'integer',  // zu_film
+            'boolean'   // isvalid
         );
 
     const
         // für protected Funktionen
 //        SQL_ifDouble = 'SELECT id FROM i_main WHERE oldsig = ? AND del = false;',
         SQL_get     = 'SELECT * FROM i_main WHERE id = ?;',
-        SQL_getLOrt = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
-        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;',
-        SQL_search1 = 'SELECT id FROM i_main WHERE (bezeichner ILIKE ?) AND (del != TRUE);';
+        SQL_isDel   = 'SELECT del FROM i_main WHERE id = ?;';
 //        SQL_isLink  = 'SELECT COUNT(*) FROM ____ WHERE id = ?';
 
     function __construct($nr = NULL) {
@@ -113,7 +117,7 @@ abstract class Item implements iItem {
           case 'edit' :
             $data = array(
                 new d_feld('persLi', Person::getPersonLi()),    // Personenliste
-                new d_feld('lortLi', self::getLOrtLi()),        // Liste Lagerorte
+                new d_feld('lortLi', LOrt::getLOrtList()),        // Liste Lagerorte
                 new d_feld('filmLi', Film::getTitelList()),     // Liste filmogr.
                 new d_feld('bezeichner', $this->bezeichner, EDIT, 4029),
                 new d_feld('x',         $this->x,           EDIT,  469, ANZAHL),
@@ -121,15 +125,16 @@ abstract class Item implements iItem {
                 new d_feld('kollo',     $this->kollo,       EDIT,  475, ANZAHL),
                 new d_feld('lagerort',  $this->lagerort,  ARCHIV,  472, ANZAHL),
                 new d_feld('akt_ort',   $this->akt_ort,     EDIT,  476),
-                new d_feld('zu_film',   $this->zu_film,     EDIT,   5, ANZAHL),
-                new d_feld('eigner',    $this->eigner,     IEDIT, 473, ANZAHL),
-                new d_feld('herkunft',  $this->herkunft,   IEDIT, 480, ANZAHL),
-                new d_feld('in_date',   $this->in_date,    IEDIT, 481, DATUM),
+                new d_feld('zu_film',   $this->zu_film,     EDIT,    5, ANZAHL),
+                new d_feld('eigner',    $this->eigner,     IEDIT,  473, ANZAHL),
+                new d_feld('herkunft',  $this->herkunft,   IEDIT,  480, ANZAHL),
+                new d_feld('in_date',   $this->in_date,    IEDIT,  481, DATUM),
                 new d_feld('leihbar',   true,             ARCHIV,  474, BOOL),
                 new d_feld('a_wert',    $this->a_wert,     IEDIT, 4031, DZAHL),
                 new d_feld('rest_report',$this->rest_report, EDIT, 482),
                 new d_feld('descr',     $this->descr,       EDIT,  506),
-                new d_feld('notiz',     $this->notiz,       EDIT,  514)
+                new d_feld('notiz',     $this->notiz,       EDIT,  514),
+                new d_feld('isvalid',   $this->isvalid,   ARCHIV,10010)
             );
             if(empty($this->oldsig))
                         $data[] = new d_feld('oldsig', null, EDIT, 479, NAMEN);
@@ -144,6 +149,7 @@ abstract class Item implements iItem {
 
             $besitzer = new Person($this->eigner);
             $vbesitz  = new Person($this->herkunft);
+            $lagerort = new LOrt($this->lagerort);
             $data = array( // name, inhalt, opt -> rechte, label,tooltip
                 new d_feld('id',        $this->id),
     //          new d_feld('bild_id',   $this->bild_id),
@@ -152,8 +158,9 @@ abstract class Item implements iItem {
                 new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
                 new d_feld('chdatum',   $this->editdate,   IVIEW),
                 new d_feld('chname',    $bearbeiter,       IVIEW),
+                new d_feld('isvalid',   $this->isvalid,    IVIEW, 10010),
                 new d_feld('bezeichner', $this->bezeichner, VIEW),
-                new d_feld('lagerort',  $this->getLOrt(),   IVIEW, 472),
+                new d_feld('lagerort',  $lagerort->getLOrt(), IVIEW, 472),
                 new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
                 new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
                 new d_feld('x',         $this->x,           VIEW, 469),
@@ -181,10 +188,7 @@ abstract class Item implements iItem {
         global $db;
         $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) :   // kein Datensatz vorhanden
-            fehler(4);
-            exit;
-        endif;
+        if (empty($data)) fehler(4);    // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) $this->$key = $wert;
@@ -192,8 +196,8 @@ abstract class Item implements iItem {
 
     public function edit($stat) {
     /****************************************************************
-    *  Aufgabe: Validiert und setzt die Eingaben (basics). Wird nur vom
-    *           Auswertungszweig benötigt
+    *  Aufgabe: Validiert und setzt die Eingaben (basics).
+    *           Wird nur vom Auswertungszweig benötigt
     *   Return: void
     ****************************************************************/
         global $myauth;
@@ -233,6 +237,7 @@ abstract class Item implements iItem {
                 else throw new Exception(null, 103);
 
             if (!empty($_POST['leihbar'])) $this->leihbar = true;
+            else $this->leihbar = false;
 
             // Zuordnung zu Film
             if (!empty($_POST['zu_film'])) $this->zu_film = (int)$_POST['zu_film'];
@@ -241,6 +246,11 @@ abstract class Item implements iItem {
                 $this->oldsig = $_POST['oldsig'];
             // Alte Signatur sperren
             if(empty($this->oldsig)) $this->oldsig = 'NIL';
+
+            $this->isvalid = false;
+            if(isset($_POST['isvalid'])) :
+                if ($_POST['isvalid']) $this->isvalid = true;
+            endif;
 
             if (!empty($_POST['descr'])) $this->descr = $_POST['descr'];
             if (!empty($_POST['rest_report'])) $this->rest_report = $_POST['rest_report'];
@@ -256,36 +266,6 @@ abstract class Item implements iItem {
         }
     }
 
-    final protected function getLOrt() {
-    /****************************************************************
-    *  Aufgabe: liefert den Texteintrag zum Lagerort
-    *   Return: string
-    ****************************************************************/
-        global $db;
-        if(empty($this->lagerort)) return;
-        $data = $db->extended->getOne(
-            self::SQL_getLOrt, 'text', $this->lagerort, 'integer');
-        IsDbError($data);
-        return $data;
-    }
-
-    final public static function getLOrtLi() {
-    /****************************************************************
-    *  Aufgabe: liefert die Liste mit den möglichen Lagerorten
-    *   Return: string
-    ****************************************************************/
-        global $db;
-        $list = $db->extended->getAll(
-            'SELECT * FROM i_lagerort', array('integer', 'text'));
-        IsDbError($list);
-        $data = array();
-        foreach($list as $wert) $data[$wert['id']] = $wert['lagerort'];
-        natcasesort($data);
-        // $data[0] = getString(xxx); <-- keine gute Idee, das hebelt die Verpflichtung
-        //                                zur Eingabe eines Lagerorts aus..
-        return $data;
-    }
-
     final public function getOSig() {
     /****************************************************************
     *  Aufgabe: liefert die alte Signatur zurück, wenn nicht 'NIL' gesetzt ist
@@ -297,7 +277,7 @@ abstract class Item implements iItem {
 
     final protected function ifDouble() {
     /****************************************************************
-    *  Aufgabe: Ermitteln gleichlautender Titel
+    *  Aufgabe: Ermitteln gleich
     *   Return: int (ID des letzten Datensatzes | null )
     ****************************************************************/
 /**
@@ -359,6 +339,18 @@ abstract class Item implements iItem {
         return $data;
     }
 
+    final public function isVal() {
+    /****************************************************************
+    *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
+    *   Return: bool
+    ****************************************************************/
+        global $db;
+        $data = $db->extended->getOne(
+            self::SQL_isVal, 'boolean', $this->id, 'integer');
+        IsDbError($data);
+        return $data;
+    }
+
     public static function search($s) {
     /****************************************************************
     *  Aufgabe: Suchfunktion in .......
@@ -397,7 +389,11 @@ abstract class Item implements iItem {
     *  Aufgabe: Prototyp der Ausgabefunktion
     *   Return: array mit Daten
     ****************************************************************/
-        return self::ea_struct('view');
+        $data = a_display(self::ea_struct('view'));
+
+        if ($data['leihbar'][1]) $data['leihbar'][1] = d_feld::getString(474);
+        else $data['leihbar'][1] = d_feld::getString(485);
+        return $data;
     }
 }
 
@@ -429,10 +425,7 @@ final class Planar extends Item implements iPlanar {
 
         $data = $db->extended->getOne(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) :   // kein Datensatz vorhanden
-            fehler(4);
-            exit;
-        endif;
+        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         $this->art = $data;
@@ -498,10 +491,12 @@ final class Planar extends Item implements iPlanar {
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if($stat == false) :        // Formular anzeigen
-            $data = self::ea_struct('edit');
-            $data[] = new d_feld('art', $this->art, EDIT, 4030);
-            $data[] = new d_feld('artLi', self::getArtLi());
-            $smarty->assign('dialog', a_display($data));
+            $data = a_display(self::ea_struct('edit'));
+            $a = new d_feld('art', $this->art, EDIT, 4030);
+            $data['art'] = $a->display();
+            $a = new d_feld('artLi', self::getArtLi());
+            $data['artLi'] = $a->display();
+            $smarty->assign('dialog', $data);
             $smarty->display('item_planar_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
         else :                         // Formular auswerten
@@ -512,7 +507,7 @@ final class Planar extends Item implements iPlanar {
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
             if (!empty($number) AND $number != $this->id) warng('10008');
-        endif;  // Formularbereich
+        endif;
     }
 
     public function set() {
@@ -545,9 +540,10 @@ final class Planar extends Item implements iPlanar {
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         $data = parent::view();
-        $data[] = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $data['art'] = $a->display();
 
-        $smarty->assign('dialog', a_display($data));
+        $smarty->assign('dialog', $data);
         $smarty->display('item_planar_dat.tpl');
     }
 }

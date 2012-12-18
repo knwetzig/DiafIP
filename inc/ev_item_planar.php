@@ -9,10 +9,7 @@ $URL$
 
 ***** (c) DIAF e.V. *********************************************************/
 
-if(!$myauth->checkAuth()) :
-    fehler(108);
-    exit;
-endif;
+if(!$myauth->checkAuth()) fehler(108);
 
 // Überschrift
 $data = a_display(array(
@@ -49,10 +46,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                 $i2d = unserialize($myauth->getAuthData('obj'));
                 $i2d->edit(true);
                 $erg = $i2d->set();
-                if ($erg) :
-                    fehler($erg);
-                    exit;
-                endif;
+                if ($erg) fehler($erg);
                 $i2d->view();
             endif;
         break;	// Ende edit
@@ -71,7 +65,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                         $item->view();
                     endforeach;
                 else :
-                    fehler(102); // kein Erg.
+                    warng(102); // kein Erg.
                 endif;
             endif;
         break;
