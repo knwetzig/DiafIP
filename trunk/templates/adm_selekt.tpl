@@ -5,13 +5,14 @@ class:
 proc:
 param: array(0 => Feldname, 1 => Wert, 2 => Label, 3 => Tooltip)
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ToDo:
 ***** (c) DIAF e.V. *******************************************}
+
 <form method="post">
     <fieldset>
         <legend>&nbsp;{$dialog[2]}&nbsp;</legend>

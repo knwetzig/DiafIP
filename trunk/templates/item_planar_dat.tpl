@@ -24,7 +24,8 @@
 {* --- Name/Status/Bearbeitungssymbole --- *}
     <tr><form method="post">
         <td colspan="3">
-            {if !empty($dialog['bezeichner'][1])}<span class="fett">{$dialog['bezeichner'][1]}</span>{/if}
+            {if !empty($dialog['bezeichner'][1])}
+            <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
         <span class="note" style="float:right;">
                 ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
                 {if isset($dialog['edit'])}
@@ -55,7 +56,6 @@
             <img src="images/platzhalter.png" width="200" height="150" alt="bild" />
         </td>
     <tr>{/if}
-
 
 {* -- art -- *}
     {if !empty($dialog['art'][1])}<tr>
@@ -112,14 +112,6 @@
         <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
-{* -- leihbar -- *}
-    {if !empty($dialog['leihbar'][1])}<tr>
-        <td class="re">
-            {if !empty($dialog['leihbar'][2])}{$dialog['leihbar'][2]}:{/if}
-        </td>
-        <td>{$dialog['leihbar'][1]}</td>
-    </tr>{/if}
-
 {* -- vers_wert -- *}
     {if !empty($dialog['vers_wert'][1])}<tr>
         <td class="re">
@@ -168,6 +160,12 @@
         <td>{$dialog['rest_report'][1]}</td>
     </tr>{/if}
 
+{* -- leihbar -- *}
+    {if isset($dialog['leihbar'][1])}<tr>
+        <td class="re">&nbsp;</td>
+        <td>{$dialog['leihbar'][1]}</td>
+    </tr>{/if}
+
 {* -- oldsig -- *}
     {if !empty($dialog['oldsig'][1]) AND $dialog['oldsig'][1] !== 'NIL'}<tr class='note'>
         <td class="re">
@@ -182,6 +180,13 @@
             {if !empty($dialog['notiz'][2])}{$dialog['notiz'][2]}:{/if}
         </td>
         <td>{$dialog['notiz'][1]}</td>
+    </tr>{/if}
+
+{* --isvalid-- Eintrag *}
+    {if !empty($dialog['isvalid'][1])}<tr>
+        <td colspan="3" class="re">
+            <img src="images/ok.png" />&nbsp;{$dialog['isvalid'][2]}
+        </td>
     </tr>{/if}
 
 </table>

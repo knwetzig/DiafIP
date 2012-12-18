@@ -68,6 +68,7 @@ $adm_site = array(
     'self'  => "adm_self.php",
     'alias' => "adm_aliasname.php",
     'orte'  => "adm_orte.php",
+    'lort'  => "adm_lort.php",
     'user'  => "adm_user.php"
 );
 // ___ Initialisierung abgeschlossen / Programmstart

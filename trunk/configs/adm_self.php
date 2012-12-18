@@ -2,9 +2,9 @@
 /*****************************************************************************
 Eventhandler für Änderung des eigenen Passwortes
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
@@ -16,7 +16,7 @@ if (!$myauth->getAuth()) {
 
 if($myauth->getAuthData('rechte') < 2) {
     fehler(2);
-    die();
+    exit;
 }
 
 // Dialog anzeigen

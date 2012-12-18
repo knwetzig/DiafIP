@@ -5,9 +5,9 @@ class: s_location_class.php
 proc:  editOrt
 param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] => tooltip)
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden

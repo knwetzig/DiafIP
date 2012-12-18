@@ -9,10 +9,7 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) :
-    fehler(108);
-    exit;
-endif;
+if(!$myauth->checkAuth()) fehler(108);
 
 // Überschrift
 $data = a_display(array(
@@ -49,10 +46,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                 $film = unserialize($myauth->getAuthData('obj'));
                 $film->edit(true);
                 $erg = $film->set();
-                if ($erg) :
-                    fehler($erg);
-                    exit;
-                endif;
+                if ($erg) fehler($erg);
                 $film->view();
             }
         break;	// Ende edit
@@ -79,7 +73,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         case "del" :
             $film = new Film($_POST['fid']);
             $erg = $film->del();
-            if(empty($erg)) erfolg(); else fehler($erg);
+            if(empty($erg)) erfolg(); else warng($erg);
         break;
 
         case 'view' :

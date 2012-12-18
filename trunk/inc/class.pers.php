@@ -254,10 +254,7 @@ func: __construct($)
 
             if(isset($_POST['name'])) {
                 if(!empty($_POST['name'])) $this->name = $_POST['name'];
-                else {
-                    fehler(107);
-                    exit();
-                }
+                else fehler(107);
             }
 
             if (isset($_POST['aliases'])) $this->aliases = $_POST['aliases'];
@@ -265,7 +262,7 @@ func: __construct($)
             if(isset($_POST['gtag'])) {
                 if($_POST['gtag']) {
                     if(isValid($_POST['gtag'], DATUM)) $this->gtag = $_POST['gtag'];
-                    else fehler(103);
+                    else warng(103);
                 } else $this->gtag = '0001-01-01';
             }
 
@@ -276,7 +273,7 @@ func: __construct($)
             if(isset($_POST['ttag'])) {
                 if($_POST['ttag']) {
                     if(isValid($_POST['ttag'], DATUM)) $this->ttag = $_POST['ttag'];
-                    else fehler(103);
+                    else warng(103);
                 } else $this->ttag = null;
             }
 
@@ -300,7 +297,7 @@ func: __construct($)
                 if(isset($_POST['plz'])) {
                     if($_POST['plz']){
                         if(isValid($_POST['plz'], '[\d]{3,5}')) $this->plz = $_POST['plz'];
-                        else fehler(104);
+                        else warng(104);
                     } else $this->plz = null;
                 }
 
@@ -314,7 +311,7 @@ func: __construct($)
                 if(isset($_POST['mail'])) {
                     if($_POST['mail']) {
                         if(isValid($_POST['mail'], EMAIL)) $this->mail = $_POST['mail'];
-                        else fehler(106);
+                        else warng(106);
                     } else $this->mail = null;
                 }
             }
@@ -326,10 +323,7 @@ func: __construct($)
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) :
-                fehler(128);
-                exit();
-            endif;
+            if (!empty($number) AND $number != $this->id) fehler(128);
         }
     }
 
@@ -426,10 +420,7 @@ func: __construct($)
         /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
         knüpft ist oder problemlos gelöscht werden kann */
 
-        if(self::isLinked()) :
-            fehler(10006);
-            exit();
-        endif;
+        if(self::isLinked()) fehler(10006);
 
         IsDbError($db->extended->autoExecute('p_person', null,
             MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));

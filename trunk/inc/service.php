@@ -118,6 +118,7 @@ function fehler($err) {
     if(is_numeric($err))
         echo "<div class='error'>".d_feld::getString((int)$err)."</div>";
     else echo '<div class="error">'.$err.'</div>';
+    exit;
 }
 function warng($warn) {
     if(is_numeric($warn))
