@@ -18,8 +18,9 @@ $URL$
         <button name='sektion' value='person'>{$dlg[3]}</button>
         <button name='sektion' value='film'>{$dlg[1]}</button>
         <button name='sektion' value='i_planar'>{$dlg[2]}</button>
-        <button name='sektion'  value='admin'>{$dlg[6]}</button>
-        <span class='note' style='padding-top:15px;'><br /><br />{$dlg[8]}<br /></span>
+        <button name='sektion' value='i_3dobj'>{$dlg[8]}</button>
+        <button name='sektion' value='admin'>{$dlg[6]}</button>
+        <span class='note' style='padding-top:15px;'><br /><br />{$dlg[9]}<br /></span>
         <button name='aktion' value='logout'>{$dlg[5]}</button>
     </form>
 </div>

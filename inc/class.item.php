@@ -19,12 +19,12 @@ interface iItem {
     public function del();
     public static function is_Del($nr);
     public function isVal();
-    public static function search($s);
 }
 
-interface iPlanar extends iItem {
+interface iPlanar extends iItem { // wird auch von 3D-Obj genutzt
     public function add($stat);
     public function set();
+    public static function search($s);
     public function view();
 }
 
@@ -175,7 +175,6 @@ abstract class Item implements iItem {
                 new d_feld('descr',     changetext($this->descr), VIEW, 506),
                 new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
             );
-
         endswitch;
         return $data;
     }
@@ -351,12 +350,14 @@ abstract class Item implements iItem {
         return $data;
     }
 
+
+/* Ausgelagert in die Kindroutinen wegen Obj-zuordnung
     public static function search($s) {
     /****************************************************************
     *  Aufgabe: Suchfunktion in .......
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
-    ****************************************************************/
+    ****************************************************************
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
@@ -368,6 +369,7 @@ abstract class Item implements iItem {
         $erg = $data;
         if ($erg) return array_unique($erg); else return 1;
     }
+*/
 
     protected function VWert() {
     /****************************************************************
@@ -531,6 +533,25 @@ final class Planar extends Item implements iPlanar {
         IsDbError($erg);
     }
 
+    public static function search($s) {
+    /****************************************************************
+    *  Aufgabe: Suchfunktion in .......
+    *   Param:  string
+    *   Return: Array der gefunden ID's | Fehlercode
+    ****************************************************************/
+        global $db, $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        $s = "%".$s."%";
+
+        // Suche in Bezeichner (rudimentär)
+        $data = $db->extended->getCol(
+            'SELECT id FROM ONLY i_planar
+            WHERE (bezeichner ILIKE ?) AND (del != TRUE);', null, $s);
+        IsDbError($data);
+        $erg = $data;
+        if ($erg) return array_unique($erg); else return 1;
+    }
+
     public function view() {
     /****************************************************************
     *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
@@ -545,6 +566,181 @@ final class Planar extends Item implements iPlanar {
 
         $smarty->assign('dialog', $data);
         $smarty->display('item_planar_dat.tpl');
+    }
+}
+
+
+
+/** ==========================================================================
+                                3D-Objekt CLASS
+========================================================================== **/
+final class Obj3d extends Item implements iPlanar {
+
+    protected
+        $art    = 585,      // Puppen, Requisiten, Preise
+                            // Vorgabe: 585 = Animationspuppe
+        $z      = null;     // Oh Wunder, da taucht die 3. Dimension auf ;-))
+
+    const
+        SQL_get = 'SELECT art, z FROM ONLY i_3dobj WHERE id = ?;';
+
+    function __construct($nr = NULL) {
+        if (isset($nr)) self::get($nr);
+    }
+
+    protected function get($nr) {
+    /****************************************************************
+    *  Aufgabe: Aufruf der Elternklasse zur Initialisierung und Ergänzung
+    *           um eigene Felder
+    *   Return: void
+    ****************************************************************/
+        parent::get($nr);
+        global $db;
+        $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
+        IsDbError($data);
+        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
+
+        // Ergebnis -> Objekt schreiben
+        $this->art = $data['art'];
+        $this->z = $data['z'];
+    }
+
+    protected static function getArtLi() {
+    /****************************************************************
+    *  Aufgabe: Liefert eine Array der Arten
+    *   Return: array()
+    ****************************************************************/
+        global $db;
+        $list = $db->extended->getCol('SELECT id FROM i_3dobj_art;', 'integer');
+        IsDbError($list);
+        $data = array();
+        foreach($list as $wert) :
+            $data[$wert] = d_feld::getString($wert);
+        endforeach;
+        asort($data);
+        return $data;
+    }
+
+    public function add($stat) {
+    /****************************************************************
+    *   Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
+    *   Aufruf:  Status
+    *   Return:  Fehlercode
+    ****************************************************************/
+        global $db, $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if ($stat == false) :
+            $db->beginTransaction('new3Ditem'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
+            IsDbError($data);
+            $this->id = $data;
+            $this->edit($stat);
+       else :
+            // Objekt wurde vom Eventhandler initiiert
+            $this->edit(true);
+            // Typ wird autom. generiert
+            foreach($this as $key => $wert) $data[$key] = $wert;
+            unset($data['types']);
+
+            $types = $this->types;
+            array_unshift($types, 'integer','integer');
+            $erg = $db->extended->autoExecute('i_3dobj', $data,
+                        MDB2_AUTOQUERY_INSERT, null, $types);
+            IsDbError($erg);
+
+            $db->commit('new3Ditem'); IsDbError($db);
+            // ende Transaktion
+        endif;
+    }
+
+    public function edit($stat) {
+    /****************************************************************
+    *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
+    *   Return: none
+    ****************************************************************/
+        global $db, $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        if($stat == false) :        // Formular anzeigen
+            $data = a_display(self::ea_struct('edit'));
+            $a = new d_feld('art', $this->art, EDIT, 4030);
+            $data['art'] = $a->display();
+            $a = new d_feld('z', $this->z, EDIT, 471, ANZAHL);
+            $data['z'] = $a->display();
+            $a = new d_feld('artLi', self::getArtLi());
+            $data['artLi'] = $a->display();
+            $smarty->assign('dialog', $data);
+            $smarty->display('item_3dobj_dialog.tpl');
+            $myauth->setAuthData('obj', serialize($this));
+        else :                         // Formular auswerten
+            // Obj zurückspeichern wird im aufrufenden Teil erledigt
+            parent::edit(true);
+            $this->art = (int)$_POST['art'];
+            if (!empty($_POST['z']) AND is_numeric($_POST['z']))
+                $this->z = (int)$_POST['z'];
+
+            // doppelten Datensatz abfangen
+            $number = self::ifDouble();
+            if (!empty($number) AND $number != $this->id) warng('10008');
+        endif;
+    }
+
+    public function set() {
+    /****************************************************************
+    *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
+    *    Return: Fehlercode
+    ****************************************************************/
+        global $db, $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if(!$this->id) return 4;         // Abbruch: leerer Datensatz
+
+        // Uhrzeit und User setzen
+
+        foreach($this as $key => $wert) $data[$key] = $wert;
+        unset($data['types']);
+        $types = $this->types;
+        array_unshift($types, 'integer', 'integer');
+        $erg = $db->extended->autoExecute('i_3dobj', $data,
+            MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
+        IsDbError($erg);
+    }
+
+    public static function search($s) {
+    /****************************************************************
+    *  Aufgabe: Suchfunktion in .......
+    *   Param:  string
+    *   Return: Array der gefunden ID's | Fehlercode
+    ****************************************************************/
+        global $db, $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        $s = "%".$s."%";
+
+        // Suche in Bezeichner (rudimentär)
+        $data = $db->extended->getCol(
+            'SELECT id FROM ONLY i_3dobj
+            WHERE (bezeichner ILIKE ?) AND (del != TRUE);', null, $s);
+        IsDbError($data);
+        $erg = $data;
+        if ($erg) return array_unique($erg); else return 1;
+    }
+
+    public function view() {
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
+    *    Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+        $data = parent::view();
+        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $data['art'] = $a->display();
+        $a = new d_feld('z',   $this->z,   VIEW, 471);
+        $data['z'] = $a->display();
+        $smarty->assign('dialog', $data);
+        $smarty->display('item_3dobj_dat.tpl');
     }
 }
 ?>

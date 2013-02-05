@@ -44,11 +44,7 @@ class LOrt implements iLOrt {
         global $db;
         $data = $db->extended->getOne(self::SQL_get, null, $nr, 'integer');
         IsDbError($data);
-
-        if (empty($data)) :   // kein Datensatz vorhanden
-            fehler(4);
-            exit;
-        endif;
+        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
 
         $this->id = (int)$nr;
         $this->lort = $data;
@@ -83,13 +79,22 @@ class LOrt implements iLOrt {
         if ($st) :
 
         else :
-
+            $lort = array();
+            if($_POST['lagerort'] !== "") $lort['lagerort'] = $_POST['lagerort']; else fehler(107);
+// Test Unique
+            $data = $db->extended->autoExecute('p_alias', $lort,
+                        MDB2_AUTOQUERY_INSERT, null, array('text','text'));
+            IsDbError($data);
         endif;
     }
 
     public function edit($st) {
         if ($st) :
-
+            $dialog[0][2] = 'Lagerort&nbsp;bearbeiten';
+            $dialog[2][1] = $ali->name;
+            $dialog[6][1] = $_POST['lort']?'edLort':'addLort';
+            $smarty->assign('dialog', $dialog);
+            $smarty->display('adm_dialog.tpl');
         else :
 
         endif;
@@ -99,7 +104,9 @@ class LOrt implements iLOrt {
         if ($st) :
 
         else :
-
+            $data = $db->extended->autoExecute('p_alias', $ali,
+                MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('integer','text','text'));
+            IsDbError($data);
         endif;
     }
 
@@ -108,7 +115,6 @@ class LOrt implements iLOrt {
         $list = $db->extended->getCol(
             self::SQL_islinked, 'integer', $this->id, 'integer');
         IsDbError($list);
-_v($list,'Liste mit den verknüpften Lagerorten');
         return $list;
     }
 
@@ -118,12 +124,9 @@ _v($list,'Liste mit den verknüpften Lagerorten');
 
         if ($this->is_linked()) Fehler(10006); else {
             // löschen in Tabelle
-
-/*
-        IsDbError($db->extended->autoExecute('p_person', null,
-            MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
-        erfolg(); return 0;
-*/
+            IsDbError($db->extended->autoExecute('i_lagerort', null,
+                MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
+            erfolg();
         }
     }
 

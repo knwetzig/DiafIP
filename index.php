@@ -70,7 +70,7 @@ $stat = new db_stat();
 $smarty->assign('stat', $stat->view());
 
 // laden Menübereich
-$data = getStringList(array(0,4008,4028,4003,0,4005,4006,4009));
+$data = getStringList(array(0,4008,4028,4003,0,4005,4006,4009,4032));
 $data[] = $myauth->getAuthData('realname');
 $smarty->assign('dlg', $data);
 $smarty->display('menue.tpl');

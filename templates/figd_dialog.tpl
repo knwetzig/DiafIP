@@ -50,43 +50,16 @@ $URL$
         <td><input type='text' name='sfolge' value="{$dialog['sfolge'][1]}" /></td>
     </tr>{/if}
 
-{* --- Beschreibung --- *}
-    {if isset($dialog['inhalt'])}<tr>
-        <td class="re" style="vertical-align:top">{$dialog['inhalt'][2]}:</td>
-        <td><textarea
-            cols="40"
-            rows="10"
-            wrap="soft"
-            name={$dialog['inhalt'][0]}
-            >{$dialog['inhalt'][1]}</textarea></td>
+{* --- Auftraggeber --- *}
+    {if isset($dialog['auftraggeber'])}<tr>
+        <td class="re">{$dialog['auftraggeber'][2]}:</td>
+        <td>{html_options
+            name=$dialog['auftraggeber'][0]
+            options=$dialog['persLi'][1]
+            selected=$dialog['auftraggeber'][1]
+        }</td>
     </tr>{/if}
 
-{* --- Quellen --- *}
-    {if isset($dialog['quellen'])}<tr>
-        <td class="re" style="vertical-align:top">{$dialog['quellen'][2]}:</td>
-        <td><textarea
-            cols="40"
-            rows="3"
-            name={$dialog['quellen'][0]}
-            >{$dialog['quellen'][1]}</textarea>
-        </td>
-    </tr>{/if}
-
-{* --- Anmerkungen --- *}
-    {if isset($dialog['anmerk'])}<tr>
-        <td class="re" style="vertical-align:top">
-            {$dialog['anmerk'][2]}:<br />
-            <span class="note">(public)</span>
-        </td>
-        <td><textarea
-            cols="40"
-            rows="8"
-            wrap="soft"
-            name={$dialog['anmerk'][0]}
-            >{$dialog['anmerk'][1]}</textarea></td>
-    </tr>{/if}
-</table></td><!-- ende links --><td style="padding-left:20px"><!-- rechter Block -->
-<table>
 {* --- Produktionjahr --- *}
     {if isset($dialog['prod_jahr'])}<tr>
         <td class="re">{$dialog['prod_jahr'][2]}:</td>
@@ -109,6 +82,33 @@ $URL$
                 selected=$dialog['gattung'][1]}
         </td>
     </tr>{/if}
+
+{* --- Beschreibung --- *}
+    {if isset($dialog['inhalt'])}<tr>
+        <td class="re" style="vertical-align:top">{$dialog['inhalt'][2]}:</td>
+        <td><textarea
+            cols="40"
+            rows="10"
+            wrap="soft"
+            name={$dialog['inhalt'][0]}
+            >{$dialog['inhalt'][1]}</textarea></td>
+    </tr>{/if}
+
+{* --- Anmerkungen --- *}
+    {if isset($dialog['anmerk'])}<tr>
+        <td class="re" style="vertical-align:top">
+            {$dialog['anmerk'][2]}:<br />
+            <span class="note">(public)</span>
+        </td>
+        <td><textarea
+            cols="40"
+            rows="8"
+            wrap="soft"
+            name={$dialog['anmerk'][0]}
+            >{$dialog['anmerk'][1]}</textarea></td>
+    </tr>{/if}
+</table></td><!-- ende links --><td class="top" style="padding-left:20px"><!-- rechter Block -->
+<table>
 
 {* --- Prod_technik --- *}
     {if isset($dialog['prodtech'])}<tr>
@@ -181,6 +181,17 @@ $URL$
                 separator= "&nbsp;"}</td>
     </tr>{/if}
 
+{* --- Quellen --- *}
+    {if isset($dialog['quellen'])}<tr>
+        <td class="re" style="vertical-align:top">{$dialog['quellen'][2]}:</td>
+        <td><textarea
+            cols="40"
+            rows="3"
+            name={$dialog['quellen'][0]}
+            >{$dialog['quellen'][1]}</textarea>
+        </td>
+    </tr>{/if}
+
 {* --- Notiz --- *}
     {if isset($dialog['notiz'])}<tr>
         <td class="re" style="vertical-align:top">
@@ -227,7 +238,7 @@ $URL$
 <table{*für Casting/bild*}><tr><td>
 
 {* --- Besetzung --- *}
-    <fieldset><legend>????????</legend>
+    <fieldset><legend>Stabliste</legend>
     <table>
         {foreach from=$dialog['cast'][1] item=wert}
         <tr>
