@@ -58,7 +58,7 @@ $datei = array(
     'film'	    => "inc/ev_figd.php",		    // filmografische Daten
     'person'    => "inc/ev_pers.php",           // Personenverzeichnis
     'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
-    'i_3d'      => '',
+    'i_3dobj'   => 'inc/ev_item_3dobj.php',
     'i_media'   => '',
     'changes'   => 'changes.txt'
 );

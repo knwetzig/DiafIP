@@ -79,6 +79,12 @@ $URL$
             onmouseout="return nd();"{/if}>{$dialog['stitel'][1]} {if !empty($dialog['sfolge'][1])}({$dialog['sfolge'][1]}){/if}</td>
     </tr>{/if}
 
+{* --Auftraggeber-- *}
+    {if !empty($dialog['auftraggeber'][1])}<tr>
+        <td class="re">{$dialog['auftraggeber'][2]}:</td>
+        <td>{$dialog['auftraggeber'][1]}</td>
+    </tr>{/if}
+
 {* --prod_jahr-- *}
     {if !empty($dialog['prod_jahr'][1])}<tr>
         <td class="re">{$dialog['prod_jahr'][2]}:</td>

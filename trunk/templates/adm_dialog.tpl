@@ -80,12 +80,14 @@ $URL$
 
             <tr>
                 <td colspan="2" class="re">
+
 {if isset($dialog[5])}<button
                         type="submit"
                         name="{$dialog[5][0]}"
                         value="{$dialog[5][1]}">
                         {$dialog[5][2]}
                     </button>{/if}
+
                     <button
                         type="submit"
                         name="{$dialog[6][0]}"

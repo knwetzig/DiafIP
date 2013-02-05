@@ -85,15 +85,11 @@ interne Methoden:
         SQL_get     = 'SELECT * FROM f_main WHERE id = ?;',
         SQL_exCast  = 'SELECT COUNT(*) FROM F_cast
                        WHERE fid = ? AND pid = ? AND tid = ?;',
-        SQL_getCaLi = 'SELECT
-                         p_person.vname, p_person.name,
-                         f_cast.tid, f_cast.pid
-                       FROM
-                         public.f_cast, public.p_person
-                       WHERE
-                         f_cast.pid = p_person.id AND f_cast.fid = ?
-                       ORDER BY
-                         p_person."name" ASC, p_person.vname ASC;',
+        SQL_getCaLi = 'SELECT   p_person.vname, p_person.name,
+                                f_cast.tid, f_cast.pid
+                       FROM     public.f_cast, public.p_person
+                       WHERE    f_cast.pid = p_person.id AND f_cast.fid = ?
+                       ORDER BY tid;',
         SQL_isDel   = 'SELECT del FROM f_main WHERE id = ?;',
         SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?';
 
@@ -405,11 +401,12 @@ Interne Methoden:
         $praedikat  = 0,
         $mediaspezi = 0,
         $bildformat = 0,
-        $urauffuehr = null;
+        $urauffuehr = null,
+        $auftraggeber = null;
 
     const
-        SQL_get      = 'SELECT gattung, prodtechnik, laenge, fsk,
-                          praedikat, bildformat, mediaspezi, urauffuehr
+        SQL_get      = 'SELECT gattung, prodtechnik, laenge, fsk, praedikat,
+                            bildformat, mediaspezi, urauffuehr, auftraggeber
                        FROM f_film WHERE id = ?;',
         SQL_getPraed = 'SELECT * FROM f_praed ORDER BY praed ASC;',
         SQL_getGenre = 'SELECT * FROM f_genre;',
@@ -439,6 +436,7 @@ Interne Methoden:
             'integer',  // bildformat
             'integer',  // mediaspezi
             'date',     // urauffuehr
+            'integer'   // Auftraggeber
         );
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
@@ -577,6 +575,7 @@ Interne Methoden:
                 'integer',      // mediaspezi
                 'integer',      // bildformat
                 'text',         // urauffuehr
+                'integer',      // auftraggeber
                 'integer',      // id
                 'boolean',      // del
                 'integer',      // editfrom
@@ -649,6 +648,7 @@ Interne Methoden:
                 new d_feld('bildformat',$this->bildformat,  EDIT, 608),
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
+                new d_feld('auftraggeber', $this->auftraggeber, EDIT, 555),
                 new d_feld('isvalid',   $this->isvalid,     IEDIT, 10009),
             );
             // CastListe nur beim bearbeiten und nicht bei Neuanlage zeigen.
@@ -657,8 +657,10 @@ Interne Methoden:
             $smarty->assign('dialog', a_display($data));
             $smarty->display('figd_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
-        else :                         // Formular auswerten
-            // Obj zurückspeichern wird im aufrufenden Teil erledigt
+
+        else :          // Formular auswerten - Obj zurückspeichern wird im
+                        // aufrufenden Teil erledigt
+
             if (empty($this->titel) AND empty($_POST['titel'])) fehler(100);
             else if ($_POST['titel']) $this->titel = $_POST['titel'];
 
@@ -693,6 +695,12 @@ Interne Methoden:
                 else $this->anmerk = null;
             endif;
 
+            if(isset($_POST['auftraggeber'])) :
+                if ($_POST['auftraggeber'])
+                    $this->auftraggeber = (int)($_POST['auftraggeber']);
+                else $this->auftraggeber = null;
+            endif;
+
             if(isset($_POST['prod_jahr'])) :
                 if ($_POST['prod_jahr']) {
                     if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
@@ -715,7 +723,7 @@ Interne Methoden:
             endif;
 
             if(isset($_POST['prodtech']))
-                $this->prodtechnik = bitArr2wert($_POST['prodtech']);
+               $this->prodtechnik = array2wert(0, $_POST['prodtech']);
             else $this->prodtechnik = null;
 
             if(isset($_POST['laenge'])) :
@@ -754,7 +762,7 @@ Interne Methoden:
                     $this->bildformat = (int)$_POST['bildformat'];
 
             if(isset($_POST['mediaspezi']))
-                $this->mediaspezi = bitArr2wert($_POST['mediaspezi']);
+                $this->mediaspezi = array2wert(0, $_POST['mediaspezi']);
             else $this->mediaspezi = null;
 
 
@@ -775,7 +783,7 @@ Interne Methoden:
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
             if (!empty($number) AND $number != $this->id) warng('10008');
-        endif;  // Formularbereich
+        endif;
     }
 
     public function set() {
@@ -796,6 +804,7 @@ Interne Methoden:
             'integer',      // mediaspezi
             'integer',      // bildformat
             'text',         // urauffuehr
+            'integer',      // auftraggeber
             'boolean',      // del
             'integer',      // editfrom
             'timestamp',    // editdate
@@ -843,12 +852,15 @@ Interne Methoden:
         global $db, $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
         if(!empty($this->editfrom)) :
             $bearbeiter = $db->extended->getOne(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
             IsDbError($bearbeiter);
         else : $bearbeiter = null;
         endif;
+        $ageber = new Person($this->auftraggeber);
+
         $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
             new d_feld('id',        $this->id,          VIEW),   // fid
             new d_feld('titel',     $this->titel,       VIEW, 500), // Originaltitel
@@ -871,6 +883,7 @@ Interne Methoden:
             new d_feld('praedikat', d_feld::getString($this->praedikat), VIEW, 582),
             new d_feld('bildformat', self::getBildformat(),    VIEW, 608),
             new d_feld('mediaspezi', self::getThisMediaSpez(),  VIEW, 583),
+            new d_feld('auftraggeber', $ageber->getName(), VIEW, 555),
             new d_feld('urrauff',   $this->urauffuehr,          VIEW, 584),
             new d_feld('cast',      $this->getCastList(),       VIEW),
             new d_feld('edit',      null, EDIT, null, 4013), // edit-Button

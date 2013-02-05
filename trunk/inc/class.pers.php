@@ -4,7 +4,7 @@ Enthält alle Klassenbibliotheken zu Personendaten
 
 $Rev$
 $Author$
-$Date: 2012-08-12 23:05:36 +0200 (#$
+$Date$
 $URL$
 
 ToDo: Das Löschen von Personen ist noch auf die Papierkorb-Mechanik umzustellen.
@@ -140,7 +140,7 @@ func: __construct($)
         // -> Bildinitialisierung hinzufügen
     }
 
-    function getName() {
+    public function getName() {
     /****************************************************************
     *  Aufgabe: Liefert den zusammngesetzten Namen zurück
     *   Return: bool
