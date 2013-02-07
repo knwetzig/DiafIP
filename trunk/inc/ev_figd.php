@@ -23,10 +23,10 @@ $smarty->assign('dialog', $data);
 $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');
 
-if (isset($_POST['aktion'])?$_POST['aktion']:'') :
-    $smarty->assign('aktion', $_POST['aktion']);
+if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
+    $smarty->assign('aktion', $_REQUEST['aktion']);
     // switch:action => add | edit | search | del | view
-    switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
+    switch(isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
         case "add":
             if (isset($_POST['form'])) {
                 $film = new Film;        // Formular anfordern
@@ -77,7 +77,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         break;
 
         case 'view' :
-            $film = new Film((int)$_POST['fid']);
+            $film = new Film((int)$_REQUEST['fid']);
             $film->view();
         break;
 

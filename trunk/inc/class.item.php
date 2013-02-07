@@ -60,7 +60,7 @@ abstract class Item implements iItem {
         $bild_id        = '{}',
         $obj_typ        = 1,
         $del            = false,
-        $lagerort       = null,     // -> lagerort
+        $lagerort       = 67,       // -> lagerort unbestimmt
         $bezeichner     = null,
         $editfrom       = null,
         $editdate       = null,

@@ -87,6 +87,7 @@ func: __construct($)
       get($!)     // holt db-felder -> this
       refresh
     getPersonLi()       // gibt die Liste aller Personen aus
+    getCastLi()
       edit()
       add()
       set()       // schreibt objekt.person -> db
@@ -116,10 +117,12 @@ func: __construct($)
         $editfrom = null;
 
     const
-        SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?',
-        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person ORDER BY name ASC;',
-        SQL_ifDouble    = 'SELECT id FROM p_person WHERE gtag = ? AND vname = ? AND name = ?;';
-
+        SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?;',
+        SQL_getCaLi     = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
+        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person
+                           ORDER BY name ASC;',
+        SQL_ifDouble    = 'SELECT id FROM p_person
+                           WHERE gtag = ? AND vname = ? AND name = ?;';
     function __construct($nr = NULL) {
         if (isset($nr)) $this->get($nr);
     }
@@ -147,7 +150,7 @@ func: __construct($)
     ****************************************************************/
         if(empty($this->id)) return;
             $data = $this->fiVname().$this->name;
-        return $data;
+        return '<a href="index.php?sektion=person&aktion=view&pid='.$this->id.'">'.$data.'</a>';
     }
 
 
@@ -192,6 +195,30 @@ func: __construct($)
             if ($wert['vname'] !== '-') $data[$wert['id']] = $wert['vname'].'&nbsp;'.$wert['name']; else $data[$wert['id']] = $wert['name'];
         endforeach;
         return $data;
+    }
+
+    final protected function getCastList() {
+    /****************************************************************
+    *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
+    *   Return: array(vname, name, tid, pid, job)
+    ****************************************************************/
+        global $db;
+        if (empty($this->id)) return;
+        $data = $db->extended->getALL(
+            self::SQL_getCaLi, null, $this->id, 'integer');
+        IsDbError($data);
+        $f=array();
+
+        // Übersetzung für die Tätigkeit und Namen holen
+        foreach($data as $wert) :
+            if(!Film::is_Del($wert['fid'])) :
+                $g = array();
+                $g['ftitel'] = Film::getTitel($wert['fid']);
+                $g['job'] = d_feld::getString($wert['tid']);
+                $f[] = $g;
+            endif;
+        endforeach;
+        return $f;
     }
 
     protected function isLinked() {
@@ -496,6 +523,7 @@ func: __construct($)
             new d_feld('tel',    $this->tel,                IVIEW,  511),   // Telefonnr.
             new d_feld('mail',   $this->mail,               IVIEW,  512),   // email
             new d_feld('biogr',  changetext($this->biogr),  VIEW,   513),   // Biografie
+            new d_feld('castLi', $this->getCastList(),      VIEW),          // Verw. Film
             new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514),   // Notiz
             new d_feld('bild',   $this->bild,               VIEW),
             new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button

@@ -12,7 +12,7 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <div id='menue'>
-    <form method='post'>
+    <form action='index.php' method='get'>
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <br /><br />
         <button name='sektion' value='person'>{$dlg[3]}</button>
