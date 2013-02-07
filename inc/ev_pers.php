@@ -27,11 +27,11 @@ $smarty->assign('dialog', $data);
 $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');
 
-if (isset($_POST['aktion'])?$_POST['aktion']:'') {
-    $smarty->assign('aktion', $_POST['aktion']);
+if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
+    $smarty->assign('aktion', $_REQUEST['aktion']);
 
     // switch:action => add | edit | search | del | view
-    switch($_POST['aktion']) :
+    switch($_REQUEST['aktion']) :
         case "add":
             if(isset($_POST['form'])) {
                 // neues Formular
@@ -90,7 +90,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') {
         break;
 
         case "view" :
-            $pers = new Person((int)$_POST['pid']);
+            $pers = new Person((int)$_REQUEST['pid']);
             $pers->view();
         break;  // Endview
     endswitch;

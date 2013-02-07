@@ -1,9 +1,9 @@
 {**************************************************************
 Smarty-Template für die Ansicht von Personendaten
 
-$Rev::                              $
-$Author::                           $
-$Date::                           $
+$Rev$
+$Author$
+$Date$
 $URL$
 
     call:   pers_class.php
@@ -73,7 +73,7 @@ $URL$
                 &nbsp;({$dialog['gort'][1]['land']},&nbsp;{$dialog['gort'][1]['bland']})
             {/if}
         </td>
-        <td rowspan="5">{*<img src="bild.png" width="100" height="135" alt="bild" />*}</td>
+        <td >{*<img src="images/platzhalter.png" width="100" height="135" alt="bild" />*}</td>
     </tr>{/if}
 
 {* --Todeszeile-- *}
@@ -121,6 +121,15 @@ $URL$
             <td class="re" style="vertical-align:top">{$dialog['biogr'][2]}:</td>
             <td colspan="2" style="white-space:normal">{$dialog['biogr'][1]|nl2br}</td>
     </tr>{/if}
+
+{* --Verweis auf Filmografie-- *}
+    {if !empty($dialog['castLi'][1])}
+        {foreach from=$dialog['castLi'][1] item=cast}<tr>
+            <td><!-- Label --></td>
+            <td>{$cast['ftitel']}</td>
+            <td>{$cast['job']}</td>
+        </tr>{/foreach}
+    {/if}
 
 {* --Notizfeld-- *}
     {if !empty($dialog['notiz'][1])}<tr>

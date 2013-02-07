@@ -13,7 +13,8 @@ $URL$
 interface iMain {
     const
         SQL_getSTLi = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
-        SQL_getTLi  = 'SELECT id, titel FROM f_main ORDER BY titel ASC',
+        SQL_getTLi  = 'SELECT f_main.id, f_main.titel FROM public.f_main
+                        WHERE f_main.del != TRUE ORDER BY f_main.titel ASC;',
         SQL_isVal   = 'SELECT isvalid FROM f_main WHERE id = ?;',
         SQL_search1  = 'SELECT id FROM f_film
                             WHERE (titel ILIKE ?) OR   (utitel ILIKE ?)
@@ -85,10 +86,9 @@ interne Methoden:
         SQL_get     = 'SELECT * FROM f_main WHERE id = ?;',
         SQL_exCast  = 'SELECT COUNT(*) FROM F_cast
                        WHERE fid = ? AND pid = ? AND tid = ?;',
-        SQL_getCaLi = 'SELECT   p_person.vname, p_person.name,
-                                f_cast.tid, f_cast.pid
-                       FROM     public.f_cast, public.p_person
-                       WHERE    f_cast.pid = p_person.id AND f_cast.fid = ?
+        SQL_getCaLi = 'SELECT   f_cast.tid, f_cast.pid
+                       FROM     public.f_cast
+                       WHERE    f_cast.fid = ?
                        ORDER BY tid;',
         SQL_isDel   = 'SELECT del FROM f_main WHERE id = ?;',
         SQL_isLink  = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?';
@@ -164,7 +164,7 @@ interne Methoden:
         $erg = $db->extended->getOne(
             'SELECT titel FROM f_main WHERE id = ?;', null, (int)$nr);
         IsDbError($erg);
-        return $erg;
+        return '<a href="index.php?sektion=film&aktion=view&fid='.$nr.'">'.$erg.'</a>';
     }
 
     protected function get($nr) {
@@ -239,7 +239,7 @@ interne Methoden:
 
     final public static function is_Del($nr) {
     /****************************************************************
-    *  Aufgabe: Testet ob Löschflaf für Eintrag $nr gesetzt ist
+    *  Aufgabe: Testet ob Löschflag für Eintrag $nr gesetzt ist
     *   Aufruf: int $nr
     *   Return: bool
     ****************************************************************/
@@ -298,7 +298,7 @@ interne Methoden:
     final protected function getCastList() {
     /****************************************************************
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
-    *   Return: array(vname, name, tid, pid, job)
+    *   Return: array(name, tid, pid, job)
     ****************************************************************/
         global $db;
         if (empty($this->id)) return;
@@ -306,13 +306,14 @@ interne Methoden:
             self::SQL_getCaLi, null, $this->id, 'integer');
         IsDbError($data);
 
-        // Übersetzung für die Tätigkeit holen
+        // Übersetzung für die Tätigkeit und Namen holen
         foreach($data as &$wert) :
            $wert['job'] = d_feld::getString($wert['tid']);
-           if ($wert['vname'] === '-') $wert['vname'] = null;
+           $p = new Person($wert['pid']);
+           $wert['name'] = $p->getName();
         endforeach;
         unset($wert);
-        return ($data);
+        return $data;
     }
 
     final protected function isLinked() {

@@ -10,6 +10,7 @@ $URL$
 
 require_once	'configs/config.php';
 $_POST = normtext($_POST);              // Filter für htmlentities
+$_GET = normtext($_GET);
 
 // Datenbankanbindung
 $options = array(
@@ -32,7 +33,7 @@ $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
 if (!$myauth->checkAuth()) exit;        // erfolglose Anmeldung
 
-if (isset($_POST['aktion']) AND ($_POST['aktion'] === "logout")) :
+if (isset($_GET['aktion']) AND ($_GET['aktion'] === "logout")) :
     $db->disconnect();
     $myauth->logout();
     $myauth->start();

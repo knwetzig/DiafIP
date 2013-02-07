@@ -49,11 +49,9 @@ $URL$
     </form></tr>
 
 {* --Bild-- *}
-    {if !empty($dialog['bild_id'][1])}<tr><td colspan="2"></td>
-        <td rowspan="7">
-            <img src="images/platzhalter.png" width="200" height="150" alt="bild" />
-        </td>
-    <tr>{/if}
+    {if !empty($dialog['bild_id'][1])}
+        {* PLATZHALTER *}
+    {/if}
 
 
 {* --Untertitel-- *}
@@ -149,10 +147,7 @@ $URL$
     {if !empty($dialog['cast'][1])}
     {foreach from=$dialog['cast'][1] item=cast}<tr>
         <td class="re">{$cast['job']}:</td>
-        <td>
-            {if !empty($cast['vname'])} {$cast['vname']}&nbsp;{/if}
-            {$cast['name']}
-        </td>
+        <td>{$cast['name']}</td>
     </tr>{/foreach}
     {/if}
 

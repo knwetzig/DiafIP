@@ -235,7 +235,7 @@ $URL$
     nicht bei der Neuanlage angezeigt.
 **************************************************************}
 {if isset($dialog['cast'])}
-<table{*für Casting/bild*}><tr><td>
+<table id='castlist'{*für Casting/bild*}><tr><td>
 
 {* --- Besetzung --- *}
     <fieldset><legend>Stabliste</legend>
@@ -243,8 +243,8 @@ $URL$
         {foreach from=$dialog['cast'][1] item=wert}
         <tr>
             <td class="re">{$wert['job']}:</td>
-            <td>{$wert['vname']}&nbsp;{$wert['name']}</td>
-            <td><form method="post"><button
+            <td>{$wert['name']}</td>
+            <td><form action='#castlist' method="post"><button
                     class="small"
                     name="aktion"
                     value="delCast" /><img src="images/del.png"
@@ -257,7 +257,7 @@ $URL$
         </tr>
         {/foreach}
 
-        <tr><form method='post'>
+        <tr><form action='#castlist' method='post'>
             <td>{html_options
                     name=tid
                     options=$dialog['taetigLi'][1]}
