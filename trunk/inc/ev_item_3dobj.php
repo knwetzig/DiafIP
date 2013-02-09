@@ -62,7 +62,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                     foreach(($list) as $nr) :
                         ++$bg; $smarty->assign('darkBG', $bg % 2);
                         $item = new Obj3d($nr);
-                        $item->view();
+                        $item->sview();
                     endforeach;
                 else :
                     warng(102); // kein Erg.

@@ -25,6 +25,7 @@ interface iPlanar extends iItem { // wird auch von 3D-Obj genutzt
     public function add($stat);
     public function set();
     public static function search($s);
+    public function sview();
     public function view();
 }
 
@@ -58,7 +59,6 @@ abstract class Item implements iItem {
         $descr          = null,     // Beschreibung des Gegenstandes
         $rest_report    = null,     // Restaurierungsbericht
         $bild_id        = '{}',
-        $obj_typ        = 1,
         $del            = false,
         $lagerort       = 67,       // -> lagerort unbestimmt
         $bezeichner     = null,
@@ -85,7 +85,6 @@ abstract class Item implements iItem {
             'text',     // descr
             'text',     // rest_report
             'text',     // images[]     Korrektur nötig
-            'integer',  // obj_typ
             'boolean',  // del          true wenn gelöscht
             'integer',  // lagerort
             'text',     // bezeichner
@@ -168,7 +167,7 @@ abstract class Item implements iItem {
                 new d_feld('kollo',     $this->kollo,       IVIEW, 475),
                 new d_feld('zu_film',   Film::getTitel($this->zu_film), VIEW, 5),
                 new d_feld('akt_ort',   $this->akt_ort,     IVIEW, 476),
-                new d_feld('vers_wert', $this->VWert(),     VIEW, 477),
+                new d_feld('vers_wert', $this->VWert(),     IVIEW, 477),
                 new d_feld('oldsig',    $this->getOSig(),   IVIEW, 479),
                 new d_feld('herkunft',  $vbesitz->getName(),IVIEW, 480),
                 new d_feld('in_date',   $this->in_date,     IVIEW, 481),
@@ -467,7 +466,6 @@ final class Planar extends Item implements iPlanar {
        else :
             // Objekt wurde vom Eventhandler initiiert
             $this->edit(true);
-            // Typ wird autom. generiert
             foreach($this as $key => $wert) $data[$key] = $wert;
             unset($data['types']);
 
@@ -550,6 +548,22 @@ final class Planar extends Item implements iPlanar {
         IsDbError($data);
         $erg = $data;
         if ($erg) return array_unique($erg); else return 1;
+    }
+
+    public function sview() {
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Objektdatensatzes (Listenansicht)
+    *    Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+        $data = parent::view();
+        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $data['art'] = $a->display();
+
+        $smarty->assign('dialog', $data);
+        $smarty->display('item_planar_ldat.tpl');
     }
 
     public function view() {
@@ -639,7 +653,6 @@ final class Obj3d extends Item implements iPlanar {
        else :
             // Objekt wurde vom Eventhandler initiiert
             $this->edit(true);
-            // Typ wird autom. generiert
             foreach($this as $key => $wert) $data[$key] = $wert;
             unset($data['types']);
 
@@ -724,6 +737,21 @@ final class Obj3d extends Item implements iPlanar {
         IsDbError($data);
         $erg = $data;
         if ($erg) return array_unique($erg); else return 1;
+    }
+
+    public function sview() {
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
+    *    Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+        $data = parent::view();
+        $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
+        $data['art'] = $a->display();
+        $smarty->assign('dialog', $data);
+        $smarty->display('item_3dobj_ldat.tpl');
     }
 
     public function view() {

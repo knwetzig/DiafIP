@@ -1,13 +1,14 @@
 {**************************************************************
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
-$URL$
 
 call:   pers_class.php
 class:  Person
 proc:   editPerson/
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
+
+$Rev$
+$Author$
+$Date$
+$URL$
 
 ***** (c) DIAF e.V. *******************************************}
 

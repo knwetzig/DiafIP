@@ -3,7 +3,7 @@ Eventhandler für Aktionen der Personenverwaltung
 
 $Rev$
 $Author$
-$Date: 2012-08-07 16:26:19 +0200 (#$
+$Date$
 $URL$
 
 ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
@@ -47,7 +47,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
 
         case "edit" :
             if (isset($_POST['form'])) {
-                $ePer = new Person($_POST['pid']);
+                $ePer = new Person($_POST['id']);
                 // Daten einlesen und Formular anzeigen
                 $ePer->edit(false);
             } else {
@@ -70,27 +70,26 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                 $myauth->setAuthData('search', $_POST['sstring']);
                 $plist = Person::search($myauth->getAuthData('search'));
             // }
-            if (!empty($plist) AND is_array($plist)) {
+            if (!empty($plist) AND is_array($plist)) :
                 // Ausgabe
                 $bg = 1;
-                foreach(($plist) as $nr) {
+                foreach(($plist) as $nr) :
                     ++$bg; $smarty->assign('darkBG', $bg % 2);
                     $pers = new Person($nr);
-                    $pers->view();
-                }
-            } else {
-                fehler(102); // kein Ergebnis
-            }
+                    $pers->sview();
+                endforeach;
+            else : fehler(102); // kein Ergebnis
+            endif;
         }
         break; // Ende --search--
 
         case "del" :
-            $pers = new Person($_POST['pid']);
+            $pers = new Person($_POST['id']);
             $pers->del();
         break;
 
         case "view" :
-            $pers = new Person((int)$_REQUEST['pid']);
+            $pers = new Person((int)$_REQUEST['id']);
             $pers->view();
         break;  // Endview
     endswitch;

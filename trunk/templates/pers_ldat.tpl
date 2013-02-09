@@ -8,7 +8,7 @@ $URL$
 
     call:   pers_class.php
     class:  Person
-    proc:   view
+    proc:   sview
     param:  dialog[???][0] feldname
                        [1] inhalt (evt. weitere arrays)
                        [2] label
@@ -36,8 +36,15 @@ $URL$
         <td style="text-align:right;">
             <form method="post">
             <span class="note">
-                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                ID:&nbsp;{$dialog['id'][1]}&nbsp;
             </span>
+
+                <button
+                    class={if $darkBG}"small_dk"{else}"small"{/if}
+                    name="aktion"
+                    value="view"><img src="images/view_detailed.png" />
+                </button>
+
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -46,6 +53,7 @@ $URL$
                         onmouseout="return nd();"
                         value="edit"><img src="images/edit.png" /></button>
                 {/if}
+
                 {if isset($dialog['del'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -54,6 +62,7 @@ $URL$
                         onmouseout="return nd();"
                         value="del" /><img src="images/del.png" /></button>
                 {/if}
+
                 <input type="hidden" name="form" value="true" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
             </form>
@@ -88,51 +97,4 @@ $URL$
         </td>
     </tr>{/if}
 
-{* --Anschrift-- *}
-    {if !empty($dialog['strasse'][1]) OR !empty($dialog['plz'][1]) OR !empty($dialog['wort'][1])}<tr>
-        <td class="re">
-            {if !empty($dialog['strasse'][2])}{$dialog['strasse'][2]}:{/if}
-        </td>
-        <td>
-            {if !empty($dialog['strasse'][1])}{$dialog['strasse'][1]}<br />{/if}
-            {if !empty($dialog['plz'])}{$dialog['plz'][1]}&nbsp;{/if}
-            {if !empty($dialog['wort'][1])}
-                {$dialog['wort'][1]['ort']}&nbsp;({$dialog['wort'][1]['land']}&nbsp;,&nbsp;{$dialog['wort'][1]['bland']})
-            {/if}
-        </td>
-    </tr>{/if}
-
-{* --Telefonzeile-- *}
-    {if !empty($dialog['tel'][1])}<tr>
-        <td class="re">{$dialog['tel'][2]}:</td>
-        <td>{$dialog['tel'][1]}</td>
-    </tr>{/if}
-
-{* --Mailzeile-- *}
-    {if !empty($dialog['mail'][1])}<tr>
-            <td class="re">{$dialog['mail'][2]}:</td>
-            <td><a href="mailto:{$dialog['mail'][1]}">{$dialog['mail'][1]}</a></td>
-    </tr>{/if}
-
-
-{* --Biografiezeile-- *}
-    {if !empty($dialog['biogr'][1])}<tr>
-            <td class="re" style="vertical-align:top">{$dialog['biogr'][2]}:</td>
-            <td colspan="2" style="white-space:normal">{$dialog['biogr'][1]|nl2br}</td>
-    </tr>{/if}
-
-{* --Verweis auf Filmografie-- *}
-    {if !empty($dialog['castLi'][1])}
-        {foreach from=$dialog['castLi'][1] item=cast}<tr>
-            <td><!-- Label --></td>
-            <td>{$cast['ftitel']}</td>
-            <td>{$cast['job']}</td>
-        </tr>{/foreach}
-    {/if}
-
-{* --Notizfeld-- *}
-    {if !empty($dialog['notiz'][1])}<tr>
-            <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
-            <td colspan="2" class="note" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
-    </tr>{/if}
 </table>
