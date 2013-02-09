@@ -42,9 +42,8 @@ $URL$
                         onmouseout="return nd();"
                         value="del" /><img src="images/del.png" /></button>
                 {/if}
-                <input type="hidden" name="sektion" value="film" />
                 <input type="hidden" name="form" value="true" />
-                <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
+                <input type="hidden" name="id" value="{$dialog['id'][1]}" />
         </span></td>
     </form></tr>
 

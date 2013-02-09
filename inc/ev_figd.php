@@ -40,7 +40,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
 
         case "edit" :
             if (isset($_POST['form'])) {
-                $film = new Film($_POST['fid']);
+                $film = new Film($_POST['id']);
                 $film->edit(false); // Formular anfordern
             } else {                // Auswertezweig
                 $film = unserialize($myauth->getAuthData('obj'));
@@ -62,7 +62,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
                     foreach(($tlist) as $nr) :
                         ++$bg; $smarty->assign('darkBG', $bg % 2);
                         $film = new Film($nr);
-                        $film->view();
+                        $film->sview();
                     endforeach;
                 else :
                     fehler(102); // kein Erg.
@@ -71,25 +71,25 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
         break;
 
         case "del" :
-            $film = new Film($_POST['fid']);
+            $film = new Film($_POST['id']);
             $erg = $film->del();
             if(empty($erg)) erfolg(); else warng($erg);
         break;
 
         case 'view' :
-            $film = new Film((int)$_REQUEST['fid']);
+            $film = new Film((int)$_REQUEST['id']);
             $film->view();
         break;
 
         case 'addCast' :
-            $film = new Film($_POST['fid']);
+            $film = new Film($_POST['id']);
             $film->addCast($_POST['pid'], $_POST['tid']);
             $smarty->assign('aktion','edit');
             $film->edit(false);
         break;
 
         case 'delCast' :
-            $film = new Film($_POST['fid']);
+            $film = new Film($_POST['id']);
             $film->delCast($_POST['pid'], $_POST['tid']);
             $smarty->assign('aktion','edit');
             $film->edit(false);

@@ -252,7 +252,7 @@ $URL$
                 <input type="hidden" name="sektion" value="film" />
                 <input type="hidden" name="pid" value="{$wert['pid']}" />
                 <input type="hidden" name="tid" value="{$wert['tid']}" />
-                <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
+                <input type="hidden" name="id" value="{$dialog['id'][1]}" />
             </form></td>
         </tr>
         {/foreach}
@@ -275,7 +275,7 @@ $URL$
             </td>
             <input type="hidden" name="sektion" value="film" />
             <input type="hidden" name="aktion" value="addCast" />
-            <input type="hidden" name="fid" value={$dialog['id'][1]} />
+            <input type="hidden" name="id" value={$dialog['id'][1]} />
         </form></tr>
     </table>
     </fieldset>
@@ -292,9 +292,8 @@ $URL$
                 <input type="file" name="bild" />
                 <input type="submit" value="Upload Image" />
             </tr></table>
-            <input type="hidden" name="sektion" value="film" />
             <input type="hidden" name="aktion" value="addImage" />
-            <input type="hidden" name="fid" value="{$dialog['id'][1]}" />
+            <input type="hidden" name="id" value="{$dialog['id'][1]}" />
         </form>
     </fieldset>
   </td>

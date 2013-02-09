@@ -37,6 +37,7 @@ interface iTyp extends iMain {
     public function add($stat);
     public function edit($stat);
     public function set();
+    public function sview();
     public function view();
 }
 
@@ -84,7 +85,7 @@ interne Methoden:
         SQL_getTaetigk = 'SELECT * FROM f_taetig;',
         SQL_getST   = 'SELECT titel, descr FROM f_stitel WHERE sertitel_id = ?;',
         SQL_get     = 'SELECT * FROM f_main WHERE id = ?;',
-        SQL_exCast  = 'SELECT COUNT(*) FROM F_cast
+        SQL_exCast  = 'SELECT COUNT(*) FROM f_cast
                        WHERE fid = ? AND pid = ? AND tid = ?;',
         SQL_getCaLi = 'SELECT   f_cast.tid, f_cast.pid
                        FROM     public.f_cast
@@ -150,6 +151,7 @@ interne Methoden:
         global $db;
         $list = $db->extended->getAll(self::SQL_getTLi);
         IsDbError($list);
+
         $data = array(0 => null);
         foreach($list as $wert) $data[$wert['id']] = $wert['titel'];
         return $data;
@@ -162,9 +164,11 @@ interne Methoden:
     ****************************************************************/
         global $db;
         $erg = $db->extended->getOne(
-            'SELECT titel FROM f_main WHERE id = ?;', null, (int)$nr);
+            'SELECT titel FROM f_main
+             WHERE id = ? AND del != TRUE;', null, (int)$nr);
         IsDbError($erg);
-        return '<a href="index.php?sektion=film&aktion=view&fid='.$nr.'">'.$erg.'</a>';
+        if(!empty($erg))
+            return '<a href="index.php?aktion=view&id='.$nr.'">'.$erg.'</a>';
     }
 
     protected function get($nr) {
@@ -596,7 +600,6 @@ Interne Methoden:
                 'integer');     // sfolge
 
             $this->edit(true);
-            // Typ wird autom. generiert
             foreach($this as $key => $wert) $data[$key] = $wert;
             unset($data['stitel'], $data['sdescr']);
             $erg = $db->extended->autoExecute('f_film', $data,
@@ -821,8 +824,7 @@ Interne Methoden:
             'text',         // atitel
             'text',         // utitel
             'integer',      // sid
-            'integer',      // sfolge
-            'integer',      // typ (1 = film)
+            'integer'       // sfolge
         );
         foreach($this as $key => $wert) $data[$key] = $wert;
         unset($data['stitel'], $data['sdescr'], $data['id']);
@@ -845,6 +847,30 @@ Interne Methoden:
 
     }
 
+    public function sview() {
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
+    *    Return: none
+    ****************************************************************/
+        global $db, $myauth, $smarty;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
+            new d_feld('id',        $this->id,          VIEW),
+            new d_feld('titel',     $this->titel,       VIEW, 500), // Originaltitel
+            new d_feld('prod_jahr', $this->prod_jahr,   VIEW, 576),
+            new d_feld('thema',     $this->thema,       VIEW, 577), // Schlagwortliste
+            new d_feld('gattung',   d_feld::getString($this->gattung), VIEW, 579),
+            new d_feld('laenge',    $this->laenge,              VIEW, 580),
+            new d_feld('fsk',       $this->fsk,                 VIEW, 581),
+            new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
+            new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
+        ));
+        $smarty->assign('dialog', $data);
+        $smarty->display('figd_ldat.tpl');
+    }
+
     public function view() {
     /****************************************************************
     *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
@@ -863,7 +889,7 @@ Interne Methoden:
         $ageber = new Person($this->auftraggeber);
 
         $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
-            new d_feld('id',        $this->id,          VIEW),   // fid
+            new d_feld('id',        $this->id,          VIEW),
             new d_feld('titel',     $this->titel,       VIEW, 500), // Originaltitel
             new d_feld('atitel',    $this->atitel,      VIEW, 503), // Arbeitstitel
             new d_feld('utitel',    $this->utitel,      VIEW, 501), // Untertitel
@@ -953,6 +979,16 @@ class Biblio extends Main implements iTyp {
     ****************************************************************/
         global $db, $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+    }
+
+    function sview() {
+    /****************************************************************
+        Aufgabe: Ausgabe des Datensatzes (Listenansicht)
+        Aufruf:
+        Return: Fehlercode
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
     }
 
     function view() {

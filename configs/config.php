@@ -59,8 +59,7 @@ $datei = array(
     'person'    => "inc/ev_pers.php",           // Personenverzeichnis
     'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
     'i_3dobj'   => 'inc/ev_item_3dobj.php',
-    'i_media'   => '',
-    'changes'   => 'changes.txt'
+    'i_media'   => ''
 );
 
 // Admin-Array

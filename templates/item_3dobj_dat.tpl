@@ -44,7 +44,6 @@
                         onmouseout="return nd();"
                         value="del" /><img src="images/del.png" /></button>
                 {/if}
-                <input type="hidden" name="sektion" value="i_3dobj" />
                 <input type="hidden" name="form" value="true" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
         </span></td>

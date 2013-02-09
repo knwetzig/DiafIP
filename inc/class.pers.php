@@ -16,7 +16,8 @@ ToDo: Das Löschen von Personen ist noch auf die Papierkorb-Mechanik umzustellen
 
 interface iPerson {
     const
-        SQL = '';
+        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person
+                           ORDER BY name ASC;';
 
     public function getName();
     public static function getPersonLi();
@@ -25,6 +26,7 @@ interface iPerson {
     public function set();
     public function del();
     public function search($s);
+    public function sview();
     public function view();
 }
 
@@ -119,8 +121,6 @@ func: __construct($)
     const
         SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?;',
         SQL_getCaLi     = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
-        SQL_getPersLi   = 'SELECT id, vname, name FROM p_person
-                           ORDER BY name ASC;',
         SQL_ifDouble    = 'SELECT id FROM p_person
                            WHERE gtag = ? AND vname = ? AND name = ?;';
     function __construct($nr = NULL) {
@@ -150,7 +150,7 @@ func: __construct($)
     ****************************************************************/
         if(empty($this->id)) return;
             $data = $this->fiVname().$this->name;
-        return '<a href="index.php?sektion=person&aktion=view&pid='.$this->id.'">'.$data.'</a>';
+        return '<a href="index.php?aktion=view&id='.$this->id.'">'.$data.'</a>';
     }
 
 
@@ -486,6 +486,30 @@ func: __construct($)
 
         if ($erg) return array_unique($erg);     // id's der gefundenen Personen
         else return 1;
+    }
+
+    function sview() {
+    /****************************************************************
+    * Aufgabe: Anzeige eines Datensatzes (Listenansicht
+    ****************************************************************/
+        global $db, $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        // Zuweisungen und ausgabe an pers_dat.tpl
+
+        $data = a_display(array(
+        // name,inhalt optional-> $rechte,$label,$tooltip,valString
+            new d_feld('id',     $this->id,                 VIEW),          // pid
+            new d_feld('vname',  $this->fiVname(),          VIEW),          // vname
+            new d_feld('name',   $this->name,               VIEW),          // name
+            // alias (Liste)
+            new d_feld('aliases', parent::getAlias($this->aliases), VIEW, 515),
+            new d_feld('gtag',   $this->fiGtag(),           VIEW,   502),   // Geburtstag
+            new d_feld('gort',   Ort::getOrt($this->gort),  VIEW,  4014),   // GebOrt
+            new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button
+            new d_feld('del',    null,                      DELE, null, 4020), // Lösch-Button
+        ));
+        $smarty->assign('dialog', $data, 'nocache');
+        $smarty->display('pers_ldat.tpl');
     }
 
     function view() {
