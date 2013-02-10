@@ -1,5 +1,7 @@
 {**********************************************************
+
    Menüseite für die Administration
+   (Auswahl der Elemente/Presetlisten)
 
 $Rev$
 $Author$

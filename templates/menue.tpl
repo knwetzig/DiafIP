@@ -1,8 +1,6 @@
-{***********************************+++************************
+{**************************************************************
     Enthält die statische Menüstruktur im linken Bereich
-    der Seite einschließlich der DB-Statistik
-    Daten werden an main.php und anschließend an index.php
-    via POST weitergegeben.
+    der Seite
 
 $Rev$
 $Author$
@@ -23,13 +21,4 @@ $URL$
         <span class='note' style='padding-top:15px;'><br /><br />{$dlg[9]}<br /></span>
         <button name='aktion' value='logout'>{$dlg[5]}</button>
     </form>
-</div>
-
-<div id='status' class='note'>
-    <b>{$dlg[7]}</b>
-    <table>
-{foreach from=$stat item=wert key=schluessel}
-    <tr><td>{$schluessel}:</td><td class='re'>{$wert}</td></tr>
-{/foreach}  </table><br />
-    <img src='../../openbsdpower.gif' alt='powered by OpenBSD' width='100px' />
 </div>
