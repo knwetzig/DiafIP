@@ -1,27 +1,8 @@
 {**************************************************************
-Template Listendialog
-
-class:  admin
-proc:   variabel, abhängig vom geladenen Inhalt
-param:  $dialog = array( Datenfeldname, inhalt, label, tooltip)
-        0 => Bereich (immer vorhanden)
-            [0] = Site
-            [2] = Legend
-        1 => DropDown
-            $list = Elementliste
-            [1] = selected
-        2 => Text
-        3 => Text
-        4 => Textarea
-        5 => Submit
-        6 => Submit speichern (immer da)
-
-
-$Rev$
+$Rev$ --> FINALVERSION
 $Author$
 $Date$
 $URL$
-
 ***** (c) DIAF e.V. *******************************************}
 
 <br />

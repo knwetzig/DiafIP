@@ -1,6 +1,6 @@
 <?php
 /**************************************************************
-    Statistikauswertung der Datenbank
+    Statistikauswertung des Datenkerns
 
 $Rev$
 $Author$
@@ -18,7 +18,7 @@ class db_stat {
     }
 
     function getStat() {
-	global $db;
+	global $db, $laufzeit, $outtime;
 
         // Anzahl filmogr. & bibl. Datensätze
         $sql = 'SELECT COUNT(*) FROM i_main WHERE del = false;';
@@ -36,6 +36,16 @@ class db_stat {
         $data = $db->extended->getOne($sql,'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4003)] = $data;
+
+        // Runtime
+        $laufzeit += gettimeofday(true);
+        $this->statistic[d_feld::getString(580)] = sprintf('%f', $laufzeit);
+
+        // Processtime Laufzeit - Zeit die Ausgaberoutinen verschlungen haben
+        if (!empty($outtime)) :
+            $ptime = $laufzeit - $outtime;
+            $this->statistic[d_feld::getString(9)] = sprintf('%f', $ptime);
+        endif;
     }
 
     function view() {

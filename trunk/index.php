@@ -1,13 +1,15 @@
 <?php
 /**************************************************************
 
+    DIAFIP - HAUPTPROGRAMM
+
 $Rev$
 $Author$
 $Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
-
+$laufzeit = -gettimeofday(true);
 require_once	'configs/config.php';
 $_POST = normtext($_POST);              // Filter für htmlentities
 $_GET = normtext($_GET);
@@ -66,10 +68,6 @@ require_once 'class.media.php';
 require_once 'class.item.php';
 require_once 'class.db_statistik.php';
 
-// laden Statistikanzeige
-$stat = new db_stat();
-$smarty->assign('stat', $stat->view());
-
 // laden Menübereich
 $data = getStringList(array(0,4008,4028,4003,0,4005,4006,4009,4032));
 $data[] = $myauth->getAuthData('realname');
@@ -77,4 +75,9 @@ $smarty->assign('dlg', $data);
 $smarty->display('menue.tpl');
 
 include 'main.php';
+
+// laden Statistikanzeige
+$stat = new db_stat();
+$smarty->assign('stat', $stat->view());
+$smarty->display('statistik.tpl')
 ?></body></html>

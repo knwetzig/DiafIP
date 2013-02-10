@@ -1,6 +1,7 @@
 <?php
-/*****************************************************************************
-Eventhandler für Verwaltung von Aliasnamen
+/**************************************************************
+
+    Eventhandler für Verwaltung von Aliasnamen
 
 section:    admin
 site:       alias
@@ -12,18 +13,11 @@ $Author$
 $Date$
 $URL$
 
-ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
-    fehler(108);
-    exit;           // Fremdaufruf!
-}
+if(!$myauth->getAuth()) fehler(108);    // Fremdaufruf!
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
-    fehler(2);
-    exit;
-}
 // Überschrift
 echo '<div class="bereich">Alias-/K&uuml;nstlernamen</div>';
 $dialog = array(
@@ -33,10 +27,13 @@ $dialog = array(
         6 => array('submit', 'addAlias')
     );
 
-// Ausgabe: Liste zum auswählen
+/** Ausgabe: Liste zum auswählen veraltet!!
+    NEU: adm_selekt+adm_dialog -> adm_dialog.tpl **/
+
 $smarty->assign('list', Alias::getAliasList());
 $data = new d_feld('alias', null, SEDIT, 515);
 $smarty->assign("dialog", $data->display());
+
 $smarty->display("adm_selekt.tpl");
 if(!isset($_POST['submit'])) {
     $smarty->assign('dialog', $dialog);
@@ -62,10 +59,9 @@ if(isset($_POST['submit'])) {
     case "addAlias" :
         // Auswertung auf die klassische Art
         $ali = array();
-        if($_POST['name'] !== "") $ali['name'] = $_POST['name']; else {
-            fehler(107);
-            die();
-        }
+        if($_POST['name'] !== "") $ali['name'] = $_POST['name'];
+        else fehler(107);
+
         $ali['notiz'] = $_POST['notiz'];
         $data = $db->extended->autoExecute('p_alias', $ali,
                     MDB2_AUTOQUERY_INSERT, null, array('text','text'));
@@ -78,9 +74,8 @@ if(isset($_POST['submit'])) {
         if($_POST['name'] !== "") $ali->name = $_POST['name'];
         $ali->notiz = $_POST['notiz'];
         $data = $db->extended->autoExecute('p_alias', $ali,
-                MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('integer','text','text'));
+                MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('text','text'));
         IsDbError($data);
-        break;
     endswitch;
 }
 if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !== "selekt")) {
@@ -89,6 +84,5 @@ if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !=
     $ali = new Alias();
     $myauth->setAuthData('obj', serialize(new Alias()));
 }
-unset($_POST);
 
 ?>
