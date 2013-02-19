@@ -552,8 +552,8 @@ func: __construct($)
             new d_feld('bild',   $this->bild,               VIEW),
             new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button
             new d_feld('del',    null,                      DELE, null, 4020), // Lösch-Button
-            new d_feld('chdatum',   $this->editdate),
-            new d_feld('chname',    $bearbeiter[0]),
+            new d_feld('chdatum',   $this->editdate,        EDIT),
+            new d_feld('chname',    $bearbeiter[0],         EDIT),
         ));
 
         $smarty->assign('dialog', $data, 'nocache');

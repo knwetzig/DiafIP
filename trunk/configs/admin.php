@@ -9,10 +9,7 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if($myauth->getAuthData('rechte') < 2) :
-    fehler(2);
-    exit;
-endif;
+if($myauth->getAuthData('rechte') < 2) fehler(2);
 
 if(isset($_POST['site']) AND isset($adm_site[$_POST['site']]))
     include $adm_site[$_POST['site']];

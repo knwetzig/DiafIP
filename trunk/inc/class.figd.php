@@ -856,14 +856,23 @@ Interne Methoden:
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
+        /* Sonderwunsch Regie anzeigen ;-( */
+        $regie = $db->extended->getRow(
+            'SELECT pid
+             FROM f_cast
+             WHERE fid = ? AND tid = ?;',
+             null,
+             array($this->id, 1000),
+             array('integer', 'integer'));
+        IsDbError($regie);
+        $regie = new Person($regie['pid']);
+
         $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
             new d_feld('id',        $this->id,          VIEW),
             new d_feld('titel',     $this->titel,       VIEW, 500), // Originaltitel
+            new d_feld('regie',     $regie->getName(), VIEW, 1000),
             new d_feld('prod_jahr', $this->prod_jahr,   VIEW, 576),
-            new d_feld('thema',     $this->thema,       VIEW, 577), // Schlagwortliste
-            new d_feld('gattung',   d_feld::getString($this->gattung), VIEW, 579),
-            new d_feld('laenge',    $this->laenge,              VIEW, 580),
-            new d_feld('fsk',       $this->fsk,                 VIEW, 581),
+            new d_feld('prodtech',  self::getThisProdTech(),    VIEW, 571),
             new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
             new d_feld('del',       null, DELE, null, 4020), // Lösch-Button
         ));

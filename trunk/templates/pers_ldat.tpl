@@ -34,7 +34,7 @@ $URL$
 
 {* --Bearbeitungssymbole-- *}
         <td style="text-align:right;">
-            <form method="post">
+            <form action='{$dlg[10]}' method="post">
             <span class="note">
                 ID:&nbsp;{$dialog['id'][1]}&nbsp;
             </span>

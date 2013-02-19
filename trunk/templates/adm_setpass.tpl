@@ -14,7 +14,7 @@ ToDo:   None
 
 ***** (c) DIAF e.V. *******************************************}
 
-<form method='post'>
+<form action='{$dlg[10]}' method='post'>
     <fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
         <table style='padding:5px'>
             <tr>

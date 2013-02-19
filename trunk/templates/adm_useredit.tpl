@@ -15,7 +15,7 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <br />
-<form method='post'>
+<form action='{$dlg[10]}' method='post'>
     <fieldset>
         <legend>&nbsp;Accountdaten&nbsp:bearbeiten&nbsp;</legend>
         <table>
@@ -58,7 +58,7 @@ $URL$
                 <td>&nbsp;</td>
                 <td class="re"><button
                     type="submit"
-                    name="submit"
+                    name="aktion"
                     value="edUser"
                     onmouseover="{literal}return overlib('<b>Achtung: </b>Die &Auml;nderungen werden erst wirksam, wenn sich der Nutzer neu einloggt! ',DELAY,500,FGCOLOR,'#FFEfEf',BGCOLOR,'#C00010',TEXTCOLOR,'#C00010');{/literal}"
                     onmouseout="return nd();"

@@ -8,7 +8,7 @@ $Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
-<form method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
+<form action='{$dlg[10]}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
     <table>
         <colgroup><col><col></colgroup>
         <tr><td style="vertical-align:top"><!-- linke Seite -->

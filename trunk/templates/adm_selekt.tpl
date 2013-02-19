@@ -11,10 +11,10 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<form method="post"><fieldset>
+<form action='{$dlg[10]}' method="post"><fieldset>
     <legend>&nbsp;{$dialog[2]}&nbsp;</legend>
         {html_options name=$dialog[0] options=$list selected=$dialog[1]}
-    <button class="small" type="submit" name="submit" value="selekt">
+    <button class="small" style="width:50px;" " type="submit" name="aktion" value="selekt">
         <img src="images/forward.png" alt="enter" />
     </button>
     <input type="hidden" name="sektion" value="admin" />

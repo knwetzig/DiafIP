@@ -17,8 +17,17 @@ $URL$
         <button name='sektion' value='film'>{$dlg[1]}</button>
         <button name='sektion' value='i_planar'>{$dlg[2]}</button>
         <button name='sektion' value='i_3dobj'>{$dlg[8]}</button>
-        <button name='sektion' value='admin'>{$dlg[6]}</button>
-        <span class='note' style='padding-top:15px;'><br /><br />{$dlg[9]}<br /></span>
+        <button name='sektion' value='admin'>{$dlg[6]}</button><br />
+        <button class='flag' name='aktion' value='de'>
+            <img src='images/flag-german.png' alt='de' />
+        </button>
+        <button class='flag' name='aktion' value='en'>
+            <img src='images/flag-english.png' alt='en' />
+        </button>
+        <button class='flag' name='aktion' value='fr'>
+            <img src='images/flag-french.png' alt='fr' />
+        </button><br />
+        <span class='note' style='padding-top:15px;'><br />{$dlg[9]}<br /></span>
         <button name='aktion' value='logout'>{$dlg[5]}</button>
     </form>
 </div>

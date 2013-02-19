@@ -22,7 +22,7 @@
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form method="post">
+    <tr><form action='{$dlg[10]}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
             <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
@@ -64,11 +64,36 @@
         <td>{$dialog['art'][1]}</td>
     </tr>{/if}
 
-
 {* -- Zuordnung zu Film -- *}
     {if !empty($dialog['zu_film'][1])}<tr>
         <td class="re">
             {if !empty($dialog['zu_film'][2])}{$dialog['zu_film'][2]}:{/if}
         <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
+
+{* -- Maße -- *}
+    {if !empty($dialog['masze'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['masze'][2])}{$dialog['masze'][2]}:{/if}
+        </td>
+        <td>{$dialog['masze'][1]}&nbsp;mm</td>
+    </tr>{/if}
+
+{* -- lagerort -- *}
+    {if !empty($dialog['lagerort'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['lagerort'][2])}{$dialog['lagerort'][2]}:{/if}
+        </td>
+        <td>{$dialog['lagerort'][1]}</td>
+    </tr>{/if}
+
+{* -- akt_ort -- *}
+    {if !empty($dialog['akt_ort'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['akt_ort'][2])}{$dialog['akt_ort'][2]}:{/if}
+        </td>
+        <td>{$dialog['akt_ort'][1]}</td>
+    </tr>{/if}
+
+
 </table>

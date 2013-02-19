@@ -18,15 +18,8 @@ ToDo:
     Das gleiche für das Dialog-Template in der Klassendefinition
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) :
-    fehler(108);
-    exit;           // Fremdaufruf!
-endif;
-
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) :
-    fehler(2);
-    exit;
-endif;
+if(!$myauth->getAuth()) fehler(108);
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
 
 $smarty->assign('dialog', array(
     'bereich' => array( 1 => 'Verwaltung&nbsp;der&nbsp;Ortsnamen')
@@ -69,12 +62,12 @@ if(isset($_POST['submit'])) {
         $loc->del();
     endswitch;
 }
-if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !== "selekt")) {
+
+if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND
+                                    $_POST['submit'] !== "selekt")) :
     // Anzeige Formular Neuanlage
     $smarty->assign('aktion', 'addOrt');
     $loc = new Ort();
     $myauth->setAuthData('obj', serialize($loc));
-}
-unset($_POST);
-
+endif;
 ?>
