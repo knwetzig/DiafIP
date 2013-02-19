@@ -19,6 +19,7 @@ $URL$
 </head>
 <body>
     <div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>    <script language="JavaScript" src="inc/overlib/overlib.js"></script>
+
 {*
     <script language="javascript" src="inc/overlib/overlib_anchor.js"></script>
     <script language="javascript" src="inc/overlib/overlib_crossframe.js"></script>

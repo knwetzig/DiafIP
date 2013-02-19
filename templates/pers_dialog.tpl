@@ -12,7 +12,7 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<form method='post'>
+<form action='{$dlg[10]}' method='post'>
   <fieldset>
     <legend>{$dialog['bereich'][2]}</legend>
       <table><colgroup><col><col><col><col></colgroup>

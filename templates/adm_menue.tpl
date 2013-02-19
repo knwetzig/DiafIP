@@ -17,19 +17,15 @@ $URL$
     <td class="top">    {*links*}
         <form method="post">
             <fieldset><legend>&nbsp;Verwaltung&nbsp;</legend>
-                <button
-                    name='site'
-                    value='self'>
-                    Password&nbsp;&auml;ndern
-                </button>
-                <br />
-                <button
-                    name='site'
-                    value='user'>
-                    Nutzerverwaltung
-                </button>
+                <button name='site' value='self'>
+                    Password</button><br />
+                <button name='site' value='user'>
+                    Nutzer</button><br />
+                <button name='site' value='string'>
+                    &Uuml;bersetzung</button>
             </fieldset>
             <input type='hidden' name='sektion' value='admin' />
+            <input type='hidden' name='aktion' value='' />
         </form>
     </td>
 
@@ -39,7 +35,8 @@ $URL$
                 <button name="site" value="alias">Alias verwalten</button><br />
                 <button name="site" value="orte">Orte verwalten</button><br />
                 <button name="site" value="lort">Lagerorte verwalten</button>
-                <input type='hidden' name='sektion' value='admin' />
+                <input type="hidden" name="sektion" value="admin" />
+                <input type="hidden" name="aktion" value="" />
         </form>
     </td>
 </tr></table>

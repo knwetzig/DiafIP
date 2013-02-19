@@ -34,9 +34,11 @@ $URL$
 
 {* --Bearbeitungssymbole-- *}
         <td style="text-align:right;">
-            <form method="post">
+            <form action='{$dlg[10]}' method="post">
             <span class="note">
-                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                ID:&nbsp;{$dialog['id'][1]}&nbsp;
+                {if isset($dialog['chname'])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
+                {if isset($dialog['chdatum'])}|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}
             </span>
                 {if isset($dialog['edit'])}
                     <button

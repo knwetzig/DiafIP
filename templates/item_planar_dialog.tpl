@@ -17,7 +17,7 @@
 
  ***** (c) DIAF e.V. *********************************************************}
 
-<form method='post'>
+<form action='{$dlg[10]}' method='post'>
 
 <div name='links' style='float:left'>
 <table>
@@ -27,6 +27,18 @@
     {if isset($dialog['bezeichner'])}<tr>
         <td class="re">{$dialog['bezeichner'][2]}:</td>
         <td><input type='text' name='bezeichner' value="{$dialog['bezeichner'][1]}" /></td>
+    </tr>{/if}
+
+{* --- Filmzuordnung --- *}
+    {if isset($dialog['zu_film'])}<tr>
+        <td class="re">{$dialog['zu_film'][2]}:</td>
+        <td>
+            {html_options
+                name=$dialog['zu_film'][0]
+                options=$dialog['filmLi'][1]
+                selected=$dialog['zu_film'][1]
+            }
+        </td>
     </tr>{/if}
 
 {* --- Breite --- *}
@@ -69,18 +81,6 @@
     {if isset($dialog['leihbar'])}<tr>
         <td class="re">{$dialog['leihbar'][2]}:</td>
         <td><input type='checkbox' name='leihbar' value="{$dialog['leihbar'][1]}" /></td>
-    </tr>{/if}
-
-{* --- Filmzuordnung --- *}
-    {if isset($dialog['zu_film'])}<tr>
-        <td class="re">{$dialog['zu_film'][2]}:</td>
-        <td>
-            {html_options
-                name=$dialog['zu_film'][0]
-                options=$dialog['filmLi'][1]
-                selected=$dialog['zu_film'][1]
-            }
-        </td>
     </tr>{/if}
 
 {* --- Wert zum Zeitpunkt der Anschaffung --- *}

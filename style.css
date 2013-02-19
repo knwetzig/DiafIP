@@ -127,6 +127,10 @@ input[type='text'].halb {
     width:125px;
 }
 
+input[type='text'].lang {
+    width:500px;
+}
+
 input[type='submit'],[type='button'] {
     background-color:#c0c0c0;
     color:black;
@@ -155,6 +159,14 @@ button.small {
     background-image:url(images/bg.png);
     border:none;
     width:20px;
+}
+
+/* für Länderflaggen im Menübereich */
+button.flag {
+    background-image:url(images/bg.png);
+    border:none;
+    width:34px;
+    height:22px;
 }
 
 button.small_dk {

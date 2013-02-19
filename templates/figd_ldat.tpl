@@ -21,7 +21,7 @@ $URL$
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form method="post">
+    <tr><form action='{$dlg[10]}' method="post">
         <td colspan="3">
             {if !empty($dialog['titel'][1])}<span class="fett">{$dialog['titel'][1]}</span>{/if}
         <span class="note" style="float:right;">
@@ -55,33 +55,22 @@ $URL$
         </span></td>
     </form></tr>
 
+{* --Regie-- *}
+    {if !empty($dialog['regie'][1])}<tr>
+        <td class="re">{$dialog['regie'][2]}:</td>
+        <td>{$dialog['regie'][1]}</td>
+    </tr>{/if}
+
 {* --prod_jahr-- *}
     {if !empty($dialog['prod_jahr'][1])}<tr>
         <td class="re">{$dialog['prod_jahr'][2]}:</td>
         <td>{$dialog['prod_jahr'][1]}</td>
     </tr>{/if}
 
-{* --thema-- *}
-    {if !empty($dialog['thema'][1])}<tr>
-        <td class="re">{$dialog['thema'][2]}:</td>
-        <td>{$dialog['thema'][1]}</td>
+{* --prodtech-- *}
+    {if !empty($dialog['prodtech'][1])}<tr>
+        <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
+        <td>{foreach from=$dialog['prodtech'][1] item=wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
-{* --gattung-- *}
-    {if !empty($dialog['gattung'][1])}<tr>
-        <td class="re">{$dialog['gattung'][2]}:</td>
-        <td>{$dialog['gattung'][1]}</td>
-    </tr>{/if}
-
-{* --laenge-- *}
-    {if !empty($dialog['laenge'][1])}<tr>
-        <td class="re">{$dialog['laenge'][2]}:</td>
-        <td>{$dialog['laenge'][1]}</td>
-    </tr>{/if}
-
-{* --fsk-- *}
-    {if !empty($dialog['fsk'][1])}<tr>
-        <td class="re">{$dialog['fsk'][2]}:</td>
-        <td>{$dialog['fsk'][1]}</td>
-    </tr>{/if}
 </table>

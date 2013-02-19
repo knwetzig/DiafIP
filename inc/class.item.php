@@ -561,7 +561,8 @@ final class Planar extends Item implements iPlanar {
         $data = parent::view();
         $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
         $data['art'] = $a->display();
-
+        $a = new d_feld('masze',   $this->x.'x'.$this->y,   VIEW, 484);
+        $data['masze'] = $a->display();
         $smarty->assign('dialog', $data);
         $smarty->display('item_planar_ldat.tpl');
     }
@@ -750,6 +751,8 @@ final class Obj3d extends Item implements iPlanar {
         $data = parent::view();
         $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
         $data['art'] = $a->display();
+        $a = new d_feld('masze',   $this->x.'x'.$this->y.'x'.$this->z,   VIEW, 484);
+        $data['masze'] = $a->display();
         $smarty->assign('dialog', $data);
         $smarty->display('item_3dobj_ldat.tpl');
     }

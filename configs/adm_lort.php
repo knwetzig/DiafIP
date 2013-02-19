@@ -1,5 +1,5 @@
 <?php
-/*****************************************************************************
+/**************************************************************
 Eventhandler für Verwaltung von Lagerorten
 
     section:    admin
@@ -10,59 +10,51 @@ Eventhandler für Verwaltung von Lagerorten
     $Date$
     $URL$
 
+------------- BAUSTELLE -------------------!!!
+
 ***** (c) DIAF e.V. *******************************************/
 
 if(!$myauth->getAuth()) fehler(108);          // Fremdaufruf!
 if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) fehler(2);
-
-$smarty->assign('dialog', array('bereich' => array( 1 => 'Lagerort')));
+$smarty->assign('dialog', array('bereich' =>
+                            array( 1 => d_feld::getString(472))));
 $smarty->display('main_bereich.tpl');
+warng('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.'); exit;
 
-// Ausgabe: Liste zum auswählen
-$smarty->assign('list', LOrt::getLOrtList());
-$data = new d_feld('Lagerort', null, ARCHIV, 472);
-$smarty->assign("dialog", $data->display());
-$smarty->display("adm_selekt.tpl");
-
-// Editfeld
-$dialog = array(
-        0 => array('lort', null, 'neuen&nbsp;Lagerort&nbsp;erstellen'),
-        2 => array('name', null, 'Lagerort'),
-        6 => array('submit', 'addLort')
-    );
-
-if(!isset($_POST['submit'])) :
-    $smarty->assign('dialog', $dialog);
-    $smarty->display('adm_dialog.tpl');
-endif;
-
-_v($_POST);
-
-if(isset($_POST['submit'])) :
-    switch ($_POST['submit']) :
+switch ($_POST['aktion']) :
     case "selekt" :
-        // Formularauswertung von Nutzerauswahl (impliziert bearbeiten)
-        $smarty->assign('aktion', 'edAlias');   // Initiator
-        $ali = new Alias($_POST['alias']);
-
-        $myauth->setAuthData('obj', serialize($lort));
+        $lo = new LOrt($_POST['lort']);
+        $myauth->setAuthData('obj', serialize($lo));
         break;
 
-    case "addLort" :
-
+    case "edLOrt" :
+        $lo->edit(TRUE);
         break;
 
-    case "edLort" :
-
+    case "addLOrt" :
+        $lo = new LOrt();
+        $lo->add($_POST['lagerort']);
+        erfolg();
         break;
-    endswitch;
-endif;
 
-if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !== "selekt")) {
-    // Anzeige Formular Neuanlage
-    $smarty->assign('aktion', 'addLort');
-    $lort = new LOrt();
-    $myauth->setAuthData('obj', serialize(new LOrt()));
-}
-unset($_POST);
+    case "delLOrt" :
+        echo 'löscht den Lagerort';
+        break;
+
+    default :
+        // Ausgabe: Liste zum auswählen
+        $smarty->assign('list', LOrt::getLOrtList());
+        $data = new d_feld('lort', null, ARCHIV, 472);
+        $smarty->assign("dialog", $data->display());
+        $smarty->display("adm_selekt.tpl");
+
+        // Editfeld zur Neueingabe
+        $dialog = array(
+                0 => array('lort', null, 'neuen&nbsp;Lagerort&nbsp;erstellen'),
+                2 => array('lagerort', null, 'Lagerort'),
+                6 => array('aktion', 'addLOrt')
+            );
+        $smarty->assign('dialog', $dialog);
+        $smarty->display('adm_dialog.tpl');
+endswitch;
 ?>

@@ -25,15 +25,15 @@ interface iLOrt {
 
 /***** interne routinen **********************************
       get()         // --dito-- schreibt dies aber ins Objekt
-      upd()         // eigentl. editroutine
+      exist()
       is_linked     // prüft auf eine Verknüpfung
 **********************************************************/
 class LOrt implements iLOrt {
     const
-        SQL_get = 'SELECT lagerort FROM i_lagerort WHERE id = ?;',
+        SQL_get = 'SELECT lagerort FROM i_lagerort WHERE nr = ?;',
         SQL_islinked = 'SELECT id FROM i_main WHERE lagerort = ?;';
     protected
-        $id     = null,
+        $nr     = null,
         $lort   = null;
 
     public function __construct($nr = null) {
@@ -46,7 +46,7 @@ class LOrt implements iLOrt {
         IsDbError($data);
         if (empty($data)) fehler(4);        // kein Datensatz vorhanden
 
-        $this->id = (int)$nr;
+        $this->nr = (int)$nr;
         $this->lort = $data;
     }
 
@@ -68,54 +68,59 @@ class LOrt implements iLOrt {
             'SELECT * FROM i_lagerort', array('integer', 'text'));
         IsDbError($list);
         $data = array();
-        foreach($list as $wert) $data[$wert['id']] = $wert['lagerort'];
+        foreach($list as $wert) $data[$wert['nr']] = $wert['lagerort'];
         natcasesort($data);
         // $data[0] = getString(xxx); <-- keine gute Idee, das hebelt die Verpflichtung
         //                                zur Eingabe eines Lagerorts aus..
         return $data;
     }
 
-    public function add($st) {
-        if ($st) :
+    public function add($name) {
+        global $db;
+        $this->lort = $name;
+        if (empty($name)) fehler(107);
+        elseif ($this->exist()) fehler('Objekt exisitiert bereits');
 
-        else :
-            $lort = array();
-            if($_POST['lagerort'] !== "") $lort['lagerort'] = $_POST['lagerort']; else fehler(107);
-// Test Unique
-            $data = $db->extended->autoExecute('p_alias', $lort,
-                        MDB2_AUTOQUERY_INSERT, null, array('text','text'));
-            IsDbError($data);
-        endif;
+        $val = array('lagerort' => $this->lort);
+        IsDbError($db->extended->autoExecute('i_lagerort', $val,
+                    MDB2_AUTOQUERY_INSERT, null, 'text'));
     }
 
     public function edit($st) {
+        global $smarty;
+
+/** __________ BAUSTELLE _____________________ **/
         if ($st) :
-            $dialog[0][2] = 'Lagerort&nbsp;bearbeiten';
-            $dialog[2][1] = $ali->name;
-            $dialog[6][1] = $_POST['lort']?'edLort':'addLort';
-            $smarty->assign('dialog', $dialog);
+            $smarty->assign('dialog',
+                array(
+                    0 => array('lort', $this->nr, 'Lagerort&nbsp;bearbeiten'),
+                    2 => array('lagerort', $this->lort, null),
+                    5 => array('aktion', 'delLOrt','löschen'),
+                    6 => array('aktion', 'edLOrt'))             //absendebutton
+            );
             $smarty->display('adm_dialog.tpl');
         else :
 
-        endif;
-    }
-
-    protected function upd($st) {
-        if ($st) :
-
-        else :
-            $data = $db->extended->autoExecute('p_alias', $ali,
-                MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('integer','text','text'));
-            IsDbError($data);
+            IsDbError($db->extended->autoExecute('i_lagerort', $this->lort,
+                MDB2_AUTOQUERY_UPDATE, 'nr = '.$db->quote($this->nr, 'integer'), 'text'));
         endif;
     }
 
     final protected function is_linked() {
         global $db;
         $list = $db->extended->getCol(
-            self::SQL_islinked, 'integer', $this->id, 'integer');
+            self::SQL_islinked, 'integer', $this->nr, 'integer');
         IsDbError($list);
         return $list;
+    }
+
+    final protected function exist() {
+        global $db;
+        $sql = 'SELECT COUNT(*) FROM i_lagerort
+                WHERE i_lagerort.lagerort ILIKE ?;';
+        $data = $db->extended->getRow($sql, null, array($this->lort));
+        IsDbError($data);
+        return $data['count'];
     }
 
     public function del() {
@@ -125,7 +130,7 @@ class LOrt implements iLOrt {
         if ($this->is_linked()) Fehler(10006); else {
             // löschen in Tabelle
             IsDbError($db->extended->autoExecute('i_lagerort', null,
-                MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
+                MDB2_AUTOQUERY_DELETE, 'nr = '.$db->quote($this->nr, 'integer')));
             erfolg();
         }
     }
@@ -196,9 +201,8 @@ class Ort {
     ****************************************************************/
         global $db;
 
-        if($status == false) {
-            $this->edit(false);
-        } else {
+        if($status == false) $this->edit(false);
+        else {
             $this->edit(true);
             $data = $db->extended->autoExecute('s_orte', array(
                     'ort' => $this->ort,
@@ -226,10 +230,7 @@ class Ort {
             if(isset($_POST['ort'])) :
                 if(isValid($_POST['ort'], NAMEN))
                     $this->ort = $_POST['ort'];
-                else {
-                    fehler(107);
-                    exit;
-                }
+                else fehler(107);
             endif;
             $this->lid = (int)$_POST['land'];
         }
@@ -276,8 +277,9 @@ class Ort {
         $data = $db->extended->getAll($sql);
         IsDbError($data);
         $orte=array('-- unbekannt --');
-        foreach($data as $val) { // val ist das Städtearray
-            $orte[$val['oid']] = $val['ort'];
+        foreach($data as $val) {
+        $st = $val['ort'].'&nbsp;-&nbsp;'.$val['land'];
+            $orte[$val['oid']] = $st;
         }
         return $orte;
     }

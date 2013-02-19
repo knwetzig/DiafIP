@@ -11,7 +11,7 @@ $URL$
 <div class='bereich'>{$dialog['bereich'][1]}</div>
 {if isset($dialog['sstring'])}
 <div id='bereichssuche'>
-    <form method='post'>
+    <form action='{$dlg[10]}' method='post'>
         <input
         type='text'
         name='sstring'
@@ -34,7 +34,7 @@ $URL$
 
 {if isset($dialog['add'])}
 <div id='bereichssymbole'>
-    <form  method='post'>
+    <form action='{$dlg[10]}' method='post'>
         <button
             class='small'
             name='aktion'

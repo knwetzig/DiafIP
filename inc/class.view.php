@@ -1,10 +1,10 @@
 <?php
 /**************************************************************
-Stellt Klassen und Funktionen für die
-Ein-/Ausgabefunktionalität bereit.
+    Stellt Klassen und Funktionen für die
+    Ein-/Ausgabefunktionalität bereit.
 
 $Rev$
-$Author::          $
+$Author$
 $Date$
 $URL$
 
@@ -44,23 +44,11 @@ Repräsentiert ein Ein-/Ausgabeelement
     static function getString($nr) {
         global $db, $lang;
         if(empty($nr) OR !is_numeric($nr)) return null;
-        $str = "";
-        switch ($lang) :
-            case 'eu' :
-            case 'us' :
-                $sql = "SELECT en FROM s_strings WHERE id = ?;";
-                $data = $db->extended->getRow($sql, null, $nr);
-                IsDbError($data);
-                if(!empty($data['en'])) $str = $data['en'];
-                break;
 
-            default :
-                $sql = "SELECT de FROM s_strings WHERE id = ?;";
-                $data = $db->extended->getRow($sql, null, $nr);
-                IsDbError($data);
-                $str = $data['de'];
-        endswitch;
-        return $str;
+        $data = $db->extended->getRow(
+            'SELECT de, en, fr FROM s_strings WHERE id = ?;', null, $nr);
+        if(!empty($data[$lang])) $st = $data[$lang]; else $st = $data['de'];
+        return $st;
     }
 
     function isValid() {

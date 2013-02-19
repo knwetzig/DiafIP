@@ -22,7 +22,7 @@
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form method="post">
+    <tr><form action='{$dlg[10]}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
             <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
@@ -55,6 +55,13 @@
             <img src="images/platzhalter.png" width="200" height="150" alt="bild" />
         </td>
     <tr>{/if}
+
+{* -- Zuordnung zu Film -- *}
+    {if !empty($dialog['zu_film'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['zu_film'][2])}{$dialog['zu_film'][2]}:{/if}
+        <td>{$dialog['zu_film'][1]}<td>
+    </tr>{/if}
 
 {* -- art -- *}
     {if !empty($dialog['art'][1])}<tr>
@@ -102,13 +109,6 @@
             {if !empty($dialog['kollo'][2])}{$dialog['kollo'][2]}:{/if}
         </td>
         <td>{$dialog['kollo'][1]}</td>
-    </tr>{/if}
-
-{* -- Zuordnung zu Film -- *}
-    {if !empty($dialog['zu_film'][1])}<tr>
-        <td class="re">
-            {if !empty($dialog['zu_film'][2])}{$dialog['zu_film'][2]}:{/if}
-        <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
 {* -- vers_wert -- *}

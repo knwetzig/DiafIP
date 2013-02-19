@@ -19,38 +19,40 @@ if(!$myauth->getAuth()) fehler(108);    // Fremdaufruf!
 if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
 
 // Überschrift
-echo '<div class="bereich">Alias-/K&uuml;nstlernamen</div>';
-$dialog = array(
-        0 => array('alias', null, 'neuen&nbsp;Alias&nbsp;erstellen'),
-        2 => array('name', null, 'Aliasname'),
-        4 => array('notiz', null, 'Anmerkungen'),
-        6 => array('submit', 'addAlias')
-    );
+$smarty->assign('dialog', array('bereich' =>
+                            array( 1 => d_feld::getString(515))));
+$smarty->display('main_bereich.tpl');
 
-/** Ausgabe: Liste zum auswählen veraltet!!
-    NEU: adm_selekt+adm_dialog -> adm_dialog.tpl **/
+    function viewSelekt($nr = null) {
+        global $smarty;
+        $smarty->assign('list', Alias::getAliasList());
+        $data = new d_feld('alias', null, SEDIT, 515);
+        $smarty->assign("dialog", $data->display());
+        $smarty->display("adm_selekt.tpl");
+    }
 
-$smarty->assign('list', Alias::getAliasList());
-$data = new d_feld('alias', null, SEDIT, 515);
-$smarty->assign("dialog", $data->display());
 
-$smarty->display("adm_selekt.tpl");
-if(!isset($_POST['submit'])) {
-    $smarty->assign('dialog', $dialog);
-    $smarty->display('adm_dialog.tpl');
-}
+    function viewAdd() {
+        global $smarty;
+        $dialog = array(
+                0 => array('alias', null, 'neuen&nbsp;Alias&nbsp;erstellen'),
+                2 => array('name', null, 'Aliasname'),
+                4 => array('notiz', null, 'Anmerkungen'),
+                6 => array('aktion', 'addAlias')
+            );
+        $smarty->assign('dialog', $dialog);
+        $smarty->display('adm_dialog.tpl');
+    }
 
-if(isset($_POST['submit'])) {
-    switch ($_POST['submit']) :
+
+if(!empty($_POST['aktion'])) switch ($_POST['aktion']) :
     case "selekt" :
-        // Formularauswertung von Nutzerauswahl (impliziert bearbeiten)
-        $smarty->assign('aktion', 'edAlias');   // Initiator
         $ali = new Alias($_POST['alias']);
         // -> edit-dialog anzeigen
-        $dialog[0][2] = 'Alias&nbsp;bearbeiten';
-        $dialog[2][1] = $ali->name;
-        $dialog[4][1] = $ali->notiz;
-        $dialog[6][1] = $_POST['alias']?'edAlias':'addAlias';
+        $dialog[0] = array('alias', null, 'Alias&nbsp;bearbeiten');
+        $dialog[2] = array('name', $ali->name, d_feld::getString(515));
+        $dialog[4] = array('notiz', $ali->notiz, d_feld::getString(514));
+        $dialog[6] = array('aktion', 'edAlias');
         $smarty->assign('dialog', $dialog);
         $smarty->display('adm_dialog.tpl');
         $myauth->setAuthData('obj', serialize($ali));
@@ -76,13 +78,12 @@ if(isset($_POST['submit'])) {
         $data = $db->extended->autoExecute('p_alias', $ali,
                 MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($ali->id, 'integer'), array('text','text'));
         IsDbError($data);
-    endswitch;
-}
-if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND  $_POST['submit'] !== "selekt")) {
-    // Anzeige Formular Neuanlage
-    $smarty->assign('aktion', 'addAlias');
-    $ali = new Alias();
-    $myauth->setAuthData('obj', serialize(new Alias()));
-}
+endswitch;
+
+if(isset($_POST['aktion']) AND $_POST['aktion'] !== 'selekt') :
+    viewSelekt();
+    viewAdd();
+endif;
+
 
 ?>

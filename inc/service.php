@@ -2,9 +2,9 @@
 /**************************************************************
 Lose Sammlung diverser Funktionen
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                           $:  Datum der letzten Übertragung
+$Rev$
+$Author$
+$Date$
 $URL$
 
 ToDo:
@@ -14,19 +14,19 @@ function loginFunction($username = null, $status = null, $myauth = null) {
 /*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
     den Authorisations-Zustand und das Auth-Objekt
 */
-?>    <form action='' method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle; padding-left:20px;"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
+?><form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle; padding-left:20px;"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
 }
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt
-    if(PEAR::isError($obj)) {
+    if(PEAR::isError($obj)) :
         global $db;
         if ($db->inTransaction()) $db->rollback();
-        echo "<fieldset class='error'><legend>DB-Fehler</legend>";
+        echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());
             print_r($obj->getMessage());
         echo "</fieldset>\n";
-        die();
-    }
+        exit();
+    endif;
     return false;
 }
 
@@ -120,6 +120,7 @@ function fehler($err) {
     else echo '<div class="error">'.$err.'</div>';
     exit;
 }
+
 function warng($warn) {
     if(is_numeric($warn))
         echo '<div class="warng">'.d_feld::getString((int)$warn).'</div>';
@@ -135,16 +136,6 @@ function erfolg($s = null) {
 }
 
 /** **** TEXTBEARBEITUNG ****************************************************/
-function array_stripslashes($var) {
-    if(is_string($var)) {
-        $var = stripslashes($var);
-    } else {
-        if(is_array($var)) {
-            foreach($var AS $key => $value) array_stripslashes($var[$key]);
-        }
-    }
-}
-
 function normtext($var) {
     if(!is_array($var)) :
         // max drei White-Spaces erlaubt
