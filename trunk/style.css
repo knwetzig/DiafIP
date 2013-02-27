@@ -148,6 +148,8 @@ button {
     cursor: pointer;
     width:120px;
     margin:2px;
+    border:1px black solid;
+    background-color:#CCC;
 }
 
 button.noBG {
