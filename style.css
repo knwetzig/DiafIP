@@ -5,6 +5,8 @@
     $URL$
 ***** (c) DIAF e.V. *******************************************/
 
+DIV#overDiv {position:absolute;visibility:hidden; z-index:1000;}
+
 #menue {
     float:left;
     width:15%;
