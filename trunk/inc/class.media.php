@@ -64,8 +64,10 @@ class bild implements image {
             throw new Exception($msg);
         }
 
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        $db =& MDB2::singleton();
         $fehler = array();
         $errmsg = '';
         $types = array(

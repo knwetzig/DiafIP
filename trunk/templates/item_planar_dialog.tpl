@@ -17,7 +17,7 @@
 
  ***** (c) DIAF e.V. *********************************************************}
 
-<form action='{$dlg[10]}' method='post'>
+<form action='{$dlg[100]}' method='post'>
 
 <div name='links' style='float:left'>
 <table>

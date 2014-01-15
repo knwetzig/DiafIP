@@ -1,16 +1,18 @@
 <?php
 /**************************************************************
    Enthält ein internes Board zum Austauschen von Nachrichten.
-   Nicht für Produktionsumgebung geeignet!
 
-$Rev::                              $:  Revision der letzten Übertragung
-$Author::                           $:  Autor der letzten Übertragung
-$Date::                             $:  Datum der letzten Übertragung
+$Rev::                              $
+$Author::                           $
+$Date::                             $
 $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-echo '<div class="bereich">Pinwand</div>';
+if(!$myauth->checkAuth()) fehler(108);
+if($myauth->getAuthData('rechte') < 2) fehler(2);
+
+echo '<div class="bereich">Nachrichten</div>';
 if (!isset($_POST['aktion'])) {
     // einfügen -> ist Benutzer berechtigt neue Artike zu erstellen
     echo "<form method='post'>
@@ -20,6 +22,7 @@ if (!isset($_POST['aktion'])) {
 }
 
 switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
+
     case "neu":
        if(!isset($_POST['submit'])) {
             // Formular anzeigen
@@ -35,7 +38,6 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
                 </fieldset>
             </form>
 <?php
-
         } else {
             //  Auswertung evt. Eingaben
             if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
@@ -77,7 +79,6 @@ EDITFORM;
             // Auswertung evt. Eingaben
             if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
                 fehler(100);
-                break;
             }
             $a = array(
                 'titel'  => $_POST['titel'],

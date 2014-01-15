@@ -22,7 +22,7 @@
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form action='{$dlg[10]}' method="post">
+    <tr><form action='{$dlg[100]}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
             <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}

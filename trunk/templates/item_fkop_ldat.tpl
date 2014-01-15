@@ -1,10 +1,10 @@
  {*****************************************************************************
 
- Smarty-Template für alle räumlichen Gegenstände (Detailansicht)
+ Smarty-Template für Filmkopien (Detailansicht)
 
  call:   class.item.php
- class:  Obj3d
- proc:   sview
+ class:  FilmKopie
+ proc:   view
  param:	dialog[???][0] feldname
                    [1] inhalt (evt. weitere arrays)
                    [2] label
@@ -27,14 +27,7 @@
             {if !empty($dialog['bezeichner'][1])}
             <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
         <span class="note" style="float:right;">
-                ID:&nbsp;{$dialog['id'][1]}
-
-                <button
-                    class={if $darkBG}"small_dk"{else}"small"{/if}
-                    name="aktion"
-                    value="view"><img src="images/view_detailed.png" />
-                </button>
-
+                ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -43,7 +36,6 @@
                         onmouseout="return nd();"
                         value="edit"><img src="images/edit.png" /></button>
                 {/if}
-
                 {if isset($dialog['del'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}
@@ -57,13 +49,12 @@
         </span></td>
     </form></tr>
 
-{* -- art -- *}
-    {if !empty($dialog['art'][1])}<tr>
-        <td class="re">
-            {if !empty($dialog['art'][2])}{$dialog['art'][2]}:{/if}
+{* -- Bild -- *}
+    {if !empty($dialog['bild_id'][1])}<tr><td colspan="2"></td>
+        <td rowspan="7">
+            <img src="images/platzhalter.png" width="200" height="150" alt="bild" />
         </td>
-        <td>{$dialog['art'][1]}</td>
-    </tr>{/if}
+    <tr>{/if}
 
 {* -- Zuordnung zu Film -- *}
     {if !empty($dialog['zu_film'][1])}<tr>
@@ -72,12 +63,20 @@
         <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
-{* -- Maße -- *}
-    {if !empty($dialog['masze'][1])}<tr>
+{* -- medium -- *}
+    {if !empty($dialog['medium'][1])}<tr>
         <td class="re">
-            {if !empty($dialog['masze'][2])}{$dialog['masze'][2]}:{/if}
+            {if !empty($dialog['medium'][2])}{$dialog['medium'][2]}:{/if}
         </td>
-        <td>{$dialog['masze'][1]}&nbsp;mm</td>
+        <td>{$dialog['medium'][1]}</td>
+    </tr>{/if}
+
+{* -- laufzeit -- *}
+    {if !empty($dialog['laufzeit'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['laufzeit'][2])}{$dialog['laufzeit'][2]}:{/if}
+        </td>
+        <td>{$dialog['laufzeit'][1]}</td>
     </tr>{/if}
 
 {* -- lagerort -- *}

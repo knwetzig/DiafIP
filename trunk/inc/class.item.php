@@ -51,7 +51,7 @@ abstract class Item implements iItem {
         $x              = null,     // in mm (max 32757)
         $y              = null,
         $kollo          = 1,
-        $akt_ort        = null, // aktueller Aufenthaltsort des Gegenstandes....
+        $akt_ort        = null,     // aktueller Aufenthaltsort des Gegenstandes
         $a_wert         = 10,       // Anschaffungswert zur Zeit des Zugangs
         $oldsig         = null,     // alte Signatur
         $herkunft       = 1,        // -> DEFA Studio für Trickfilme
@@ -110,7 +110,7 @@ abstract class Item implements iItem {
     *  Aufgabe: gibt den Ein-/Ausgaberecord zurück
     *   Return: array
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
 
         switch ($set) :
           case 'edit' :
@@ -183,7 +183,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
     *   Return: void
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) fehler(4);    // kein Datensatz vorhanden
@@ -279,7 +279,7 @@ abstract class Item implements iItem {
     *   Return: int (ID des letzten Datensatzes | null )
     ****************************************************************/
 /**
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_ifDouble, null, $this->titel);
         IsDbError($data);
         return $data['id'];
@@ -291,7 +291,9 @@ abstract class Item implements iItem {
     *  Aufgabe: Setzt "NUR" das Löschflag für den Datensatz in der DB
     *   Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
+        $db =& MDB2::singleton();
+
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
         IsDbError($db->extended->autoExecute(
@@ -304,7 +306,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Testet ob die Löschflagge gesetzt ist
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         if(empty($this->id)) return;
         $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $this->id, 'integer');
@@ -318,7 +320,7 @@ abstract class Item implements iItem {
     *   Aufruf: int $nr
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $nr, 'integer');
         IsDbError($data);
@@ -330,7 +332,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Prüft ob der Datensatz verknüpft ist
     *   Return: int $Anzahl
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         // Prüfkandidaten:  ...?
         $data = $db->extended->getOne(self::SQL_isLink, null, $this->id);
         IsDbError($data);
@@ -342,7 +344,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getOne(
             self::SQL_isVal, 'boolean', $this->id, 'integer');
         IsDbError($data);
@@ -357,9 +359,10 @@ abstract class Item implements iItem {
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
+        $db =& MDB2::singleton();
         $s = "%".$s."%";
 
         // Suche in Bezeichner (rudimentär)
@@ -422,7 +425,7 @@ final class Planar extends Item implements iPlanar {
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        global $db;
+        $db =& MDB2::singleton();
 
         $data = $db->extended->getOne(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
@@ -437,7 +440,7 @@ final class Planar extends Item implements iPlanar {
     *  Aufgabe: Liefert eine Array der Arten (dok/plakat etc)
     *   Return: array()
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol('SELECT id FROM i_planar_art;', 'integer');
         IsDbError($list);
         $data = array();
@@ -454,8 +457,10 @@ final class Planar extends Item implements iPlanar {
     *   Aufruf:  Status
     *   Return:  Fehlercode
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        $db =& MDB2::singleton();
         if ($stat == false) :
             $db->beginTransaction('new2Ditem'); IsDbError($db);
             // neue id besorgen
@@ -463,7 +468,7 @@ final class Planar extends Item implements iPlanar {
             IsDbError($data);
             $this->id = $data;
             $this->edit($stat);
-       else :
+        else :
             // Objekt wurde vom Eventhandler initiiert
             $this->edit(true);
             foreach($this as $key => $wert) $data[$key] = $wert;
@@ -487,7 +492,7 @@ final class Planar extends Item implements iPlanar {
     *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
     *   Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if($stat == false) :        // Formular anzeigen
@@ -515,7 +520,7 @@ final class Planar extends Item implements iPlanar {
     *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
     *    Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
 
@@ -526,6 +531,7 @@ final class Planar extends Item implements iPlanar {
         $types = $this->types;
         array_unshift($types, 'integer');
 
+        $db =& MDB2::singleton();
         $erg = $db->extended->autoExecute('i_planar', $data,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
         IsDbError($erg);
@@ -537,7 +543,8 @@ final class Planar extends Item implements iPlanar {
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
+        $db =& MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         $s = "%".$s."%";
 
@@ -610,7 +617,7 @@ final class Obj3d extends Item implements iPlanar {
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
         if (empty($data)) fehler(4);   // kein Datensatz vorhanden
@@ -625,7 +632,7 @@ final class Obj3d extends Item implements iPlanar {
     *  Aufgabe: Liefert eine Array der Arten
     *   Return: array()
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol('SELECT id FROM i_3dobj_art;', 'integer');
         IsDbError($list);
         $data = array();
@@ -642,7 +649,8 @@ final class Obj3d extends Item implements iPlanar {
     *   Aufruf:  Status
     *   Return:  Fehlercode
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth;
+        $db =& MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if ($stat == false) :
             $db->beginTransaction('new3Ditem'); IsDbError($db);
@@ -673,7 +681,8 @@ final class Obj3d extends Item implements iPlanar {
     *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
     *   Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
+        $db =& MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if($stat == false) :        // Formular anzeigen
@@ -705,7 +714,8 @@ final class Obj3d extends Item implements iPlanar {
     *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
     *    Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
+        $db =& MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
 
@@ -726,7 +736,8 @@ final class Obj3d extends Item implements iPlanar {
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
+        $db =& MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $s = "%".$s."%";
@@ -742,12 +753,14 @@ final class Obj3d extends Item implements iPlanar {
 
     public function sview() {
     /****************************************************************
-    *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
+    *   Aufgabe: Ausgabe des Objektdatensatzes an smarty
+    *            Listenansicht
     *    Return: none
     ****************************************************************/
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+
         $data = parent::view();
         $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
         $data['art'] = $a->display();
@@ -759,12 +772,14 @@ final class Obj3d extends Item implements iPlanar {
 
     public function view() {
     /****************************************************************
-    *   Aufgabe: Ausgabe des Objektdatensatzes (an smarty)
+    *   Aufgabe: Ausgabe des Objektdatensatzes an smarty
+    *            Detailansicht
     *    Return: none
     ****************************************************************/
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+
         $data = parent::view();
         $a = new d_feld('art',   d_feld::getString($this->art),   VIEW, 483);
         $data['art'] = $a->display();
@@ -774,4 +789,157 @@ final class Obj3d extends Item implements iPlanar {
         $smarty->display('item_3dobj_dat.tpl');
     }
 }
+
+
+/** ==========================================================================
+                                Filmkopie CLASS
+========================================================================== **/
+final class FilmKopie extends Item implements iPlanar {
+
+    protected
+        $medium     = 10,   // Film, DVD etc  DB->i_medium
+                            // Vorgabe: 10 = 35mm Film
+        $material   = 5,    // Trägermaterial DB->i_material
+        $tonart     = 5,    // Tonverfahren DB->i_tonart, Vorgabe LT-Mono
+        $fps        = 24,   // Frames/s (Vorführfrequenz)
+        $laufzeit   = 1;    // Laufzeit bei angegebner fps in sekunden
+
+    const
+        SQL_get = 'SELECT medium, material, tonart, fps, laufzeit
+                      FROM ONLY i_fkop WHERE id = ?;';
+
+    function __construct($nr = NULL) {
+        if (isset($nr)) self::get($nr);
+    }
+
+    protected function get($nr) {
+    /****************************************************************
+    *  Aufgabe: Aufruf der Elternklasse zur Initialisierung und Ergänzung
+    *           um eigene Felder
+    *   Return: void
+    ****************************************************************/
+        parent::get($nr);
+        $db =& MDB2::singleton();
+        $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
+        IsDbError($data);
+        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
+
+        // Ergebnis -> Objekt schreiben
+        $this->medium     = $data['medium'];
+        $this->material   = $data['material'];
+        $this->tonart     = $data['tonart'];
+        $this->fps        = $data['fps'];
+        $this->laufzeit   = $data['laufzeit'];
+    }
+
+    protected function getMedium($nr) {
+        //DB->i_medium
+        $db =& MDB2::singleton();
+        $data = $db->extended->getOne('
+            SELECT medium FROM i_medium WHERE id = ?;', 'text', $nr);
+        IsDbError($data);
+        return $data;
+    }
+
+    protected function getMaterial($nr) {
+        $db =& MDB2::singleton();
+        $data = $db->extended->getOne('
+            SELECT material FROM i_material WHERE id = ?;', 'text', $nr);
+        IsDbError($data);
+        return $data;
+    }
+
+    protected function getTonart($nr) {
+        //DB->i_tonart
+        $db =& MDB2::singleton();
+        $data = $db->extended->getOne('
+            SELECT audiotyp FROM i_tonart WHERE id = ?;', 'text', $nr);
+        IsDbError($data);
+        return $data;
+    }
+
+    public function add($stat) {
+    }
+
+    public function edit($stat) {
+    }
+
+    public function set() {
+    /****************************************************************
+    *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
+    *    Return: Fehlercode
+    ****************************************************************/
+    }
+
+    public static function search($s) {
+    /****************************************************************
+    *  Aufgabe: Suchfunktion in .......
+    *   Param:  string
+    *   Return: Array der gefunden ID's | Fehlercode
+    ****************************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        $s = "%".$s."%";
+        $db =& MDB2::singleton();
+        // Suche in Bezeichner (rudimentär)
+        $data = $db->extended->getCol(
+            'SELECT id FROM ONLY i_fkop
+            WHERE (bezeichner ILIKE ?) AND (del != TRUE);', null, $s);
+        IsDbError($data);
+        $erg = $data;
+        if ($erg) return array_unique($erg); else return 1;
+    }
+
+    public function sview() {
+
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Objektdatensatzes an smarty
+    *            Detailansicht
+    *    Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+
+        $data = parent::view();
+        $a = new d_feld('medium', self::getMedium($this->medium), VIEW, 490);
+        $data['medium'] = $a->display();
+        $a = new d_feld('laufzeit', $this->laufzeit, VIEW, 580);
+        $data['laufzeit'] = $a->display();
+
+        $smarty->assign('dialog', $data);
+        $smarty->display('item_fkop_ldat.tpl');
+    }
+
+    public function view() {
+    /****************************************************************
+    *   Aufgabe: Ausgabe des Objektdatensatzes an smarty
+    *            Detailansicht
+    *    Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if($this->isDel()) return;          // nichts ausgeben, da gelöscht
+
+        $data = parent::view();
+        // Film, DVD etc  DB->i_medium
+        $a = new d_feld('medium', self::getMedium($this->medium), VIEW, 490);
+        $data['medium'] = $a->display();
+        // Trägermaterial DB->i_material
+        $a = new d_feld('material', self::getMaterial($this->material),VIEW, 488);
+        $data['material'] = $a->display();
+        // Tonverfahren DB->i_tonart, Vorgabe LT-Mono
+        $a = new d_feld('tonart', self::getTonart($this->tonart), VIEW, 1320);
+        $data['tonart'] = $a->display();
+        $a = new d_feld('fps', $this->fps, VIEW, 489);
+        $data['fps'] = $a->display();
+        // Laufzeit bei angegebner fps in sekunden
+        $a = new d_feld('laufzeit', $this->laufzeit, VIEW, 580);
+        $data['laufzeit'] = $a->display();
+
+        $smarty->assign('dialog', $data);
+        $smarty->display('item_fkop_dat.tpl');
+    }
+} // --- end class fkop
 ?>

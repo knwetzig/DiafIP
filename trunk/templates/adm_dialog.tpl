@@ -5,7 +5,7 @@ $Date$
 $URL$
 ***** (c) DIAF e.V. *******************************************}
 
-<form action='{$dlg[10]}' method='post'><fieldset style='margin-top:25px'><legend>{$dialog[0][2]}</legend><table>
+<form action='{$dlg[100]}' method='post'><fieldset style='margin-top:25px'><legend>{$dialog[0][2]}</legend><table>
     <colgroup><col><col></colgroup>
 
 {if isset($dialog[1])}<tr><td>$dialog[1][2]</td><td>
