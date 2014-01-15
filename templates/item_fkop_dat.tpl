@@ -1,9 +1,9 @@
  {*****************************************************************************
 
- Smarty-Template für alle räumlichen Gegenstände (Detailansicht)
+ Smarty-Template für Filmkopien (Detailansicht)
 
  call:   class.item.php
- class:  Obj3d
+ class:  FilmKopie
  proc:   view
  param:	dialog[???][0] feldname
                    [1] inhalt (evt. weitere arrays)
@@ -63,36 +63,44 @@
         <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
-{* -- art -- *}
-    {if !empty($dialog['art'][1])}<tr>
+{* -- medium -- *}
+    {if !empty($dialog['medium'][1])}<tr>
         <td class="re">
-            {if !empty($dialog['art'][2])}{$dialog['art'][2]}:{/if}
+            {if !empty($dialog['medium'][2])}{$dialog['medium'][2]}:{/if}
         </td>
-        <td>{$dialog['art'][1]}</td>
+        <td>{$dialog['medium'][1]}</td>
     </tr>{/if}
 
-{* -- Breite -- *}
-    {if !empty($dialog['x'][1])}<tr>
+{* -- material -- *}
+    {if !empty($dialog['material'][1])}<tr>
         <td class="re">
-            {if !empty($dialog['x'][2])}{$dialog['x'][2]}:{/if}
+            {if !empty($dialog['material'][2])}{$dialog['material'][2]}:{/if}
         </td>
-        <td>{$dialog['x'][1]}&nbsp;mm</td>
+        <td>{$dialog['material'][1]}</td>
     </tr>{/if}
 
-{* -- Höhe -- *}
-    {if !empty($dialog['y'][1])}<tr>
+{* -- tonart -- *}
+    {if !empty($dialog['tonart'][1])}<tr>
         <td class="re">
-            {if !empty($dialog['y'][2])}{$dialog['y'][2]}:{/if}
+            {if !empty($dialog['tonart'][2])}{$dialog['tonart'][2]}:{/if}
         </td>
-        <td>{$dialog['y'][1]}&nbsp;mm</td>
+        <td>{$dialog['tonart'][1]}</td>
     </tr>{/if}
 
-{* -- Tiefe -- *}
-    {if !empty($dialog['z'][1])}<tr>
+{* -- fps -- *}
+    {if !empty($dialog['fps'][1])}<tr>
         <td class="re">
-            {if !empty($dialog['z'][2])}{$dialog['z'][2]}:{/if}
+            {if !empty($dialog['fps'][2])}{$dialog['fps'][2]}:{/if}
         </td>
-        <td>{$dialog['z'][1]}&nbsp;mm</td>
+        <td>{$dialog['fps'][1]}</td>
+    </tr>{/if}
+
+{* -- laufzeit -- *}
+    {if !empty($dialog['laufzeit'][1])}<tr>
+        <td class="re">
+            {if !empty($dialog['laufzeit'][2])}{$dialog['laufzeit'][2]}:{/if}
+        </td>
+        <td>{$dialog['laufzeit'][1]}</td>
     </tr>{/if}
 
 {* -- lagerort -- *}

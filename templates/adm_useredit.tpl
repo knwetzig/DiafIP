@@ -15,7 +15,7 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <br />
-<form action='{$dlg[10]}' method='post'>
+<form action='{$dlg[100]}' method='post'>
     <fieldset>
         <legend>&nbsp;Accountdaten&nbsp:bearbeiten&nbsp;</legend>
         <table>

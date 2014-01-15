@@ -103,7 +103,7 @@ interne Methoden:
     *  Aufgabe: Ermitteln gleichlautender Titel
     *   Return: int (ID des letzten Datensatzes | null )
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_ifDouble, null, $this->titel);
         IsDbError($data);
         return $data['id'];
@@ -115,7 +115,7 @@ interne Methoden:
     *   Return:
     ****************************************************************/
     //
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol(self::SQL_getTaetigk, 'integer');
         IsDbError($list);
         $data = array();
@@ -130,7 +130,7 @@ interne Methoden:
     *   Return: array, alles iO
     *           Fehlercode
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $ergebnis = array();
         $erg =& $db->query(self::SQL_getSTLi);
         IsDbError($erg);
@@ -148,7 +148,7 @@ interne Methoden:
     *   Return: array, alles iO
     *           Fehlercode
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getAll(self::SQL_getTLi);
         IsDbError($list);
 
@@ -162,7 +162,7 @@ interne Methoden:
     *  Aufgabe: Ausgabe des Titels
     *   Return: String / Fehlercode
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $erg = $db->extended->getOne(
             'SELECT titel FROM f_main
              WHERE id = ? AND del != TRUE;', null, (int)$nr);
@@ -176,7 +176,6 @@ interne Methoden:
     *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
     *   Return: void
     ****************************************************************/
-        global $db;
         $types      = array(
             'integer',  // id
             'boolean',  // del          true wenn gelöscht
@@ -197,6 +196,7 @@ interne Methoden:
             'integer',  // Serienfolge
         );
 
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) fehler(4);        // kein Datensatz vorhanden
@@ -220,9 +220,10 @@ interne Methoden:
     *  Aufgabe: Setzt "NUR" das Löschflag für den Datensatz in der DB
     *   Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
+        $db =& MDB2::singleton();
         IsDbError($db->extended->autoExecute(
             'f_main', array('del' => true), MDB2_AUTOQUERY_UPDATE,
             'id = '.$db->quote($this->id, 'integer'), 'boolean'));
@@ -233,7 +234,7 @@ interne Methoden:
     *  Aufgabe: Testet ob die Löschflagge gesetzt ist
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         if(empty($this->id)) return;
         $data = $db->extended->getRow(
             self::SQL_isDel, 'boolean', $this->id, 'integer');
@@ -247,7 +248,7 @@ interne Methoden:
     *   Aufruf: int $nr
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(
             self::SQL_isDel, 'boolean', $nr, 'integer');
         IsDbError($data);
@@ -261,7 +262,7 @@ interne Methoden:
     *   Return: int (Anzahl)
     ****************************************************************/
     //
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(
             self::SQL_exCast, null, array($this->id, $p, $t),
             array('integer', 'integer', 'integer'));
@@ -275,7 +276,7 @@ interne Methoden:
     *   Aufruf: int ($pid), int ($taetigkeit)
     *   Return: Fehlercode
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         // testen, das nix doppelt eingetragen wird!
         if(self::existCast($p, $t)) return 8;
 
@@ -290,9 +291,10 @@ interne Methoden:
     *   Aufruf: int ($pid), int ($taetigkeit)
     *   Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
+        $db =& MDB2::singleton();
         IsDbError($db->extended->autoExecute(
             'f_cast', null, MDB2_AUTOQUERY_DELETE,
             'fid = '.$this->id.' AND pid = '.$p.' AND tid = '.$t
@@ -301,10 +303,13 @@ interne Methoden:
 
     final protected function getCastList() {
     /****************************************************************
-    *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
+    *  Aufgabe: gibt die Besetzungsliste für diesen filmogr. Datensatz aus
     *   Return: array(name, tid, pid, job)
+    * Die Sortierreihenfolge ist durch die ID in der Stringtabelle
+    * fest vorgegeben. Bei Änderung bitte den Eintrag in der Tabelle
+    * f_taetig korrigieren.
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         if (empty($this->id)) return;
         $data = $db->extended->getALL(
             self::SQL_getCaLi, null, $this->id, 'integer');
@@ -325,7 +330,7 @@ interne Methoden:
     *  Aufgabe: Prüft ob der Datensatz verknüpft ist
     *   Return: int $Anzahl
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         // Prüfkandidaten: f_cast.fid / ...?
         $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
         IsDbError($data);
@@ -337,7 +342,7 @@ interne Methoden:
     *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
     *   Return: bool
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getOne(
             self::SQL_isVal, 'boolean', $this->id, 'integer');
         IsDbError($data);
@@ -350,9 +355,11 @@ interne Methoden:
     *   Param:  string
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
         $s = "%".$s."%";
+        $db =& MDB2::singleton();
 
         // Suche in titel, atitel, utitel
         $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s));
@@ -395,6 +402,7 @@ Interne Methoden:
     getThisMediaSpez()  protected        -> dito für angewandte Mediaspezifikationen
     getListProdTech()   protected static -> array(txt)der Produktionstechniken
     getThisProdTech()   protected        -> dito für verwendete Produktionstechniken
+    getProdLand()       protected        -> aus Personendaten ermittelte Land zurück.
 
 ********************************************************************/
 
@@ -406,12 +414,11 @@ Interne Methoden:
         $praedikat  = 0,
         $mediaspezi = 0,
         $bildformat = 0,
-        $urauffuehr = null,
-        $auftraggeber = null;
+        $urauffuehr = null;
 
     const
         SQL_get      = 'SELECT gattung, prodtechnik, laenge, fsk, praedikat,
-                            bildformat, mediaspezi, urauffuehr, auftraggeber
+                            bildformat, mediaspezi, urauffuehr
                        FROM f_film WHERE id = ?;',
         SQL_getPraed = 'SELECT * FROM f_praed ORDER BY praed ASC;',
         SQL_getGenre = 'SELECT * FROM f_genre;',
@@ -431,7 +438,6 @@ Interne Methoden:
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        global $db;
         $types      = array(
             'integer',  // gattung
             'integer',  // prodtechnik
@@ -440,9 +446,10 @@ Interne Methoden:
             'integer',  // praedikat
             'integer',  // bildformat
             'integer',  // mediaspezi
-            'date',     // urauffuehr
-            'integer'   // Auftraggeber
+            'date'      // urauffuehr
         );
+
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) fehler(4);        // kein Datensatz vorhanden
@@ -455,7 +462,7 @@ Interne Methoden:
     *  Aufgabe: gibt ein  der Gattungen zurück
     *   Return: Array(num, text)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol(self::SQL_getGenre, 'integer');
         $data = array();
         IsDbError($list);
@@ -471,7 +478,7 @@ Interne Methoden:
     *  Aufgabe: gibt eine Liste der Praedikate zurück
     *   Return: array(int, string)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
         $data = array();
@@ -485,7 +492,7 @@ Interne Methoden:
     *  Aufgabe: gibt eine Liste der Filmformate zurück
     *   Return: array(int,string)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getAll(self::SQL_getBfLi);
         IsDbError($list);
         $data = array('');
@@ -495,7 +502,7 @@ Interne Methoden:
 
     protected function getBildformat() {
     // gibt den string mit dem Bildformat zurück
-        global $db;
+        $db =& MDB2::singleton();
         if (empty($this->bildformat)) return;
         $data = $db->extended->getOne(
             self::SQL_getBF, null, $this->bildformat);
@@ -508,7 +515,7 @@ Interne Methoden:
     *  Aufgabe: gibt eine Liste der Mediaspezifikationen zurück
     *   Return: array(int)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getCol(self::SQL_getMS, 'integer');
         IsDbError($data);
         $data = getStringList($data);
@@ -533,7 +540,7 @@ Interne Methoden:
     *  Aufgabe: gibt eine Liste der Produktionstechniken zurück
     *   Return: array (string)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getCol(self::SQL_getPT, 'integer');
         IsDbError($data);
         $data = getStringList($data);
@@ -553,14 +560,37 @@ Interne Methoden:
         return $data;
     }
 
+    protected function getProdLand() {
+    /****************************************************************
+    *  Aufgabe: Prüft, ob für diesen filmogr. Datensatz ein Hersteller
+    *           angelegt ist und gibt im Erfolgsfall, das aus den Personen-
+    *           daten ermittelte Land zurück.
+    *   Return: array | NULL
+    ****************************************************************/
+        $db =& MDB2::singleton();
+        $ProdLand = $db->extended->getCol(
+           'SELECT s_land.land
+            FROM
+              public.f_cast, public.p_person, public.s_land, public.s_orte
+            WHERE
+              f_cast.pid = p_person.id AND p_person.wort = s_orte.id AND
+              s_orte.land = s_land.id AND f_cast.fid = ? AND f_cast.tid = ?;',
+            null, array($this->id, 1480), array('integer', 'integer')
+        );
+        IsDbError($ProdLand);
+        return $ProdLand;
+    }
+
     public function add($stat) {
     /****************************************************************
     *   Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
     *   Aufruf:  Status
     *   Return:  Fehlercode
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        $db =& MDB2::singleton();
         if ($stat == false) :
             $db->beginTransaction('newFilm'); IsDbError($db);
             // neue id besorgen
@@ -580,7 +610,6 @@ Interne Methoden:
                 'integer',      // mediaspezi
                 'integer',      // bildformat
                 'text',         // urauffuehr
-                'integer',      // auftraggeber
                 'integer',      // id
                 'boolean',      // del
                 'integer',      // editfrom
@@ -616,7 +645,7 @@ Interne Methoden:
     *   Aufruf: array, welches die zu ändernden Felder enthält
     *   Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if($stat == false) :        // Formular anzeigen
             $data = array(
@@ -652,7 +681,6 @@ Interne Methoden:
                 new d_feld('bildformat',$this->bildformat,  EDIT, 608),
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
-                new d_feld('auftraggeber', $this->auftraggeber, EDIT, 555),
                 new d_feld('isvalid',   $this->isvalid,     IEDIT, 10009),
             );
             // CastListe nur beim bearbeiten und nicht bei Neuanlage zeigen.
@@ -697,12 +725,6 @@ Interne Methoden:
             if(isset($_POST['anmerk'])) :
                 if ($_POST['anmerk']) $this->anmerk = $_POST['anmerk'];
                 else $this->anmerk = null;
-            endif;
-
-            if(isset($_POST['auftraggeber'])) :
-                if ($_POST['auftraggeber'])
-                    $this->auftraggeber = (int)($_POST['auftraggeber']);
-                else $this->auftraggeber = null;
             endif;
 
             if(isset($_POST['prod_jahr'])) :
@@ -795,9 +817,10 @@ Interne Methoden:
     *   Aufgabe: schreibt die Daten in die Tabelle 'f_film' zurück (UPDATE)
     *    Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
+
         $types = array(
         // ACHTUNG: Reihenfolge beachten!
             'integer',      // gattung
@@ -808,7 +831,6 @@ Interne Methoden:
             'integer',      // mediaspezi
             'integer',      // bildformat
             'text',         // urauffuehr
-            'integer',      // auftraggeber
             'boolean',      // del
             'integer',      // editfrom
             'timestamp',    // editdate
@@ -826,8 +848,11 @@ Interne Methoden:
             'integer',      // sid
             'integer'       // sfolge
         );
+
         foreach($this as $key => $wert) $data[$key] = $wert;
         unset($data['stitel'], $data['sdescr'], $data['id']);
+
+        $db =& MDB2::singleton();
         $erg = $db->extended->autoExecute('f_film', $data,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
         IsDbError($erg);
@@ -849,21 +874,19 @@ Interne Methoden:
 
     public function sview() {
     /****************************************************************
-    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
+    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty) in der Listenansicht
     *    Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         /* Sonderwunsch Regie anzeigen ;-( */
+        $db =& MDB2::singleton();
         $regie = $db->extended->getRow(
-            'SELECT pid
-             FROM f_cast
-             WHERE fid = ? AND tid = ?;',
-             null,
-             array($this->id, 1000),
-             array('integer', 'integer'));
+            'SELECT pid FROM f_cast WHERE fid = ? AND tid = ?;', null,
+            array($this->id, 1000), array('integer', 'integer')
+        );
         IsDbError($regie);
         $regie = new Person($regie['pid']);
 
@@ -882,20 +905,20 @@ Interne Methoden:
 
     public function view() {
     /****************************************************************
-    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty)
+    *   Aufgabe: Ausgabe des Filmdatensatzes (an smarty) in der Detailansicht
     *    Return: none
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if($this->isDel()) return;          // nichts ausgeben, da gelöscht
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         if(!empty($this->editfrom)) :
+            $db =& MDB2::singleton();
             $bearbeiter = $db->extended->getOne(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');
             IsDbError($bearbeiter);
         else : $bearbeiter = null;
         endif;
-        $ageber = new Person($this->auftraggeber);
 
         $data = a_display(array( // name, inhalt, opt -> rechte, label,tooltip
             new d_feld('id',        $this->id,          VIEW),
@@ -907,6 +930,7 @@ Interne Methoden:
             new d_feld('sdescr',    $this->sdescr),   // Beschreibung Serie
             new d_feld('bild_id',   $this->bild_id),
             new d_feld('prod_jahr', $this->prod_jahr,   VIEW, 576),
+            new d_feld('prod_land', self::getProdLand(), VIEW, 698),
             new d_feld('thema',     $this->thema,       VIEW, 577), // Schlagwortliste
             new d_feld('quellen',   $this->quellen,     VIEW, 578),
             new d_feld('inhalt',    changetext($this->inhalt),  VIEW, 506),
@@ -919,7 +943,6 @@ Interne Methoden:
             new d_feld('praedikat', d_feld::getString($this->praedikat), VIEW, 582),
             new d_feld('bildformat', self::getBildformat(),    VIEW, 608),
             new d_feld('mediaspezi', self::getThisMediaSpez(),  VIEW, 583),
-            new d_feld('auftraggeber', $ageber->getName(), VIEW, 555),
             new d_feld('urrauff',   $this->urauffuehr,          VIEW, 584),
             new d_feld('cast',      $this->getCastList(),       VIEW),
             new d_feld('edit',      null, EDIT, null, 4013), // edit-Button
@@ -967,7 +990,7 @@ class Biblio extends Main implements iTyp {
         Aufruf:
         Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 
@@ -977,7 +1000,7 @@ class Biblio extends Main implements iTyp {
         Aufruf: array, welches die zu ändernden Felder enthält
         Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 
@@ -986,7 +1009,7 @@ class Biblio extends Main implements iTyp {
         Aufgabe: schreibt die Daten in die Tabelle 'f_biblio' zurück (UPDATE)
         Return: Fehlercode
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 

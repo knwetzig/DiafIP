@@ -41,7 +41,7 @@ class LOrt implements iLOrt {
     }
 
     protected function get($nr) {
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getOne(self::SQL_get, null, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) fehler(4);        // kein Datensatz vorhanden
@@ -63,7 +63,7 @@ class LOrt implements iLOrt {
     *  Aufgabe: liefert die Liste mit den möglichen Lagerorten
     *   Return: string
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getAll(
             'SELECT * FROM i_lagerort', array('integer', 'text'));
         IsDbError($list);
@@ -76,11 +76,11 @@ class LOrt implements iLOrt {
     }
 
     public function add($name) {
-        global $db;
         $this->lort = $name;
         if (empty($name)) fehler(107);
         elseif ($this->exist()) fehler('Objekt exisitiert bereits');
 
+        $db =& MDB2::singleton();
         $val = array('lagerort' => $this->lort);
         IsDbError($db->extended->autoExecute('i_lagerort', $val,
                     MDB2_AUTOQUERY_INSERT, null, 'text'));
@@ -107,7 +107,7 @@ class LOrt implements iLOrt {
     }
 
     final protected function is_linked() {
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getCol(
             self::SQL_islinked, 'integer', $this->nr, 'integer');
         IsDbError($list);
@@ -115,7 +115,7 @@ class LOrt implements iLOrt {
     }
 
     final protected function exist() {
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT COUNT(*) FROM i_lagerort
                 WHERE i_lagerort.lagerort ILIKE ?;';
         $data = $db->extended->getRow($sql, null, array($this->lort));
@@ -124,11 +124,12 @@ class LOrt implements iLOrt {
     }
 
     public function del() {
-        global $myauth, $db;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
 
         if ($this->is_linked()) Fehler(10006); else {
             // löschen in Tabelle
+            $db =& MDB2::singleton();
             IsDbError($db->extended->autoExecute('i_lagerort', null,
                 MDB2_AUTOQUERY_DELETE, 'nr = '.$db->quote($this->nr, 'integer')));
             erfolg();
@@ -175,7 +176,7 @@ class Ort {
     }
 
     protected function get() {    // die dynamische Version
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT * FROM orte WHERE oid = ?;';
         $data = $db->extended->getRow($sql, null, array($this->oid));
         IsDbError($data);
@@ -186,7 +187,7 @@ class Ort {
     }
 
     function getOrt($nr) {  // die statische Version
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT * FROM orte WHERE oid = ?;';
         $data = $db->extended->getRow($sql, null, array($nr));
         IsDbError($data);
@@ -199,7 +200,7 @@ class Ort {
     Aufruf: false   für Erstaufruf
             true    Verarbeitung nach Formular
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
 
         if($status == false) $this->edit(false);
         else {
@@ -216,7 +217,7 @@ class Ort {
     }
 
     function edit($status) {
-        global $db, $smarty;
+        global $smarty;
         if($status == false) {
             $smarty->assign('llist', self::getLandList());
             $data = a_display(array(
@@ -242,7 +243,7 @@ class Ort {
     Return: 0  alles ok
             1  leerer Datensatz
     **************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         if (!$this->oid) return 1;   // Abbruch weil leerer Datensatz
         $types = array('integer','text');
         $werte = array('land' => $this->lid, 'ort' => $this->ort);
@@ -253,7 +254,7 @@ class Ort {
     }
 
     function del() {
-        global $db;
+        $db =& MDB2::singleton();
         // Abfrage, ob Ort mit einer Person verküpft ist
         $sql = "SELECT p_person.id FROM public.p_person
                 WHERE p_person.tort = ? OR p_person.gort = ? OR p_person.wort = ?;";
@@ -272,7 +273,7 @@ class Ort {
 
     function getOrtList() {
     // listet alle Orte in einem Array
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT * FROM orte;';
         $data = $db->extended->getAll($sql);
         IsDbError($data);
@@ -285,7 +286,7 @@ class Ort {
     }
 
     function getLandList() {
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT * FROM s_land ORDER BY s_land.land ASC, s_land.bland ASC;';
         $data = $db->extended->getAll($sql);
         IsDbError($data);

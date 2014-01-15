@@ -46,7 +46,7 @@ class Alias {
 
     protected function get($nr) {
     // Diese Funktion initilisiert das Objekt
-        global $db;
+        $db =& MDB2::singleton();
         $this->id = $nr;
         $sql = 'SELECT name,notiz FROM ONLY p_alias WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $this->id, 'integer');
@@ -57,7 +57,7 @@ class Alias {
 
     static function getAlias($nr) {
     // Diese Funktion gibt den Namen zurück
-        global $db;
+        $db =& MDB2::singleton();
         if (empty($nr)) return null;
         $sql = 'SELECT name FROM ONLY p_alias WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $nr, 'integer');
@@ -66,7 +66,7 @@ class Alias {
     }
 
     static function getAliasList() {
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT id, name FROM ONLY p_alias;';
         $data = $db->extended->getAll($sql, array('integer','text'));
         IsDbError($data);
@@ -133,7 +133,7 @@ func: __construct($)
     *  Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
     *  Return: none
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $sql = 'SELECT * FROM p_person WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $nr);
         IsDbError($data);
@@ -176,7 +176,7 @@ func: __construct($)
     * Aufgabe:
     *  Return:
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $data = $db->extended->getRow(
             self::SQL_ifDouble, null, array($this->gtag, $this->vname, $this->name));
         return $data['id'];
@@ -187,7 +187,7 @@ func: __construct($)
     * Aufgabe: Personenliste
     *  Return: array([id] => vname+name)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         $list = $db->extended->getAll(self::SQL_getPersLi);
         IsDbError($list);
         $data = array();
@@ -202,7 +202,7 @@ func: __construct($)
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
     *   Return: array(vname, name, tid, pid, job)
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         if (empty($this->id)) return;
         $data = $db->extended->getALL(
             self::SQL_getCaLi, null, $this->id, 'integer');
@@ -226,7 +226,7 @@ func: __construct($)
     * Aufgabe: Prüft ob der Datensatz verknüpft ist
     *  Return: 0 = frei / Nr = Anzahl
     ****************************************************************/
-        global $db;
+        $db =& MDB2::singleton();
         // Prüfkandidaten: f_cast.pid / ...?
         $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
         IsDbError($data);
@@ -242,7 +242,7 @@ func: __construct($)
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if($stat == false) {
             // Liste mit Alias erstellen und smarty übergeben
@@ -360,8 +360,9 @@ func: __construct($)
     Aufruf: false   für Erstaufruf
             true    Verarbeitung nach Formular
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
         $types  = array(
                 'text',         // vname
                 'date',         // gtag
@@ -382,6 +383,7 @@ func: __construct($)
                 'text',         // notiz (geerbt von Alias)
                 'text'          // id
         );
+        $db =& MDB2::singleton();
 
         if ($stat == false) {
             // begin TRANSACTION anlage person
@@ -408,7 +410,7 @@ func: __construct($)
     Return: 0  alles ok
             4  leerer Datensatz
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
 
@@ -432,7 +434,7 @@ func: __construct($)
                 'text',         // notiz -> Alias
                 'integer',      // id -> Alias
         );
-
+        $db =& MDB2::singleton();
         foreach($this as $key => $wert) $data[$key] = $wert;
 
         $erg = $db->extended->autoExecute('p_person', $data,
@@ -442,12 +444,13 @@ func: __construct($)
     }
 
     function del() {
-        global $myauth, $db;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
         /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
         knüpft ist oder problemlos gelöscht werden kann */
 
         if(self::isLinked()) fehler(10006);
+        $db =& MDB2::singleton();
 
         IsDbError($db->extended->autoExecute('p_person', null,
             MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
@@ -462,11 +465,12 @@ func: __construct($)
             1   nichts gefunden
     Anm.: statisch
     ****************************************************************/
-        global $db, $myauth;
+        global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $erg = array();
         $s = "%".$s."%";        // Suche nach Teilstring
+        $db =& MDB2::singleton();
         $sql ='
             SELECT p_person.id
             FROM p_person
@@ -492,7 +496,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe: Anzeige eines Datensatzes (Listenansicht
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         // Zuweisungen und ausgabe an pers_dat.tpl
 
@@ -520,8 +524,10 @@ func: __construct($)
     Return:  void
     Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
     ****************************************************************/
-        global $db, $myauth, $smarty;
+        global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        $db =& MDB2::singleton();
         if(!empty($this->editfrom)) :
             $bearbeiter = $db->extended->getCol(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->editfrom.';');

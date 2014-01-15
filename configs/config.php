@@ -22,8 +22,7 @@ require_once    '../../conf/dsn';
 
 const
     // RegExpressions
-    NAMEN     = '^[^`{}"-,:-@[-^]+$',
-    NAME_LEER = '[^`{}"-,:-@[-^]*',
+    NAMEN     = '^[^`*+!-\':-@[-^{-~]+$',   // Keine Interpunktion, nur runde Klammern
     ANZAHL    = '([1-9]+[\d]*){1,1}',
     DZAHL     = '^[-+]?[\d]*[.,]?[\d]+([eE][-+]?[\d]+)?',
     BOOL      = '(^(true|[1]|false|[0])\b){1,1}',
@@ -59,7 +58,8 @@ $datei = array(
     'person'    => "inc/ev_pers.php",           // Personenverzeichnis
     'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
     'i_3dobj'   => 'inc/ev_item_3dobj.php',
-    'i_media'   => ''
+    'i_fkop'    => 'inc/ev_item_fkop.php',
+    'news'      => 'inc/news.php'
 );
 
 // Admin-Array

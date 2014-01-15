@@ -10,7 +10,7 @@ Eventhandler für Verwaltung von Lagerorten
     $Date$
     $URL$
 
-------------- BAUSTELLE -------------------!!!
+---------->>> BAUSTELLE <<<-------------------!!!
 
 ***** (c) DIAF e.V. *******************************************/
 

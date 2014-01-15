@@ -21,7 +21,7 @@ $URL$
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form action='{$dlg[10]}' method="post">
+    <tr><form action='{$dlg[100]}' method="post">
         <td colspan="3">
             {if !empty($dialog['titel'][1])}<span class="fett">{$dialog['titel'][1]}</span>{/if}
         <span class="note" style="float:right;">
@@ -86,6 +86,16 @@ $URL$
     {if !empty($dialog['prod_jahr'][1])}<tr>
         <td class="re">{$dialog['prod_jahr'][2]}:</td>
         <td>{$dialog['prod_jahr'][1]}</td>
+    </tr>{/if}
+
+{* --prod_land-- *}
+    {if !empty($dialog['prod_land'][1])}<tr>
+        <td class="re">{$dialog['prod_land'][2]}:</td>
+        <td>
+          {foreach from=$dialog['prod_land'][1] item=wert}
+            {$wert}&nbsp;
+          {/foreach}
+        </td>
     </tr>{/if}
 
 {* --thema-- *}

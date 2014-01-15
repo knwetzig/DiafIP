@@ -51,6 +51,30 @@ DIV#overDiv {position:absolute;visibility:hidden; z-index:1000;}
     z-index:1000;
 }
 
+@media print {
+/* Regeln für Drucker */
+    #menue {
+        display:none;
+    }
+
+    #status {
+        display:none;
+    }
+
+    #main {
+        clear:none;
+        width:100%;
+    }
+
+    #bereichssuche {
+        display:none;
+    }
+
+    #bereichssymbole {
+        display:none;
+    }
+}
+
 a:link		{text-decoration:none; color:darkblue}
 a:visited	{text-decoration:none; color:darkblue}
 a:hover		{text-decoration:underline; color:blue}

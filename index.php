@@ -17,11 +17,12 @@ $_GET = normtext($_GET);
 //_v($_GET, 'GET'); _v($_POST, 'POST');
 // Anbindung an Datenkern
 $options = array(
-    'debug'             => 5,
+//    'debug'             => 5,
+//    'ssl'               => true,
     'use_transactions'  => true,
     'persistent'        => true,
 );
-$db = &MDB2::singleton($dsn, $options); isDbError($db);
+$db =& MDB2::singleton($dsn, $options); isDbError($db);
 $db->setFetchMode(MDB2_FETCHMODE_ASSOC); isDbError($db);
 $db->loadModule('Extended'); isDbError($db);
 
@@ -34,7 +35,7 @@ $params = array(
 );
 $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
-if (!$myauth->checkAuth()) exit;        // erfolglose Anmeldung
+if (!$myauth->checkAuth()) fehler('Anmeldg. fehlgeschlagen');        // erfolglose Anmeldung
 
 // Abfangen von Aktionen die nicht durch Eventhandler bedient werden
 if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
@@ -46,15 +47,14 @@ if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
     case 'de' :
     case 'en' :
     case 'fr' :
-        $myauth->setAuthData('lang', $_GET['aktion']);
-        if ($myauth->getAuthData('rechte') >= EDIT) :
-            IsDbError($db->extended->autoExecute(
-                's_auth',
-                array('lang' => $_GET['aktion']),
-                MDB2_AUTOQUERY_UPDATE,
-                'uid = '.$db->quote($myauth->getAuthData('uid'),
-                'integer'), 'text'));
-        endif;
+
+    $myauth->setAuthData('lang', $_GET['aktion']);
+    if ($myauth->getAuthData('rechte') >= EDIT) :
+        IsDbError($db->extended->autoExecute('s_auth',
+        array('lang' => $_GET['aktion']), MDB2_AUTOQUERY_UPDATE,
+        'uid = '.$db->quote($myauth->getAuthData('uid'),
+        'integer'), 'text'));
+    endif;
 endswitch;
 
 $lang = $myauth->getAuthData('lang');
@@ -84,9 +84,9 @@ require_once 'class.item.php';
 require_once 'class.statistik.php';
 
 // laden Menübereich
-$data = getStringList(array(0,4008,4028,4003,0,4005,4006,4009,4032));
-$data[9] = $myauth->getAuthData('realname');
-$data[10] = $_SERVER['PHP_SELF'];
+$data = getStringList(array(0,4008,4028,4003,4037,4005,4006,4009,4032,4038));
+$data[99] = $myauth->getAuthData('realname');
+$data[100] = $_SERVER['PHP_SELF'];
 $smarty->assign('dlg', $data);
 $smarty->display('menue.tpl');
 

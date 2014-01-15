@@ -11,15 +11,15 @@ ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
 function loginFunction($username = null, $status = null, $myauth = null) {
-/*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
-    den Authorisations-Zustand und das Auth-Objekt
-*/
+//  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
+//    den Authorisations-Zustand und das Auth-Objekt
+
 ?><form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle; padding-left:20px;"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
 }
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt
     if(PEAR::isError($obj)) :
-        global $db;
+        $db =& MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
         echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());

@@ -20,7 +20,8 @@ Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' AND NOT 'action'!!!
             'person'    => 'p_person',
             'film'      => 'f_film',
             'i_planar'  => 'i_planar',
-            'i_3dobj'   => 'i_3dobj');
+            'i_3dobj'   => 'i_3dobj',
+            'i_fkop'    => 'i_fkop');
 
         foreach($bereich as $key => $wert) :
             $data = $db->extended->getRow(
