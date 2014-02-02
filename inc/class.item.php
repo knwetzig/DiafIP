@@ -65,10 +65,8 @@ abstract class Item implements iItem {
         $editfrom       = null,
         $editdate       = null,
         $zu_film        = null,     // Verweis auf bibl./filmogr. Daten
-        $isvalid        = false;    // Bearbeitung abgeschlossen
+        $isvalid        = false,    // Bearbeitung abgeschlossen
 
-
-    protected
         $types      = array(
             'integer',  // id
             'text',     // notiz
@@ -119,21 +117,21 @@ abstract class Item implements iItem {
                 new d_feld('lortLi', LOrt::getLOrtList()),        // Liste Lagerorte
                 new d_feld('filmLi', Film::getTitelList()),     // Liste filmogr.
                 new d_feld('bezeichner', $this->bezeichner, EDIT, 4029),
-                new d_feld('x',         $this->x,           EDIT,  469, ANZAHL),
-                new d_feld('y',         $this->y,           EDIT,  470, ANZAHL),
-                new d_feld('kollo',     $this->kollo,       EDIT,  475, ANZAHL),
-                new d_feld('lagerort',  $this->lagerort,  ARCHIV,  472, ANZAHL),
+                new d_feld('x',         $this->x,           EDIT,  469, null, ANZAHL),
+                new d_feld('y',         $this->y,           EDIT,  470, null, ANZAHL),
+                new d_feld('kollo',     $this->kollo,       EDIT,  475, null, ANZAHL),
+                new d_feld('lagerort',  $this->lagerort,  ARCHIV,  472, null, ANZAHL),
                 new d_feld('akt_ort',   $this->akt_ort,     EDIT,  476),
-                new d_feld('zu_film',   $this->zu_film,     EDIT,    5, ANZAHL),
-                new d_feld('eigner',    $this->eigner,     IEDIT,  473, ANZAHL),
-                new d_feld('herkunft',  $this->herkunft,   IEDIT,  480, ANZAHL),
-                new d_feld('in_date',   $this->in_date,    IEDIT,  481, DATUM),
-                new d_feld('leihbar',   true,             ARCHIV,  474, BOOL),
-                new d_feld('a_wert',    $this->a_wert,     IEDIT, 4031, DZAHL),
+                new d_feld('zu_film',   $this->zu_film,     EDIT,    5, null, ANZAHL),
+                new d_feld('eigner',    $this->eigner,     IEDIT,  473, null, ANZAHL),
+                new d_feld('herkunft',  $this->herkunft,   IEDIT,  480, null, ANZAHL),
+                new d_feld('in_date',   $this->in_date,    IEDIT,  481, null, DATUM),
+                new d_feld('leihbar',   $this->leihbar,   ARCHIV,  474, null, BOOL),
+                new d_feld('a_wert',    $this->a_wert,     IEDIT, 4031, null, DZAHL),
                 new d_feld('rest_report',$this->rest_report, EDIT, 482),
                 new d_feld('descr',     $this->descr,       EDIT,  506),
                 new d_feld('notiz',     $this->notiz,       EDIT,  514),
-                new d_feld('isvalid',   $this->isvalid,   ARCHIV,10010)
+                new d_feld('isvalid', null /* $this->isvalid*/,   ARCHIV,10010)
             );
             if(empty($this->oldsig))
                         $data[] = new d_feld('oldsig', null, EDIT, 479, NAMEN);
@@ -161,7 +159,7 @@ abstract class Item implements iItem {
                 new d_feld('bezeichner', $this->bezeichner, VIEW),
                 new d_feld('lagerort',  $lagerort->getLOrt(), IVIEW, 472),
                 new d_feld('eigner',    $besitzer->getName(), IVIEW, 473),
-                new d_feld('leihbar',   $this->leihbar,     VIEW, 474),
+                new d_feld('leihbar',   $this->leihbar,     IVIEW, 474),
                 new d_feld('x',         $this->x,           VIEW, 469),
                 new d_feld('y',         $this->y,           VIEW, 470),
                 new d_feld('kollo',     $this->kollo,       IVIEW, 475),
@@ -256,7 +254,10 @@ abstract class Item implements iItem {
             $this->editfrom = $myauth->getAuthData('uid');
             $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
 
+            /* Manchmal gibt es einfach keine Maße, wie bei Filmen, die aber
+               diese Routine nutzen. deswegen ausgeklammert
             if (empty($this->x) OR empty($this->y)) throw new Exception(null, 111);
+            */
         }
 
         catch (Exception $e) {
@@ -351,28 +352,6 @@ abstract class Item implements iItem {
         return $data;
     }
 
-
-/* Ausgelagert in die Kindroutinen wegen Obj-zuordnung
-    public static function search($s) {
-    /****************************************************************
-    *  Aufgabe: Suchfunktion in .......
-    *   Param:  string
-    *   Return: Array der gefunden ID's | Fehlercode
-    ****************************************************************
-        global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
-        $db =& MDB2::singleton();
-        $s = "%".$s."%";
-
-        // Suche in Bezeichner (rudimentär)
-        $data = $db->extended->getCol(self::SQL_search1, null, $s);
-        IsDbError($data);
-        $erg = $data;
-        if ($erg) return array_unique($erg); else return 1;
-    }
-*/
-
     protected function VWert() {
     /****************************************************************
     *  Aufgabe: Errechnet den Versicherungswert eines Gegenstandes
@@ -395,6 +374,9 @@ abstract class Item implements iItem {
     ****************************************************************/
         $data = a_display(self::ea_struct('view'));
 
+        if (!isset($data['leihbar'])) return $data;
+
+        // Umwandlung des boolschen Wertes in einen String - wenn sichtbar
         if ($data['leihbar'][1]) $data['leihbar'][1] = d_feld::getString(474);
         else $data['leihbar'][1] = d_feld::getString(485);
         return $data;
@@ -687,12 +669,14 @@ final class Obj3d extends Item implements iPlanar {
 
         if($stat == false) :        // Formular anzeigen
             $data = a_display(self::ea_struct('edit'));
-            $a = new d_feld('art', $this->art, EDIT, 4030);
-            $data['art'] = $a->display();
-            $a = new d_feld('z', $this->z, EDIT, 471, ANZAHL);
-            $data['z'] = $a->display();
+
             $a = new d_feld('artLi', self::getArtLi());
             $data['artLi'] = $a->display();
+            $a = new d_feld('art', $this->art, EDIT, 4030);
+            $data['art'] = $a->display();
+
+            $a = new d_feld('z', $this->z, EDIT, 471, ANZAHL);
+            $data['z'] = $a->display();
             $smarty->assign('dialog', $data);
             $smarty->display('item_3dobj_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
@@ -700,6 +684,7 @@ final class Obj3d extends Item implements iPlanar {
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             parent::edit(true);
             $this->art = (int)$_POST['art'];
+
             if (!empty($_POST['z']) AND is_numeric($_POST['z']))
                 $this->z = (int)$_POST['z'];
 
@@ -802,7 +787,7 @@ final class FilmKopie extends Item implements iPlanar {
         $material   = 5,    // Trägermaterial DB->i_material
         $tonart     = 5,    // Tonverfahren DB->i_tonart, Vorgabe LT-Mono
         $fps        = 24,   // Frames/s (Vorführfrequenz)
-        $laufzeit   = 1;    // Laufzeit bei angegebner fps in sekunden
+        $laufzeit   = null; // Laufzeit bei angegebner fps in sekunden
 
     const
         SQL_get = 'SELECT medium, material, tonart, fps, laufzeit
@@ -830,6 +815,10 @@ final class FilmKopie extends Item implements iPlanar {
         $this->tonart     = $data['tonart'];
         $this->fps        = $data['fps'];
         $this->laufzeit   = $data['laufzeit'];
+
+        // Anpassung Typen
+        array_unshift($this->types,
+            'integer', 'integer', 'integer', 'integer', 'date');
     }
 
     protected function getMedium($nr) {
@@ -841,11 +830,33 @@ final class FilmKopie extends Item implements iPlanar {
         return $data;
     }
 
+    protected function getMediumLi() {
+        $db =& MDB2::singleton();
+        $erg = $db->extended->getAll('
+            SELECT * FROM i_medium ORDER BY id;');
+        IsDbError($erg);
+
+        $data = array();
+        foreach($erg as $arr) $data[$arr['id']] = $arr['medium'];
+        return $data;
+    }
+
     protected function getMaterial($nr) {
         $db =& MDB2::singleton();
         $data = $db->extended->getOne('
             SELECT material FROM i_material WHERE id = ?;', 'text', $nr);
         IsDbError($data);
+        return $data;
+    }
+
+    protected function getMaterialLi() {
+        $db =& MDB2::singleton();
+        $erg = $db->extended->getAll('
+            SELECT * FROM i_material ORDER BY id;');
+        IsDbError($erg);
+
+        $data = array();
+        foreach($erg as $arr) $data[$arr['id']] = $arr['material'];
         return $data;
     }
 
@@ -858,10 +869,116 @@ final class FilmKopie extends Item implements iPlanar {
         return $data;
     }
 
+    protected function getTonartLi() {
+        $db =& MDB2::singleton();
+        $erg = $db->extended->getAll('
+            SELECT * FROM i_tonart ORDER BY id;');
+        IsDbError($erg);
+
+        $data = array();
+        foreach($erg as $arr) $data[$arr['id']] = $arr['audiotyp'];
+        return $data;
+    }
+
     public function add($stat) {
+    /****************************************************************
+    *   Aufgabe: Legt leeren Datensatz an (INSERT)
+    *   Aufruf:  Status
+    *   Return:  Fehlercode
+    ****************************************************************/
+        global $myauth;
+        $db =& MDB2::singleton();
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        if ($stat == false) :
+            $db->beginTransaction('newFKop'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
+            IsDbError($data);
+            $this->id = $data;
+            $this->edit($stat);
+       else :
+            // Objekt wurde vom Eventhandler initiiert
+            $this->edit(true);
+
+            foreach($this as $key => $wert) $data[$key] = $wert;
+            unset($data['types']);
+
+            $erg = $db->extended->autoExecute(
+                'i_fkop', $data, MDB2_AUTOQUERY_INSERT);
+            IsDbError($erg);
+
+            $db->commit('newFKop'); IsDbError($db);
+            // ende Transaktion
+        endif;
     }
 
     public function edit($stat) {
+    /****************************************************************
+    *   Aufgabe: Ändert die Objekteigenschaften (ohne zu speichern!)
+    *   Return: none
+    ****************************************************************/
+        global $myauth, $smarty;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        $db =& MDB2::singleton();
+
+        if($stat == false) :        // Formular anzeigen
+            $data = a_display(self::ea_struct('edit'));
+
+            $a = new d_feld('mediumLi', self::getMediumLi());
+            $data['mediumLi'] = $a->display();
+            $a = new d_feld('medium', $this->medium, EDIT, 490, ANZAHL);
+            $data['medium'] = $a->display();
+
+            $a = new d_feld('materialLi', self::getMaterialLi());
+            $data['materialLi'] = $a->display();
+            $a = new d_feld('material', $this->material, EDIT, 488, ANZAHL);
+            $data['material'] = $a->display();
+
+            $a = new d_feld('tonartLi', self::getTonartLi());
+            $data['tonartLi'] = $a->display();
+            $a = new d_feld('tonart', $this->tonart, EDIT, 491, ANZAHL);
+            $data['tonart'] = $a->display();
+
+            $a = new d_feld('fps', $this->fps, EDIT, 489, ANZAHL);
+            $data['fps'] = $a->display();
+
+            $a = new d_feld('lzeit', $this->laufzeit, EDIT, 580, 10007, DAUER);
+            $data['lzeit'] = $a->display();
+
+            $smarty->assign('dialog', $data);
+            $smarty->display('item_fkop_dialog.tpl');
+            $myauth->setAuthData('obj', serialize($this));
+        else :
+            // Formular auswerten
+            // Obj zurückspeichern wird im aufrufenden Teil erledigt
+            parent::edit(true);  // Zeile 195
+
+            try {
+                $this->medium = (int)$_POST['medium'];
+                $this->material = (int)$_POST['material'];
+                $this->tonart = (int)$_POST['tonart'];
+
+                if (!empty($_POST['fps']) AND is_numeric($_POST['fps']))
+                    $this->fps = (int)$_POST['fps']; else $this->fps = null;
+
+                if(isset($_POST['lzeit'])) :
+                    if ($_POST['lzeit']) {
+                        if(isvalid($_POST['lzeit'], DAUER))
+                            $this->laufzeit = $_POST['lzeit'];
+                        else throw new Exception(null, 4);
+                    } else $this->laufzeit = null;
+                endif;
+
+                // doppelten Datensatz abfangen
+                $number = self::ifDouble();
+                if (!empty($number) AND $number != $this->id) warng('10008');
+            }
+
+            catch (Exception $e) {
+                fehler($e->getCode());
+            }
+        endif;
     }
 
     public function set() {
@@ -869,6 +986,21 @@ final class FilmKopie extends Item implements iPlanar {
     *   Aufgabe: schreibt die Daten in die Tabelle zurück (UPDATE)
     *    Return: Fehlercode
     ****************************************************************/
+        global $myauth;
+        $db =& MDB2::singleton();
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if(!$this->id) return 4;         // Abbruch: leerer Datensatz
+
+        // Uhrzeit und User setzen
+
+        $data = array();
+        foreach($this as $key => $wert) $data[$key] = $wert;
+        unset($data['types']);
+
+        $erg = $db->extended->autoExecute(
+            'i_fkop', $data, MDB2_AUTOQUERY_UPDATE,
+            'id = '.$db->quote($this->id, 'integer'), $this->types);
+        IsDbError($erg);
     }
 
     public static function search($s) {

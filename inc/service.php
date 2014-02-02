@@ -21,10 +21,10 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
     if(PEAR::isError($obj)) :
         $db =& MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
-        echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
+/*        echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());
             print_r($obj->getMessage());
-        echo "</fieldset>\n";
+        echo "</fieldset>\n"; */
         exit();
     endif;
     return false;
@@ -96,13 +96,13 @@ function list2array($list) {
 
 function array2list($arr) {
     // wandelt ein PHP-Array in eine DB-Liste um
-/** _____ ACHTUNG! Baustelle _____ **/
+/** _____ ACHTUNG! Baustelle _____
 _v(count($arr));
 _v($arr,'array');
     $list = '{';
     foreach($arr as $val) $list .= $val.',';
     $list[strlen($list)-1] = '}';
-    return $list;
+    return $list; **/
 }
 
 function _v($text, $titel = null) {

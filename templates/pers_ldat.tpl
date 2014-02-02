@@ -16,8 +16,8 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="100px"><col><col></colgroup>
+<table width="100%" {if $darkBG}class="darkBG"{/if}>
+    <colgroup><col width="150px"><col><col></colgroup>
 
 {* --Name-- *}
     <tr>

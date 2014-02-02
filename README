@@ -8,16 +8,15 @@ Hinweise:
         php5-pgsql
 
     Vor Implementierung ist die Datenbankstruktur aufzubauen. Dazu existiert die
-    Datei "struktur.sql".
-    Im Anschluss müssen sie die Textdaten aus "strings.sql" einpflegen.
+    Datei "struktur.sql". Im Anschluss müssen sie die Daten aus "struktur_daten.sql" einpflegen.
 
     Anschließend ist der DSN außerhalb des Document-Root zu deklarieren.
         Bsp.:      DSN = 'pgsql://dbuser:password@tcp(localhost)/diafip';
-    und der Pfad in der configs/config.php einzutragen/ändern.
+    und der Pfad in der configs/config.local.php zu ändern.
 
     Anpassungen:
         PHP.INI an Produktionsumgebung
-        "smarty" Konfiguration in configs/config.php
+        "smarty" Konfiguration in configs/config.local.php
         mc.conf  Vorgabe für Smarty
 
 Fehlertabelle / Errortable
@@ -25,9 +24,9 @@ Fehlertabelle / Errortable
     1   allgemeiner Fehler
     2   fehlende Rechte
     4   fehlende Parameter
-    8
+    8   interner Fehler (Datenkonsistenz)
    16
    32
    64
-  128
+  128   Datensatz bereits vorhanden
   256
