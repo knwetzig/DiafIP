@@ -15,5 +15,5 @@ $URL$
 {foreach from=$stat item=wert key=schluessel}
     <tr><td>{$schluessel}:</td><td class='re'>{$wert}</td></tr>
 {/foreach}  </table><br />
-    <img src='../../openbsdpower.gif' alt='powered by OpenBSD' width='100px' />
+    <img src='images/openbsdpower.gif' alt='powered by OpenBSD' width='100px' />
 </div>

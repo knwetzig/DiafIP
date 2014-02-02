@@ -80,7 +80,12 @@
 {* --- leihbar --- *}
     {if isset($dialog['leihbar'])}<tr>
         <td class="re">{$dialog['leihbar'][2]}:</td>
-        <td><input type='checkbox' name='leihbar' value="{$dialog['leihbar'][1]}" /></td>
+        <td><input
+            type='checkbox'
+            name='leihbar'
+            {if $dialog['leihbar'][1]}checked="checked"{/if}
+            value="{$dialog['leihbar'][1]}" />
+        </td>
     </tr>{/if}
 
 {* --- Wert zum Zeitpunkt der Anschaffung --- *}

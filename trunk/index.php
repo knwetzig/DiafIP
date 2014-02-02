@@ -14,7 +14,6 @@ require_once	'configs/config.php';
 $_POST = normtext($_POST);              // Filter für htmlentities
 $_GET = normtext($_GET);
 
-//_v($_GET, 'GET'); _v($_POST, 'POST');
 // Anbindung an Datenkern
 $options = array(
 //    'debug'             => 5,
@@ -35,9 +34,9 @@ $params = array(
 );
 $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
-if (!$myauth->checkAuth()) fehler('Anmeldg. fehlgeschlagen');        // erfolglose Anmeldung
+if (!$myauth->checkAuth()) exit();        // erfolglose Anmeldung
 
-// Abfangen von Aktionen die nicht durch Eventhandler bedient werden
+// Abfangen von Aktionen die nicht durch nachfolgende Eventhandler bedient werden
 if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
     case 'logout' :
         $db->disconnect();

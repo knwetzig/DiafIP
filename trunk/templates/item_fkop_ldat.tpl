@@ -27,7 +27,14 @@
             {if !empty($dialog['bezeichner'][1])}
             <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
         <span class="note" style="float:right;">
-                ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
+                ID:&nbsp;{$dialog['id'][1]}
+
+                <button
+                    class={if $darkBG}"small_dk"{else}"small"{/if}
+                    name="aktion"
+                    value="view"><img src="images/view_detailed.png" />
+                </button>
+
                 {if isset($dialog['edit'])}
                     <button
                         class={if $darkBG}"small_dk"{else}"small"{/if}

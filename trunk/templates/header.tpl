@@ -1,9 +1,9 @@
 {config_load file="mc.conf" section="setup"}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 {**************************************************************
-$Rev: 19                      		$
-$Author: knwetzig             		$
-$Date: 2012-08-09 19:41:46 +0		$
+$Rev$
+$Author$
+$Date$
 $URL$
 ***** (c) DIAF e.V. *******************************************}
 
@@ -18,7 +18,8 @@ $URL$
     <link rel='shortcut icon' href='favicon.ico' />
 </head>
 <body>
-    <div id='overDiv'></div>    <script language="JavaScript" src="inc/overlib/overlib.js"></script>
+    <div id='overDiv'></div>
+    <script language="JavaScript" src="inc/overlib/overlib.js"></script>
 
 {*
     <script language="javascript" src="inc/overlib/overlib_anchor.js"></script>

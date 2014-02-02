@@ -28,17 +28,15 @@ Repräsentiert ein Ein-/Ausgabeelement
         $valStr     = null, // Regulärer Ausdruck zur Validierung des Inhalts
         $label      = null, // Beschriftungstext
         $tooltip    = null,
-        $rights     = null, // erforderliche Rechte (pos des Bits, 0 beginnend)
-        $isvalid    = false; // bool -> isvalid
+        $rights     = null; // erforderliche Rechte (pos des Bits, 0 beginnend)
 
-    function __construct($na, $inh, $ri = null, $de = null, $tt = null, $ty= null) {
-        // de -> label / tt -> tooltip sind id-nr für stringtabelle
-        $this->name     = $na;
-        $this->inhalt   = $inh;
-        $this->rights   = $ri;
-        $this->valStr   = $ty;
-        if ($de) $this->label = self::getString($de);
-        if ($tt) $this->tooltip = self::getString($tt);
+    function __construct($name, $wert, $rechte = null, $label = null, $tipp = null, $valStr = null) {
+        $this->name     = $name;
+        $this->inhalt   = $wert;
+        if (!empty($rechte) AND is_int($rechte)) $this->rights = $rechte;
+        $this->valStr   = $valStr;
+        if (!empty($label) AND is_int($label)) $this->label = self::getString($label);
+        if (!empty($tipp) AND is_int($tipp)) $this->tooltip = self::getString($tipp);
     }
 
     static function getString($nr) {
@@ -52,13 +50,11 @@ Repräsentiert ein Ein-/Ausgabeelement
         return $st;
     }
 
-    function isValid() {
+    protected function isValid() {
+        // Püfung auf korrekte syntax - keine semantikprüfung!
         if(isset($valStr)) {
-            // Püfung auf korrekte syntax - keine semantikprüfung!
-            if(preg_match('/'.$this->valStr.'/', $this->inhalt)) {
-                $this->isvalid = true;
-                return true;
-            } else return false;
+            if(preg_match('/'.$this->valStr.'/', $this->inhalt))
+                return true; else return false;
         }
         return 4;   // kein Validierungsstring vorhanden
     }

@@ -10,14 +10,9 @@ $URL$
 ***** (c) DIAF e.V. *******************************************/
 ?>
 
-<h2>
-    Willkommen auf der Portalseite des<br />"Deutschen Instituts f&uuml;r Animationsfilm"
-</h2>
+<h2>Willkommen auf der Portalseite des "Deutschen Instituts f&uuml;r Animationsfilm"</h2>
 <p>
-    Hier k&ouml;nnen Sie Information &uuml;ber Filme, Personen und in begrenztem Umfang über Archivgegenst&auml;nde erhalten. Daf&uuml;r haben sie Zugangsdaten
-erhalten die einen bestimmten Satz an Privilegien beinhalten. Alternativ
-k&ouml;nnen Sie sich als "gast" mit dem Passwort "gast" einloggen (nur
-lesen).<br />
+    Hier k&ouml;nnen Sie Information &uuml;ber Filme, Personen und in begrenztem Umfang über Archivgegenst&auml;nde erhalten. Daf&uuml;r haben sie Zugangsdaten erhalten. Alternativ k&ouml;nnen Sie sich als "gast" mit dem Passwort "gast" einloggen (nur lesen).<br />
 Technische Informationen, wie aktuelle Release, Quelltext, &Auml;nderungen usw. finden Sie auf der <a href="http://code.google.com/p/diafip" target="_blank">Projekthomepage</a>
 </p>
 <p><strong>Hinweise:</strong>
