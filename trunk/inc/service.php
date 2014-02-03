@@ -21,10 +21,10 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
     if(PEAR::isError($obj)) :
         $db =& MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
-/*        echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
+        echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());
             print_r($obj->getMessage());
-        echo "</fieldset>\n"; */
+        echo "</fieldset>\n";
         exit();
     endif;
     return false;
@@ -145,10 +145,6 @@ function normtext($var) {
     else :
         return array_map('normtext', $var);
     endif;
-}
-
-function normzahl($int) {
-    return (int)$int;
 }
 
 function changetext($str) {

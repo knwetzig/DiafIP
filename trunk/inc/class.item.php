@@ -202,30 +202,18 @@ abstract class Item implements iItem {
             if (empty($this->bezeichner) AND empty($_POST['bezeichner']))
                 throw new Exception(null, 100);
             if ($_POST['bezeichner']) $this->bezeichner = $_POST['bezeichner'];
-
-            if (!empty($_POST['x']) AND is_numeric($_POST['x']))
-                $this->x = (int)$_POST['x'];
-
-            if (!empty($_POST['y']) AND is_numeric($_POST['y']))
-                $this->y = (int)$_POST['y'];
-
-            if (!empty($_POST['lagerort'])) $this->lagerort = (int)$_POST['lagerort'];
+            if (!empty($_POST['x'])) $this->x =  intval($_POST['x']);
+            if (!empty($_POST['y'])) $this->y = intval($_POST['y']);
+            if (!empty($_POST['lagerort'])) $this->lagerort = intval($_POST['lagerort']);
 
             // Überschreiben prüfen
             if (!empty($_POST['akt_ort']))
                 $this->akt_ort = $_POST['akt_ort']; else $this->akt_ort = null;
 
-            if (!empty($_POST['kollo']) AND is_numeric($_POST['kollo']))
-                $this->kollo = (int)$_POST['kollo'];
-
-            if (!empty($_POST['a_wert']) AND is_numeric($_POST['a_wert']))
-                $this->a_wert = (int)$_POST['a_wert'];
-
-            if (!empty($_POST['eigner']) AND is_numeric($_POST['eigner']))
-                $this->eigner = (int)$_POST['eigner'];
-
-            if (!empty($_POST['herkunft']) AND is_numeric($_POST['herkunft']))
-                $this->herkunft = (int)$_POST['herkunft'];
+            if (!empty($_POST['kollo'])) $this->kollo = intval($_POST['kollo']);
+            if (!empty($_POST['a_wert'])) $this->a_wert = intval($_POST['a_wert']);
+            if (!empty($_POST['eigner'])) $this->eigner = intval($_POST['eigner']);
+            if (!empty($_POST['herkunft'])) $this->herkunft = intval($_POST['herkunft']);
 
             if (!empty($_POST['in_date']))
                 if(isvalid($_POST['in_date'], DATUM))
@@ -233,10 +221,10 @@ abstract class Item implements iItem {
                 else throw new Exception(null, 103);
 
             if (!empty($_POST['leihbar'])) $this->leihbar = true;
-            else $this->leihbar = false;
+                else $this->leihbar = false;
 
             // Zuordnung zu Film
-            if (!empty($_POST['zu_film'])) $this->zu_film = (int)$_POST['zu_film'];
+            if (!empty($_POST['zu_film'])) $this->zu_film = intval($_POST['zu_film']);
 
             if (!empty($_POST['oldsig']) AND !$this->oldsig)
                 $this->oldsig = $_POST['oldsig'];
@@ -361,7 +349,7 @@ abstract class Item implements iItem {
     ****************************************************************/
         $begin = new DateTime($this->in_date);
         $interval = $begin->diff(new DateTime("now"));
-        $jahre =(int) $interval->format('%y');
+        $jahre = intval($interval->format('%y'));
 
         $VWert = $this->a_wert * pow((WERT_QUOT+1), $jahre);
         return round($VWert,-1);
@@ -489,7 +477,7 @@ final class Planar extends Item implements iPlanar {
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             parent::edit(true);
-            $this->art = (int)$_POST['art'];
+            $this->art = intval($_POST['art']);
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
@@ -683,10 +671,8 @@ final class Obj3d extends Item implements iPlanar {
         else :                         // Formular auswerten
             // Obj zurückspeichern wird im aufrufenden Teil erledigt
             parent::edit(true);
-            $this->art = (int)$_POST['art'];
-
-            if (!empty($_POST['z']) AND is_numeric($_POST['z']))
-                $this->z = (int)$_POST['z'];
+            $this->art = intval($_POST['art']);
+            if (!empty($_POST['z'])) $this->z = intval($_POST['z']);
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
@@ -955,12 +941,12 @@ final class FilmKopie extends Item implements iPlanar {
             parent::edit(true);  // Zeile 195
 
             try {
-                $this->medium = (int)$_POST['medium'];
-                $this->material = (int)$_POST['material'];
-                $this->tonart = (int)$_POST['tonart'];
+                $this->medium   = intval($_POST['medium']);
+                $this->material = intval($_POST['material']);
+                $this->tonart   = intval($_POST['tonart']);
 
-                if (!empty($_POST['fps']) AND is_numeric($_POST['fps']))
-                    $this->fps = (int)$_POST['fps']; else $this->fps = null;
+                if (!empty($_POST['fps']))
+                    $this->fps = intval($_POST['fps']); else $this->fps = null;
 
                 if(isset($_POST['lzeit'])) :
                     if ($_POST['lzeit']) {
