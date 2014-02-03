@@ -486,7 +486,7 @@ func: __construct($)
         */
         $data =&$db->extended->getAll($sql, null, array($s,$s));
         IsDbError($data);
-        foreach($data as $wert) $erg[] = (int)$wert['id'];
+        foreach($data as $wert) $erg[] = intval($wert['id']);
 
         if ($erg) return array_unique($erg);     // id's der gefundenen Personen
         else return 1;

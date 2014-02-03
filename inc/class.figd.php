@@ -701,10 +701,10 @@ Interne Methoden:
                 else $this->atitel = null;
             endif;
 
-            if(isset($_POST['sid']) AND is_numeric($_POST['sid']))
-                $this->sid = (int)$_POST['sid']; else $this->sid = null;
-            if ($this->sid AND isset($_POST['sfolge']) AND is_numeric($_POST['sfolge']))
-                $this->sfolge = (int)$_POST['sfolge'];
+            if(isset($_POST['sid']))
+                $this->sid = intval($_POST['sid']); else $this->sid = null;
+            if ($this->sid AND isset($_POST['sfolge']))
+                $this->sfolge = intval($_POST['sfolge']);
             else $this->sfolge = null;
 
             if(isset($_POST['utitel'])) :
@@ -730,7 +730,7 @@ Interne Methoden:
             if(isset($_POST['prod_jahr'])) :
                 if ($_POST['prod_jahr']) {
                     if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
-                        $this->prod_jahr = (int)$_POST['prod_jahr'];
+                        $this->prod_jahr = intval($_POST['prod_jahr']);
                     else warng(103);
                 } else $this->prod_jahr = null;
             endif;
@@ -741,9 +741,9 @@ Interne Methoden:
             endif;
 
             if(isset($_POST['gattung'])) :
-                if ($_POST['gattung'] AND is_numeric($_POST['gattung'])) {
+                if ($_POST['gattung']) {
                     if(isvalid($_POST['gattung'], ANZAHL))
-                        $this->gattung = (int)$_POST['gattung'];
+                        $this->gattung = intval($_POST['gattung']);
                     else fehler(4);
                 } else $this->gattung = null;
             endif;
@@ -753,16 +753,15 @@ Interne Methoden:
             else $this->prodtechnik = null;
 
             if(isset($_POST['laenge'])) :
-                if ($_POST['laenge'])
+                if ($_POST['laenge'] AND isvalid($_POST['laenge'], DAUER))
                     $this->laenge = $_POST['laenge'];
                 else $this->laenge = null;
             endif;
 
-
             if(isset($_POST['fsk'])) :
-                if (!empty($_POST['fsk']) AND is_numeric($_POST['fsk'])) {
+                if (!empty($_POST['fsk'])) {
                     if(isvalid($_POST['fsk'], ANZAHL))
-                        $this->fsk = (int)$_POST['fsk'];
+                        $this->fsk = intval($_POST['fsk']);
                     else fehler(4);
                 } else $this->fsk = null;
             endif;
@@ -770,7 +769,7 @@ Interne Methoden:
             if(isset($_POST['praedikat'])) :
                 if ($_POST['praedikat']) {
                     if(isvalid($_POST['praedikat'], ANZAHL))
-                        $this->praedikat = (int)$_POST['praedikat'];
+                        $this->praedikat = intval($_POST['praedikat']);
                     else fehler(4);
                 } else $this->praedikat = null;
             endif;
@@ -784,18 +783,15 @@ Interne Methoden:
             endif;
 
             if(isset($_POST['bildformat']))
-                if ($_POST['bildformat'] AND is_numeric($_POST['bildformat']))
-                    $this->bildformat = (int)$_POST['bildformat'];
+                if ($_POST['bildformat']) $this->bildformat = intval($_POST['bildformat']);
 
             if(isset($_POST['mediaspezi']))
                 $this->mediaspezi = array2wert(0, $_POST['mediaspezi']);
             else $this->mediaspezi = null;
 
-
             if(isset($_POST['notiz'])) :
-                if ($_POST['notiz'])
-                    $this->notiz = $_POST['notiz'];
-                else $this->notiz = null;
+                if ($_POST['notiz']) $this->notiz = $_POST['notiz'];
+                    else $this->notiz = null;
             endif;
 
             $this->isvalid = false;
