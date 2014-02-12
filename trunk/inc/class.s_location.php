@@ -233,7 +233,7 @@ class Ort {
                     $this->ort = $_POST['ort'];
                 else fehler(107);
             endif;
-            $this->lid = (int)$_POST['land'];
+            $this->lid = intval($_POST['land']);
         }
     }
 

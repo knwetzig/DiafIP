@@ -190,7 +190,7 @@
     </tr>{/if}
 
 {* -- notiz -- *}
-    {if !empty($dialog['notiz'][1])}<tr class='note'>
+    {if !empty($dialog['notiz'][1])}<tr>
         <td class="re top">
             {if !empty($dialog['notiz'][2])}{$dialog['notiz'][2]}:{/if}
         </td>

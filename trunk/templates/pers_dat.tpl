@@ -99,7 +99,7 @@ $URL$
             {if !empty($dialog['strasse'][1])}{$dialog['strasse'][1]}<br />{/if}
             {if !empty($dialog['plz'])}{$dialog['plz'][1]}&nbsp;{/if}
             {if !empty($dialog['wort'][1])}
-                {$dialog['wort'][1]['ort']}&nbsp;({$dialog['wort'][1]['land']}&nbsp;,&nbsp;{$dialog['wort'][1]['bland']})
+                {$dialog['wort'][1]['ort']}&nbsp;({$dialog['wort'][1]['land']},&nbsp;{$dialog['wort'][1]['bland']})
             {/if}
         </td>
     </tr>{/if}
@@ -135,6 +135,6 @@ $URL$
 {* --Notizfeld-- *}
     {if !empty($dialog['notiz'][1])}<tr>
             <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
-            <td colspan="2" class="note" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
+            <td colspan="2" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
 </table>

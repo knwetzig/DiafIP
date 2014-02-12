@@ -256,10 +256,10 @@ func: __construct($)
                 new d_feld('vname',$this->vname,   EDIT,   516),
                 new d_feld('name', $this->name,    EDIT,   517),
                 new d_feld('aliases',$this->aliases, EDIT, 515),
-                new d_feld('gtag', $this->gtag,    EDIT,   502,10000),
+                new d_feld('gtag', $this->gtag,    EDIT,   502, 10000),
                 new d_feld('gort', $this->gort,    EDIT,   4014),
-                new d_feld('ttag', $this->ttag,    EDIT,   509,10000),
-                new d_feld('tort', $this->tort,    EDIT,   4014,10005),
+                new d_feld('ttag', $this->ttag,    EDIT,   509, 10000),
+                new d_feld('tort', $this->tort,    EDIT,   4014/*,10005*/),
                 new d_feld('strasse',$this->strasse,IEDIT, 510),
                 new d_feld('wort', $this->wort,    IEDIT),
                 new d_feld('plz',  $this->plz,     IEDIT),
@@ -308,6 +308,7 @@ func: __construct($)
                 if($_POST['tort'] == 0) $this->tort = null; else $this->tort = $_POST['tort'];
             }
 
+/* Testweise ISSUE #4
             if($this->tort OR $this->ttag) {
                 // Tote haben keine Postanschrift
                 $this->strasse = null;
@@ -316,32 +317,27 @@ func: __construct($)
                 $this->mail = null;
                 $this->tel = null;
             } else {
-                if(isset($_POST['strasse'])) $this->strasse = $_POST['strasse'];
-                if(isset($_POST['wort'])) {
-                    if($_POST['wort'] == 0) $this->wort = null; else $this->wort = $_POST['wort'];
-                }
+*/
+            if(!empty($_POST['strasse']))
+                if (isValid($_POST['strasse'], NAMEN)) $this->strasse = $_POST['strasse']; else warng(109);
 
-                if(isset($_POST['plz'])) {
-                    if($_POST['plz']){
-                        if(isValid($_POST['plz'], '[\d]{3,5}')) $this->plz = $_POST['plz'];
-                        else warng(104);
-                    } else $this->plz = null;
-                }
+            if(isset($_POST['wort']))
+                if($_POST['wort'] == 0) $this->wort = null; else $this->wort = intval($_POST['wort']);
 
-                if(isset($_POST['tel'])) {
-                    if($_POST['tel']) {
-                        if(isValid($_POST['tel'], TELNR)) $this->tel = $_POST['tel'];
-                        else fehler(105);
-                    } else $this->tel = null;
-                }
+            if(!empty($_POST['plz']))
+                if(isValid($_POST['plz'], PLZ)) $this->plz = $_POST['plz'];
+                else warng(104);
+            else $this->plz = null;
 
-                if(isset($_POST['mail'])) {
-                    if($_POST['mail']) {
-                        if(isValid($_POST['mail'], EMAIL)) $this->mail = $_POST['mail'];
-                        else warng(106);
-                    } else $this->mail = null;
-                }
-            }
+            if(!empty($_POST['tel']))
+                if(isValid($_POST['tel'], TELNR)) $this->tel = $_POST['tel'];
+                else warng(105);
+            else $this->tel = null;
+
+            if(!empty($_POST['mail']))
+                if(isValid($_POST['mail'], EMAIL)) $this->mail = $_POST['mail'];
+                else warng(106);
+            else $this->mail = null;
 
             if(isset($_POST['biogr'])) $this->biogr = $_POST['biogr'];
             if(isset($_POST['notiz'])) $this->notiz = $_POST['notiz'];
