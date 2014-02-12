@@ -150,7 +150,7 @@
             type='checkbox'
             name='leihbar'
             {if $dialog['leihbar'][1]}checked="checked"{/if}
-            value="{$dialog['leihbar'][1]}" />
+            value= '1' />
         </td>
     </tr>{/if}
 

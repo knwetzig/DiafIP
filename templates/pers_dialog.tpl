@@ -101,7 +101,7 @@ $URL$
               name="{$dialog['plz'][0]}"
               value="{$dialog['plz'][1]}"
             />
-            {html_options name={$dialog['wort'][0]} options=$ortlist selected=$dialog['wort'][1]['id']}
+            {html_options name={$dialog['wort'][0]} options=$ortlist selected=$dialog['wort'][1]}
           </td>
         </tr>
 {/if}

@@ -179,7 +179,7 @@ $URL$
     </tr>{/if}
 
 {* --notiz-- letzter Eintrag *}
-    {if !empty($dialog['notiz'][1])}<tr class="note">
+    {if !empty($dialog['notiz'][1])}<tr>
         <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
         <td colspan="2">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}

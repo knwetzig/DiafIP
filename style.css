@@ -43,6 +43,7 @@
     }
 
     .bereich {
+        /* Überschrift und Suchfeld -> Bereich */
         margin-bottom:10px;
         padding:10px;
         font-size:1.4em;
@@ -76,6 +77,8 @@
     #status {
         display:none;
     }
+
+
 
     #main {
         clear:none;
@@ -255,7 +258,6 @@ div#overDiv {
 
 .note {
     color: #A0A0A0;
-    font-size: smaller;
     font-stretch:semi-condensed;
     white-space:normal
 }
@@ -274,6 +276,7 @@ div#overDiv {
 /***** Darstellungsfenster *****/
 
 .bereich_fuss {
+    /* Trenner zwischen Bereich und Inhalt */
     clear: both;
     margin-bottom: 10px;
     padding-bottom: 5px;
@@ -281,6 +284,7 @@ div#overDiv {
 }
 
 .warng {
+    /* Warnhinweis - doppelte Datensätze etc. */
     margin: 5px;
     padding: 5px;
     font-family: monospace;
@@ -293,6 +297,7 @@ div#overDiv {
 }
 
 .error {
+    /* Fehlermeldungen für Nutzer */
     margin: 5px;
     padding: 5px;
     font-family: monospace;
@@ -304,7 +309,7 @@ div#overDiv {
 }
 
 .visor {
-/* Internes Arbeitsmittel für Breakpoints und Testausgaben */
+/* Internes Arbeitsmittel für Breakpoints und Testausgaben !no Touch please! */
     position: relative;
     margin: 20px;
     font-family: monospace;

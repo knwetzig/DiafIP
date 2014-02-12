@@ -441,7 +441,7 @@ Interne Methoden:
         $types      = array(
             'integer',  // gattung
             'integer',  // prodtechnik
-            'text',     // laenge   (Sonderformat)
+            'time',     // laenge   (Sonderformat)
             'integer',  // fsk      (Altersempfehlung)
             'integer',  // praedikat
             'integer',  // bildformat
@@ -604,7 +604,7 @@ Interne Methoden:
                 // ACHTUNG! Reihenfolge beachten !!!
                 'integer',      // gattung
                 'integer',      // prodtechnik
-                'text',         // laenge (Sonderformat))
+                'time',         // laenge (Sonderformat))
                 'integer',      // fsk
                 'integer',      // praedikat
                 'integer',      // mediaspezi
@@ -752,11 +752,9 @@ Interne Methoden:
                $this->prodtechnik = array2wert(0, $_POST['prodtech']);
             else $this->prodtechnik = null;
 
-            if(isset($_POST['laenge'])) :
-                if ($_POST['laenge'] AND isvalid($_POST['laenge'], DAUER))
-                    $this->laenge = $_POST['laenge'];
-                else $this->laenge = null;
-            endif;
+            if(!empty($_POST['laenge']))
+                if ( isValid($_POST['laenge'], DAUER)) $this->laenge = $_POST['laenge']; else warng(4);
+            else $this->laenge = null;
 
             if(isset($_POST['fsk'])) :
                 if (!empty($_POST['fsk'])) {
