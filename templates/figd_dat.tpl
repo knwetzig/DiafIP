@@ -21,7 +21,7 @@ $URL$
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form action='{$dlg[100]}' method="post">
+    <tr><form action='{$dlg['phpself']}' method="post">
         <td colspan="3">
             {if !empty($dialog['titel'][1])}<span class="fett">{$dialog['titel'][1]}</span>{/if}
         <span class="note" style="float:right;">

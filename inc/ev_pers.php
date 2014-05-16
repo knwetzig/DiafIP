@@ -14,7 +14,7 @@ ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) fehler(108);
+if(!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = a_display(array(
@@ -54,7 +54,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                 $ePer = unserialize($myauth->getAuthData('obj'));
                 $ePer->edit(true);
                 $erg = $ePer->set();
-                if ($erg) fehler($erg);
+                if ($erg) feedback($erg, 'error');
                 $ePer->view();
             }
         break; // Ende --edit --
@@ -63,7 +63,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             if (isset($_POST['sstring'])) {
             /* Suchanfrage musste entschärft werden
                 if (!preg_match('/'.NAMEN.'|[*]/',$_POST['sstring'])) {
-                    fehler(d_feld::getString(101));
+                    feedback(d_feld::getString(101), 'warng');
                     break;
                 } else {
             */
@@ -78,7 +78,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                     $pers = new Person($nr);
                     $pers->sview();
                 endforeach;
-            else : fehler(102); // kein Ergebnis
+            else : feedback(102, 'hinw'); // kein Ergebnis
             endif;
         }
         break; // Ende --search--

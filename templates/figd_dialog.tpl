@@ -8,7 +8,7 @@ $Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
-<form action='{$dlg[100]}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
+<form action='{$dlg['phpself']}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
     <table>
         <colgroup><col><col></colgroup>
         <tr><td style="vertical-align:top"><!-- linke Seite -->
@@ -213,10 +213,9 @@ $URL$
             <input
                 type="checkbox"
                 name="isvalid"
-                {if $dialog['isvalid'][1]}
-                    checked="checked"
-                {/if}
-                value="isvalid" /> {$dialog['isvalid'][2]}
+                {if $dialog['isvalid'][1]}checked="checked"{/if}
+                value='true' />
+            {$dialog['isvalid'][2]}
         </td>
     </tr>{/if}
 

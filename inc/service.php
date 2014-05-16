@@ -10,11 +10,30 @@ $URL$
 ToDo:
 ***** (c) DIAF e.V. *******************************************/
 
-function loginFunction($username = null, $status = null, $myauth = null) {
+function loginFunction($username = null, $status = null, &$auth = null) {
 //  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
 //    den Authorisations-Zustand und das Auth-Objekt
 
-?><form action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' id="login"><fieldset style='text-align:center;' ><legend>Login</legend><table  ><tr><td style="vertical-align:middle; padding-left:20px;"><input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" /><br /><input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br /><input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' /></td><td><img src="images/password.png" alt="Password" style="padding-left:20px" /></td></tr></table></fieldset></form><?php
+echo <<<FORM
+    <form action={$_SERVER['PHP_SELF']} method='post' id="login">
+    <fieldset style='text-align:center;' >
+    <legend>Login</legend>
+    <table>
+        <tr>
+            <td style="vertical-align:middle; padding-left:20px;">
+                <input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" />
+                <br />
+                <input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br />
+                <input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' />
+            </td>
+            <td>
+                <img src="images/password.png" alt="Password" style="padding-left:20px" />
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+    </form>
+FORM;
 }
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt
@@ -30,7 +49,7 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
     return false;
 }
 
-/** **** Bitfeldfunktionen / Checkboxen **************************************/
+/** **** Bitfeldfunktionen / Checkboxen ************************************/
 function setBit(&$bitFeld, $n) {
 	// Ueberprueft, ob der Wert zwischen 0-31 liegt
 	// $n ist die Position (0 beginnend)
@@ -68,7 +87,7 @@ function array2wert($wert, $arr) {
     return $wert;
 }
 
-/** **** ALLGEMEINE FUNKTIONEN ***********************************************/
+/** **** ALLGEMEINE FUNKTIONEN *********************************************/
 
 function getStringList($sl) {
     if (!is_array($sl)) return 1;
@@ -114,25 +133,10 @@ function _v($text, $titel = null) {
     }
 }
 
-function fehler($err) {
-    if(is_numeric($err))
-        echo "<div class='error'>".d_feld::getString((int)$err)."</div>";
-    else echo '<div class="error">'.$err.'</div>';
-    exit;
-}
-
-function warng($warn) {
-    if(is_numeric($warn))
-        echo '<div class="warng">'.d_feld::getString((int)$warn).'</div>';
-    else echo '<div class="warng">'.$warn.'</div>';
-}
-
-function erfolg($s = null) {
-    if (isset($s)) :
-        echo "<div class='visor'>".$s."</div>";
-    else :
-        echo "<div class='visor'>".d_feld::getString(3)."</div>";
-    endif;
+function feedback($msg, $form = null) {
+    if(is_numeric($msg))
+        echo "<div class=$form>".d_feld::getString((int)$msg)."</div>";
+    else echo "<div class=$form>".$msg.'</div>';
 }
 
 /** **** TEXTBEARBEITUNG ****************************************************/

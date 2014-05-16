@@ -15,7 +15,7 @@ ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
 ***** (c) DIAF e.V. *******************************************}
 
 <br />
-<form action='{$dlg[100]}' method='post'>
+<form action='{$dlg['phpself']}' method='post'>
     <fieldset>
         <legend>Ortsnamen</legend>
         <table><colgroup><col><col></colgroup>

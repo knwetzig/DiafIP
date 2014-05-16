@@ -12,43 +12,50 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if (!$myauth->getAuth()) fehler(108);
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');
+    exit();
+}
+
 if(!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
-                        isBit($myauth->getAuthData('rechte'), SU ))) fehler(2);
+                (isBit($myauth->getAuthData('rechte'), SU )))) {
+    feedback(2, 'error');
+    exit(2);
+}
 
-    function getUserList(){
-    // Nutzerauswahlliste erstellen
-        $db =& MDB2::singleton();
-        $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
-        $data = $db->extended->getAll($sql);
-        IsDbError($data);
-        $ul = array();
-        foreach ($data as $wert) :
-            $ul[$wert['uid']] = $wert['realname'];
-        endforeach;
-        return $ul;
-    }
+function getUserList(){
+// Nutzerauswahlliste erstellen
+    $db =& MDB2::singleton();
+    $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
+    $data = $db->extended->getAll($sql);
+    IsDbError($data);
+    $ul = array();
+    foreach ($data as $wert) :
+        $ul[$wert['uid']] = $wert['realname'];
+    endforeach;
+    return $ul;
+}
 
-    function viewAddDialog() {              // Ausgabe: Neuen Nutzer anlegen
-        global $smarty;
-        $data = array();
-        $data[0] = array('user', $_SERVER['PHP_SELF'], d_feld::getString(4034));
-        $data[2] = array('username', null, d_feld::getString(4035));
-        $data[3] = array('pwd', null, d_feld::getString(4017));
-        $data[6] = array('aktion', 'addUser');
-        $smarty->assign('dialog', $data);
-        $smarty->display('adm_dialog.tpl');
-    }
+function viewAddDialog() {              // Ausgabe: Neuen Nutzer anlegen
+    global $smarty;
+    $data = array();
+    $data[0] = array('user', $_SERVER['PHP_SELF'], d_feld::getString(4034));
+    $data[2] = array('username', null, d_feld::getString(4035));
+    $data[3] = array('pwd', null, d_feld::getString(4017));
+    $data[6] = array('aktion', 'addUser');
+    $smarty->assign('dialog', $data);
+    $smarty->display('adm_dialog.tpl');
+}
 
-    function viewSelektDialog() {
-        global $smarty, $myauth;
-        $smarty->assign('list', getUserList());
-        if (isset($_POST['user']) ? $seluid = $_POST['user'] : $seluid = $myauth->getAuthData('selUser'));
+function viewSelektDialog() {
+    global $smarty, $myauth;
+    $smarty->assign('list', getUserList());
+    if (isset($_POST['user']) ? $seluid = $_POST['user'] : $seluid = $myauth->getAuthData('selUser'));
 
-        $data = new d_feld('user', $seluid, null, 4016);
-        $smarty->assign("dialog", $data->display());
-        $smarty->display('adm_selekt.tpl');
-    }
+    $data = new d_feld('user', $seluid, null, 4016);
+    $smarty->assign("dialog", $data->display());
+    $smarty->display('adm_selekt.tpl');
+}
 
 $smarty->assign('dialog',
     array('bereich' => array( 1 => d_feld::getString(4033))));

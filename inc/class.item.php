@@ -184,7 +184,7 @@ abstract class Item implements iItem {
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);    // kein Datensatz vorhanden
+        if (empty($data)) feedback(4, 'hinw');    // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) $this->$key = $wert;
@@ -249,7 +249,7 @@ abstract class Item implements iItem {
         }
 
         catch (Exception $e) {
-            fehler($e->getCode());
+            feedback($e->getCode(), 'error');
         }
     }
 
@@ -399,7 +399,7 @@ final class Planar extends Item implements iPlanar {
 
         $data = $db->extended->getOne(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
+        if (empty($data)) feedback(4 ,'hinw');   // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         $this->art = $data;
@@ -481,7 +481,7 @@ final class Planar extends Item implements iPlanar {
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) warng('10008');
+            if (!empty($number) AND $number != $this->id) feedback(10008, 'warng');
         endif;
     }
 
@@ -590,7 +590,7 @@ final class Obj3d extends Item implements iPlanar {
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
+        if (empty($data)) feedback(4 ,'hinw');   // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         $this->art = $data['art'];
@@ -676,7 +676,7 @@ final class Obj3d extends Item implements iPlanar {
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) warng('10008');
+            if (!empty($number) AND $number != $this->id) feedback(10008, 'warng');
         endif;
     }
 
@@ -793,7 +793,7 @@ final class FilmKopie extends Item implements iPlanar {
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);   // kein Datensatz vorhanden
+        if (empty($data)) feedback(4 ,'hinw');   // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         $this->medium     = $data['medium'];
@@ -958,11 +958,11 @@ final class FilmKopie extends Item implements iPlanar {
 
                 // doppelten Datensatz abfangen
                 $number = self::ifDouble();
-                if (!empty($number) AND $number != $this->id) warng('10008');
+                if (!empty($number) AND $number != $this->id) feedback(10008, 'warng');
             }
 
             catch (Exception $e) {
-                fehler($e->getCode());
+                feedback($e->getCode(), 'error');
             }
         endif;
     }

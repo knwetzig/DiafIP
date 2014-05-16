@@ -129,7 +129,7 @@ class bild implements image {
         }
 
         foreach ($fehler as $error) $errmsg .= $error.'<br />';
-        if ($errmsg) fehler(substr($errmsg, 0, -6));
+        if ($errmsg) feedback(substr($errmsg, 0, -6), 'error');
     }   // end add
 
     public function del() {

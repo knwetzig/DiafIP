@@ -44,7 +44,7 @@ class LOrt implements iLOrt {
         $db =& MDB2::singleton();
         $data = $db->extended->getOne(self::SQL_get, null, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
+        if (empty($data)) feedback(4 ,'hinw');        // kein Datensatz vorhanden
 
         $this->nr = (int)$nr;
         $this->lort = $data;
@@ -77,8 +77,8 @@ class LOrt implements iLOrt {
 
     public function add($name) {
         $this->lort = $name;
-        if (empty($name)) fehler(107);
-        elseif ($this->exist()) fehler('Objekt exisitiert bereits');
+        if (empty($name)) feedback(107, 'warng');
+        elseif ($this->exist()) feedback('Objekt exisitiert bereits', 'error');
 
         $db =& MDB2::singleton();
         $val = array('lagerort' => $this->lort);
@@ -127,12 +127,12 @@ class LOrt implements iLOrt {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
 
-        if ($this->is_linked()) Fehler(10006); else {
+        if ($this->is_linked()) feedback(10006, 'error'); else {
             // löschen in Tabelle
             $db =& MDB2::singleton();
             IsDbError($db->extended->autoExecute('i_lagerort', null,
                 MDB2_AUTOQUERY_DELETE, 'nr = '.$db->quote($this->nr, 'integer')));
-            erfolg();
+            feedback(3, 'erfolg');
         }
     }
 
@@ -231,7 +231,7 @@ class Ort {
             if(isset($_POST['ort'])) :
                 if(isValid($_POST['ort'], NAMEN))
                     $this->ort = $_POST['ort'];
-                else fehler(107);
+                else feedback(107, 'warng');
             endif;
             $this->lid = intval($_POST['land']);
         }
@@ -265,10 +265,10 @@ class Ort {
         IsDbError($data);
         // $data enthält das array mit den konfliktdatensätzen
         if(!$data) {
-            erfolg("Lösche Ort: ".$this->ort);
+            feedback("Lösche Ort: ".$this->ort, 'erfolg');
             $res = $db->extended->autoExecute('s_orte', null,
                         MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->oid, 'integer'));
-        } else fehler(6);
+        } else feedback(6, 'error');
     }
 
     function getOrtList() {

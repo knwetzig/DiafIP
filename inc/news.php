@@ -9,8 +9,15 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) fehler(108);
-if($myauth->getAuthData('rechte') < 2) fehler(2);
+if(!$myauth->checkAuth()) {
+    feedback(108, 'error');
+    exit();
+}
+
+if($myauth->getAuthData('rechte') < 2) {
+    feedback(2, 'error');
+    exit();
+}
 
 echo '<div class="bereich">Nachrichten</div>';
 if (!isset($_POST['aktion'])) {
@@ -41,7 +48,7 @@ switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
         } else {
             //  Auswertung evt. Eingaben
             if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
-                fehler(100);
+                feedback(100, 'warng');
                 break;
             }
             $a = array(
@@ -78,7 +85,7 @@ EDITFORM;
         } else {
             // Auswertung evt. Eingaben
             if (!preg_match('/[!-ÿ]/',$_POST['titel'])) {
-                fehler(100);
+                feedback(100, 'warng');
             }
             $a = array(
                 'titel'  => $_POST['titel'],

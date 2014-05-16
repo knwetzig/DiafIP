@@ -14,12 +14,22 @@ Eventhandler für Verwaltung von Lagerorten
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) fehler(108);          // Fremdaufruf!
-if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) fehler(2);
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');             // Fremdaufruf!
+    exit();
+}
+
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+    feedback(2, 'error');
+    exit(2);
+}
+
 $smarty->assign('dialog', array('bereich' =>
                             array( 1 => d_feld::getString(472))));
 $smarty->display('main_bereich.tpl');
-warng('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.'); exit;
+feedback('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.',
+    'warng');
+exit;
 
 switch ($_POST['aktion']) :
     case "selekt" :

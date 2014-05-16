@@ -9,7 +9,7 @@
 @media screen {
     #menue {
         float:left;
-        width:15%;
+        width:12%;
         height:400px;
         font-size:0.9em;
         text-align:center;
@@ -22,7 +22,7 @@
 
     #main {
         float:right;
-        width:83%;
+        width:86%;
         margin-right:10px;
     }
 
@@ -35,9 +35,10 @@
     }
 
     #login {
+        background-image:url(images/bg_dark.png);
         position:absolute;
-        top:100px;
-        left:100px;
+        top:200px;
+        left:200px;
         text-align:center;
         z-index:1000;
     }
@@ -259,7 +260,8 @@ div#overDiv {
 .note {
     color: #A0A0A0;
     font-stretch:semi-condensed;
-    white-space:normal
+    white-space:normal;
+    font-size: 0.9em;
 }
 
 .big {
@@ -283,6 +285,18 @@ div#overDiv {
     border-bottom: 1px solid #0080ff;
 }
 
+.error {
+    /* Fehlermeldungen für Nutzer */
+    margin: 5px;
+    padding: 5px;
+    font-family: monospace;
+    font-weight: normal;
+    white-space: pre;
+    color: #C00010;
+    background-color: #FFEfEf;
+    border: 1px solid #C00010;
+}
+
 .warng {
     /* Warnhinweis - doppelte Datensätze etc. */
     margin: 5px;
@@ -296,17 +310,30 @@ div#overDiv {
     border: 1px solid #C00010;
 }
 
-.error {
-    /* Fehlermeldungen für Nutzer */
+.hinw {
+    /* Hinweise für Nutzer */
     margin: 5px;
     padding: 5px;
     font-family: monospace;
     font-weight: normal;
     white-space: pre;
-    color: #C00010;
-    background-color: #FFEfEf;
-    border: 1px solid #C00010;
+    color: black;
+    background-color: white;
+    border: 1px solid black;
 }
+
+.erfolg {
+    /* Erfolgsmeldung für Nutzer */
+    margin: 5px;
+    padding: 5px;
+    font-family: monospace;
+    font-weight: normal;
+    white-space: pre;
+    color: #004000;
+    background-color: #eeffee;
+    border: 1px solid #008000;
+}
+
 
 .visor {
 /* Internes Arbeitsmittel für Breakpoints und Testausgaben !no Touch please! */
