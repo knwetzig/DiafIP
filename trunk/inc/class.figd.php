@@ -199,7 +199,7 @@ interne Methoden:
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
+        if (empty($data)) feedback(4, 'hinw');        // kein Datensatz vorhanden
 
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) :
@@ -452,7 +452,7 @@ Interne Methoden:
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
         IsDbError($data);
-        if (empty($data)) fehler(4);        // kein Datensatz vorhanden
+        if (empty($data)) feedback(4, 'error');        // kein Datensatz vorhanden
         // Ergebnis -> Objekt schreiben
         foreach($data as $key => $wert) $this->$key = $wert;
     }
@@ -693,117 +693,132 @@ Interne Methoden:
         else :          // Formular auswerten - Obj zurückspeichern wird im
                         // aufrufenden Teil erledigt
 
-            if (empty($this->titel) AND empty($_POST['titel'])) fehler(100);
-            else if ($_POST['titel']) $this->titel = $_POST['titel'];
+/** ===== Neue Fehlerbehandlung einfügen ===== **/
+            try {
+                if (empty($this->titel) AND empty($_POST['titel']))
+                    throw new Exception(null, 100);
+                else if ($_POST['titel']) $this->titel = $_POST['titel'];
 
-            if(isset($_POST['atitel'])) :
-                if ($_POST['atitel']) $this->atitel = $_POST['atitel'];
-                else $this->atitel = null;
-            endif;
+                if(isset($_POST['atitel'])) :
+                    if ($_POST['atitel']) $this->atitel = $_POST['atitel'];
+                    else $this->atitel = null;
+                endif;
 
-            if(isset($_POST['sid']))
-                $this->sid = intval($_POST['sid']); else $this->sid = null;
-            if ($this->sid AND isset($_POST['sfolge']))
-                $this->sfolge = intval($_POST['sfolge']);
-            else $this->sfolge = null;
+                if(isset($_POST['sid']))
+                    $this->sid = intval($_POST['sid']); else $this->sid = null;
+                if ($this->sid AND isset($_POST['sfolge']))
+                    $this->sfolge = intval($_POST['sfolge']);
+                else $this->sfolge = null;
 
-            if(isset($_POST['utitel'])) :
-                if ($_POST['utitel']) $this->utitel = $_POST['utitel'];
-                else $this->utitel = null;
-            endif;
+                if(isset($_POST['utitel'])) :
+                    if ($_POST['utitel']) $this->utitel = $_POST['utitel'];
+                    else $this->utitel = null;
+                endif;
 
-            if(isset($_POST['inhalt'])) :
-                if ($_POST['inhalt']) $this->inhalt = $_POST['inhalt'];
-                else $this->inhalt = null;
-            endif;
+                if(isset($_POST['inhalt'])) :
+                    if ($_POST['inhalt']) $this->inhalt = $_POST['inhalt'];
+                    else $this->inhalt = null;
+                endif;
 
-            if(isset($_POST['quellen'])) :
-                if ($_POST['quellen']) $this->quellen = $_POST['quellen'];
-                else $this->quellen = null;
-            endif;
+                if(isset($_POST['quellen'])) :
+                    if ($_POST['quellen']) $this->quellen = $_POST['quellen'];
+                    else $this->quellen = null;
+                endif;
 
-            if(isset($_POST['anmerk'])) :
-                if ($_POST['anmerk']) $this->anmerk = $_POST['anmerk'];
-                else $this->anmerk = null;
-            endif;
+                if(isset($_POST['anmerk'])) :
+                    if ($_POST['anmerk']) $this->anmerk = $_POST['anmerk'];
+                    else $this->anmerk = null;
+                endif;
 
-            if(isset($_POST['prod_jahr'])) :
-                if ($_POST['prod_jahr']) {
-                    if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
-                        $this->prod_jahr = intval($_POST['prod_jahr']);
-                    else warng(103);
-                } else $this->prod_jahr = null;
-            endif;
+                if(isset($_POST['prod_jahr'])) :
+                    if ($_POST['prod_jahr']) {
+                        if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
+                            $this->prod_jahr = intval($_POST['prod_jahr']);
+                        else feedback(103, 'warng');
+                    } else $this->prod_jahr = null;
+                endif;
 
-            if(isset($_POST['thema'])) :
-                if ($_POST['thema']) $this->thema = $_POST['thema'];
-                else $this->thema = null;
-            endif;
+                if(isset($_POST['thema'])) :
+                    if ($_POST['thema']) $this->thema = $_POST['thema'];
+                    else $this->thema = null;
+                endif;
 
-            if(isset($_POST['gattung'])) :
-                if ($_POST['gattung']) {
-                    if(isvalid($_POST['gattung'], ANZAHL))
-                        $this->gattung = intval($_POST['gattung']);
-                    else fehler(4);
-                } else $this->gattung = null;
-            endif;
+                if(isset($_POST['gattung'])) :
+                    if ($_POST['gattung']) {
+                        if(isvalid($_POST['gattung'], ANZAHL))
+                            $this->gattung = intval($_POST['gattung']);
+                        else throw new Exception(null, 4);
+                    } else $this->gattung = null;
+                endif;
 
-            if(isset($_POST['prodtech']))
-               $this->prodtechnik = array2wert(0, $_POST['prodtech']);
-            else $this->prodtechnik = null;
+                if(isset($_POST['prodtech']))
+                $this->prodtechnik = array2wert(0, $_POST['prodtech']);
+                else $this->prodtechnik = null;
 
-            if(!empty($_POST['laenge']))
-                if ( isValid($_POST['laenge'], DAUER)) $this->laenge = $_POST['laenge']; else warng(4);
-            else $this->laenge = null;
+                if(!empty($_POST['laenge']))
+                    if ( isValid($_POST['laenge'], DAUER)) $this->laenge = $_POST['laenge']; else feedback(4, warng);
+                else $this->laenge = null;
 
-            if(isset($_POST['fsk'])) :
-                if (!empty($_POST['fsk'])) {
-                    if(isvalid($_POST['fsk'], ANZAHL))
-                        $this->fsk = intval($_POST['fsk']);
-                    else fehler(4);
-                } else $this->fsk = null;
-            endif;
+                if(isset($_POST['fsk'])) :
+                    if (!empty($_POST['fsk'])) {
+                        if(isvalid($_POST['fsk'], ANZAHL))
+                            $this->fsk = intval($_POST['fsk']);
+                        else throw new Exception(null, 4);
+                    } else $this->fsk = null;
+                endif;
 
-            if(isset($_POST['praedikat'])) :
-                if ($_POST['praedikat']) {
-                    if(isvalid($_POST['praedikat'], ANZAHL))
-                        $this->praedikat = intval($_POST['praedikat']);
-                    else fehler(4);
-                } else $this->praedikat = null;
-            endif;
+                if(isset($_POST['praedikat'])) :
+                    if ($_POST['praedikat']) {
+                        if(isvalid($_POST['praedikat'], ANZAHL))
+                            $this->praedikat = intval($_POST['praedikat']);
+                        else throw new Exception(null, 4);
+                    } else $this->praedikat = null;
+                endif;
 
-            if(isset($_POST['urauff'])) :
-                if ($_POST['urauff']) {
-                    if(isvalid($_POST['urauff'], DATUM))
-                        $this->urauffuehr = $_POST['urauff'];
-                    else warng(103);
-                } else $this->urauffuehr = null;
-            endif;
+                if(isset($_POST['urauff'])) :
+                    if ($_POST['urauff']) {
+                        if(isvalid($_POST['urauff'], DATUM))
+                            $this->urauffuehr = $_POST['urauff'];
+                        else feedback(103, 'warng');
+                    } else $this->urauffuehr = null;
+                endif;
 
-            if(isset($_POST['bildformat']))
-                if ($_POST['bildformat']) $this->bildformat = intval($_POST['bildformat']);
+                if(isset($_POST['bildformat']))
+                    if ($_POST['bildformat']) $this->bildformat = intval($_POST['bildformat']);
 
-            if(isset($_POST['mediaspezi']))
-                $this->mediaspezi = array2wert(0, $_POST['mediaspezi']);
-            else $this->mediaspezi = null;
+                if(isset($_POST['mediaspezi']))
+                    $this->mediaspezi = array2wert(0, $_POST['mediaspezi']);
+                else $this->mediaspezi = null;
 
-            if(isset($_POST['notiz'])) :
-                if ($_POST['notiz']) $this->notiz = $_POST['notiz'];
-                    else $this->notiz = null;
-            endif;
+                if(isset($_POST['notiz'])) :
+                    if ($_POST['notiz']) $this->notiz = $_POST['notiz'];
+                        else $this->notiz = null;
+                endif;
 
-            $this->isvalid = false;
-            if(isset($_POST['isvalid'])) :
-                if ($_POST['isvalid']) $this->isvalid = true;
-            endif;
+                $this->isvalid = false;
+                if(isset($_POST['isvalid'])) :
+                    if ($_POST['isvalid']) $this->isvalid = true;
+                endif;
 
-            $this->editfrom = $myauth->getAuthData('uid');
-            $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
+                $this->editfrom = $myauth->getAuthData('uid');
+                $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
 
-            // doppelten Datensatz abfangen
-            $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) warng('10008');
-        endif;
+                // doppelten Datensatz abfangen
+                $number = self::ifDouble();
+                if (!empty($number) AND $number != $this->id) feedback(10008, 'warng');
+            }   // end try
+
+            catch (Exception $e) {
+                $fehler[] = $e->getMessage();
+            }
+
+            foreach ($fehler as $error) $errmsg .= $error.'<br />';
+            if ($errmsg) {
+                feedback(substr($errmsg, 0, -6), 'error');
+                exit;
+            }
+
+        endif;      // form anzeigen/auswerten
     }
 
     public function set() {

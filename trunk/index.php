@@ -82,16 +82,30 @@ require_once 'class.media.php';
 require_once 'class.item.php';
 require_once 'class.statistik.php';
 
-// laden Menübereich
-$data = getStringList(array(0,4008,4028,4003,4037,4005,4006,4009,4032,4038));
-$data[99] = $myauth->getAuthData('realname');
-$data[100] = $_SERVER['PHP_SELF'];
-$smarty->assign('dlg', $data);
+// --- Laden Menübereich ---
+$menue = array(
+    'fgraf'     => d_feld::getString(4008),
+    'i2d'       => d_feld::getString(4028),
+    'pers'      => d_feld::getString(4003),
+    'stat'      => d_feld::getString(4009),
+    'i3d'       => d_feld::getString(4032),
+    'fkop'      => d_feld::getString(4038),
+//    'login'     => d_feld::getString(4004),
+    'logout'    => d_feld::getString(4005),
+    'realname'  => $myauth->getAuthData('realname'),
+    'userid'    => $myauth->getAuthData('uid'),
+    'phpself'   => $_SERVER['PHP_SELF']);
+
+if($myauth->getAuthData('uid') != 4) {
+    $menue['messg'] = d_feld::getString(4037);
+    $menue['pref']  = d_feld::getString(4006);
+}
+$smarty->assign('dlg', $menue);
 $smarty->display('menue.tpl');
 
 include 'main.php';
 
-// laden Statistikanzeige
+// --- Laden Statistikanzeige ---
 $stat = new db_stat();
 $smarty->assign('stat', $stat->view());
 $smarty->display('statistik.tpl')

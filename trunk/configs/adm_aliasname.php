@@ -15,8 +15,15 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) fehler(108);    // Fremdaufruf!
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');
+    exit();
+}
+
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+    feedback(2, 'error');
+    exit(2);
+}
 
 // Überschrift
 $smarty->assign('dialog', array('bereich' =>
@@ -62,7 +69,10 @@ if(!empty($_POST['aktion'])) switch ($_POST['aktion']) :
         // Auswertung auf die klassische Art
         $ali = array();
         if($_POST['name'] !== "") $ali['name'] = $_POST['name'];
-        else fehler(107);
+        else {
+            feedback(107, 'error');
+            exit();
+        }
 
         $ali['notiz'] = $_POST['notiz'];
         $data = $db->extended->autoExecute('p_alias', $ali,

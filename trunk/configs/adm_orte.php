@@ -18,8 +18,15 @@ ToDo:
     Das gleiche für das Dialog-Template in der Klassendefinition
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) fehler(108);
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');
+    exit();
+}
+
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+    feedback(2, 'error');
+    exit(2);
+}
 
 $smarty->assign('dialog', array(
     'bereich' => array( 1 => 'Verwaltung&nbsp;der&nbsp;Ortsnamen')
@@ -55,8 +62,8 @@ if(isset($_POST['submit'])) {
         break;
     case "delOrt" :
         if(!isBit($myauth->getAuthData('rechte'), DELE)) {
-            fehler(2);
-            die();
+            feedback(2, 'error');
+            exit();
         }
         $loc = new Ort($myauth->getAuthData('selOrt'));
         $loc->del();

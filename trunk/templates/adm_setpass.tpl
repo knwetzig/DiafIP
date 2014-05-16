@@ -1,4 +1,3 @@
-<div class='bereich'>{$dlg[6]}</div>
 {******************************************************************************
 Aufruf: adm_self.php
 class:
@@ -14,7 +13,9 @@ ToDo:   None
 
 ***** (c) DIAF e.V. *******************************************}
 
-<form action='{$dlg[100]}' method='post'>
+<div class='bereich'>{$dialog['bereich'][2]}</div>
+
+<form action='{$dlg['phpself']}' method='post'>
     <fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
         <table style='padding:5px'>
             <tr>

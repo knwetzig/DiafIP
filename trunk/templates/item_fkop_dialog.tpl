@@ -17,7 +17,7 @@
 
  ***** (c) DIAF e.V. *********************************************************}
 
-<form action='{$dlg[100]}' method='post'>
+<form action='{$dlg['phpself']}' method='post'>
 
 <div name='links' style='float:left'>
 <table>
@@ -118,7 +118,7 @@
             id='verleih'
             name='leihbar'
             {if $dialog['leihbar'][1]}checked="checked"{/if}
-            value= '1'
+            value='true'
         /></td>
     </tr>{/if}
 
@@ -207,7 +207,7 @@
                 {if $dialog['isvalid'][1]}
                     checked="checked"
                 {/if}
-                value="isvalid" />
+                value='true' />
                 <label for='valid'>&nbsp;{$dialog['isvalid'][2]}</label>
         </td>
     </tr>{/if}

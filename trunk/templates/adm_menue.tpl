@@ -10,7 +10,7 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div class='bereich'>{$dlg[6]}</div>
+<div class='bereich'>{$dlg['pref']}</div>
 <div class='bereich_fuss'></div>
 
 <table><tr>

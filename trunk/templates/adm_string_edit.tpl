@@ -8,7 +8,7 @@ $Date$
 $URL$
 
 ***** (c) DIAF e.V. *******************************************}
-<form action='{$dlg[100]}' method='post'>
+<form action='{$dlg['phpself']}' method='post'>
     <fieldset>
         <legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
     <table>

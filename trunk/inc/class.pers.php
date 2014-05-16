@@ -275,13 +275,17 @@ func: __construct($)
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
             // Formular auswerten
 
+
+/** ====== Neue Fehlerbehandlung ==== **/
+
+
             if(isset($_POST['vname']))
                 if (empty($_POST['vname'])) $this->vname = '-';
                     else $this->vname = $_POST['vname'];
 
             if(isset($_POST['name'])) {
                 if(!empty($_POST['name'])) $this->name = $_POST['name'];
-                else fehler(107);
+                else feedback(107, 'error');
             }
 
             if (isset($_POST['aliases'])) $this->aliases = $_POST['aliases'];
@@ -289,7 +293,7 @@ func: __construct($)
             if(isset($_POST['gtag'])) {
                 if($_POST['gtag']) {
                     if(isValid($_POST['gtag'], DATUM)) $this->gtag = $_POST['gtag'];
-                    else warng(103);
+                    else feedback(103, 'warng');
                 } else $this->gtag = '0001-01-01';
             }
 
@@ -300,7 +304,7 @@ func: __construct($)
             if(isset($_POST['ttag'])) {
                 if($_POST['ttag']) {
                     if(isValid($_POST['ttag'], DATUM)) $this->ttag = $_POST['ttag'];
-                    else warng(103);
+                    else feedback(103, 'warng');
                 } else $this->ttag = null;
             }
 
@@ -319,24 +323,24 @@ func: __construct($)
             } else {
 */
             if(!empty($_POST['strasse']))
-                if (isValid($_POST['strasse'], NAMEN)) $this->strasse = $_POST['strasse']; else warng(109);
+                if (isValid($_POST['strasse'], NAMEN)) $this->strasse = $_POST['strasse']; else feedback(109, 'warng');
 
             if(isset($_POST['wort']))
                 if($_POST['wort'] == 0) $this->wort = null; else $this->wort = intval($_POST['wort']);
 
             if(!empty($_POST['plz']))
                 if(isValid($_POST['plz'], PLZ)) $this->plz = $_POST['plz'];
-                else warng(104);
+                else feedback(104, 'warng');
             else $this->plz = null;
 
             if(!empty($_POST['tel']))
                 if(isValid($_POST['tel'], TELNR)) $this->tel = $_POST['tel'];
-                else warng(105);
+                else feedback(105, 'warng');
             else $this->tel = null;
 
             if(!empty($_POST['mail']))
                 if(isValid($_POST['mail'], EMAIL)) $this->mail = $_POST['mail'];
-                else warng(106);
+                else feedback(106, 'warng');
             else $this->mail = null;
 
             if(isset($_POST['biogr'])) $this->biogr = $_POST['biogr'];
@@ -346,7 +350,7 @@ func: __construct($)
 
             // doppelten Datensatz abfangen
             $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) fehler(128);
+            if (!empty($number) AND $number != $this->id) feedback(128, 'error');
         }
     }
 
@@ -445,12 +449,12 @@ func: __construct($)
         /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
         knüpft ist oder problemlos gelöscht werden kann */
 
-        if(self::isLinked()) fehler(10006);
+        if(self::isLinked()) feedback(10006, 'warng');
         $db =& MDB2::singleton();
 
         IsDbError($db->extended->autoExecute('p_person', null,
             MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
-        erfolg(); return 0;
+        feedback(3, 'erfolg'); return 0;
     }
 
     function search($s) {

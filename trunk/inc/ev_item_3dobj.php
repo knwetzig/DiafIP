@@ -9,7 +9,7 @@ $URL$
 
 ***** (c) DIAF e.V. *********************************************************/
 
-if(!$myauth->checkAuth()) fehler(108);
+if(!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = a_display(array(
@@ -46,7 +46,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                 $i3d = unserialize($myauth->getAuthData('obj'));
                 $i3d->edit(true);
                 $erg = $i3d->set();
-                if ($erg) fehler($erg);
+                if ($erg) feedback($erg, 'error');
                 $i3d->view();
             endif;
         break;	// Ende edit
@@ -65,7 +65,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
                         $item->sview();
                     endforeach;
                 else :
-                    warng(102); // kein Erg.
+                    feedback(102, 'hinw'); // kein Erg.
                 endif;
             endif;
         break;
@@ -73,7 +73,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         case "del" :
             $i3d = new Obj3d($_POST['id']);
             $erg = $i3d->del();
-            if(empty($erg)) erfolg(); else fehler($erg);
+            if(empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'error');
         break;
 
         case 'view' :

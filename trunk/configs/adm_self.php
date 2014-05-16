@@ -9,15 +9,16 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if (!$myauth->getAuth()) {
-    fehler(108);
-    die();           // Fremdaufruf!
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');         // Fremdaufruf
+    exit();
 }
 
-if($myauth->getAuthData('rechte') < 2) {
-    fehler(2);
-    exit;
+if($myauth->getAuthData('rechte') < 2 ) {
+    feedback(2, 'error');
+    exit(2);
 }
+
 
 // Dialog anzeigen
 $data = a_display(array(
@@ -34,11 +35,12 @@ $smarty->display('adm_setpass.tpl');
 
 if(isset($_POST['submit']) AND $_POST['submit'] === "speichern") {
     if ($_POST['password'] != "" AND ($_POST['password'] !== $_POST['password2'])) {
-        fehler(110);
+        feddback(110, 'error');
+        exit();
     } else {
         $data = $myauth->changePassword($myauth->getUsername(), $_POST['password']);
         IsDbError($data);
-        erfolg();
+        feedback(3, 'erfolg');
         }
     }
     unset($_POST);

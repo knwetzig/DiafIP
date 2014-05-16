@@ -9,8 +9,16 @@ $Date$
 $URL$
 
 ***** (c) DIAF e.V. ************************************************/
-if(!$myauth->checkAuth()) fehler(108);
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) fehler(2);
+
+if(!$myauth->getAuth()) {
+    feedback(108, 'error');
+    exit();
+}
+
+if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+    feedback(2, 'error');
+    exit(2);
+}
 
 function getStrList() {
     $db =& MDB2::singleton();
