@@ -1,0 +1,32 @@
+$Id: $
+
+Hinweise:
+    Vorausgesetzt ist, das eine lauffähige HTTP/PHP5 Umgebung installiert ist.
+    Installieren Sie, soweit nicht bereits geschehen die PEAR-Bibliotheken:
+        Auth,
+        MDB2 incl. der postgres-Treiber
+        php5-pgsql
+
+    Vor Implementierung ist die Datenbankstruktur aufzubauen. Dazu existiert die
+    Datei "struktur.sql". Im Anschluss müssen sie die Daten aus "struktur_daten.sql" einpflegen.
+
+    Anschließend ist der DSN außerhalb des Document-Root zu deklarieren.
+        Bsp.:      DSN = 'pgsql://dbuser:password@tcp(localhost)/diafip';
+    und der Pfad in der configs/config.local.php zu ändern.
+
+    Anpassungen:
+        PHP.INI an Produktionsumgebung
+        "smarty" Konfiguration in configs/config.local.php
+        mc.conf  Vorgabe für Smarty
+
+Fehlertabelle / Errortable
+    0   kein Fehler
+    1   allgemeiner Fehler
+    2   fehlende Rechte
+    4   fehlende Parameter
+    8   interner Fehler (Datenkonsistenz)
+   16
+   32
+   64
+  128   Datensatz bereits vorhanden
+  256
