@@ -11,6 +11,7 @@ $URL$
 ***** (c) DIAF e.V. *******************************************/
 $laufzeit = -gettimeofday(true);
 require_once	'configs/config.php';
+
 $_POST = normtext($_POST);              // Filter für htmlentities
 $_GET = normtext($_GET);
 
@@ -59,6 +60,8 @@ endswitch;
 $lang = $myauth->getAuthData('lang');
 $smarty->assign('lang', $lang);
 
+/* Einstellung ist obsolet geworden, da in Version 2 alle Zeitstempel als
+   bigint gespeichert werden
 switch($lang) :                         // Datumsformat der DB einstellen
     case 'de' :
         $db->query("SET datestyle TO German");
@@ -73,9 +76,12 @@ switch($lang) :                         // Datumsformat der DB einstellen
     default :
         $db->query("SET datestyle TO ISO");
 endswitch;
+*/
 
 require_once 'class.view.php';
 require_once 'class.s_location.php';
+require_once 'class.entity.php';        // Basisklasse V2
+//require_once 'class.person.php';        // Personenklasse V2
 require_once 'class.pers.php';
 require_once 'class.figd.php';
 require_once 'class.media.php';
