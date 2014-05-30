@@ -12,7 +12,7 @@ Hinweise:
 
     Anschließend ist der DSN außerhalb des Document-Root zu deklarieren.
         Bsp.:      DSN = 'pgsql://dbuser:password@tcp(localhost)/diafip';
-    und der Pfad in der configs/config.local.php zu ändern.
+    Eine Datei 'configs/config.local.php' ist zu erstellen und die Pfade darin entsprechend zu ändern.
 
     Anpassungen:
         PHP.INI an Produktionsumgebung
