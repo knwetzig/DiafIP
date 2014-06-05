@@ -17,6 +17,7 @@ ToDo:
 =========================================================== **/
 interface iEntity {
     function getBearbeiter();   // ermittelt Realnamen des Bearbeiters
+    static function search($s); // liefert die ID's des Suchmusters
     function setValid();        // Set/Unset Flag
     function setDel();          // -- dito--
     function lview();           // array mit Objekten Listenansicht
@@ -65,6 +66,10 @@ abstract class entity implements iEntity {
         endif;
     }
 
+    abstract protected function add($status);
+    abstract protected function edit($status);
+    abstract static function search($s);
+    
     final function getBearbeiter() {
     /**********************************************************
      * Aufgabe: Ermittelt den Realnamen des Bearbeiters
@@ -121,18 +126,13 @@ abstract class entity implements iEntity {
     function view() {
         $data = array(
         // name,inhalt optional-> $rechte,$label,$tooltip,valString
-            new d_feld('id',     $this->id,                 VIEW),
-            new d_feld('bereich', $this->bereich,           VIEW),
             new d_feld('descr',  changetext($this->descr),  VIEW,   513),   // Beschreibung
             new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514),   // Notiz
-            new d_feld('bilder', $this->bilder,             VIEW),
             // Bearbeitungssymbole und -ausgaben
-            new d_feld('edit',   null,                      EDIT, null, 4013), // edit-Button
-            new d_feld('del',    null,                      DELE, null, 4020), // Lösch-Button
             new d_feld('chdatum', date('ymd',$this->editdate), EDIT),
-            new d_feld('chname', $this->getBearbeiter(),    EDIT),
+            new d_feld('chname', $this->getBearbeiter(),    EDIT)
         );
-        return $data;
+        return array_merge(self::lview(), $data);
     }
 }
 ?>

@@ -15,54 +15,192 @@ ToDo:
 /** ===========================================================
                                 NAMEN
 =========================================================== **/
-class name {
-    public
-        $name   = null,
-        $notiz  = null,
-        $id     = null;     // ! Böser Trick - id muss immer zuletzt stehen
+interface iName {
+    static function getNameList();	// Listet alle Aliasname (nicht Personen)
+    function add($status = null);
+    function edit($status = null);
+    static function search($s);
+    function lview();
+    function view();
+}
+
+class name extends entity implements iName {
+    const
+	GETDATA = 'SELECT * FROM ONLY p_namen WHERE id = ?;',
+	SEARCH =  'SELECT id FROM ONLY p_namen
+	    WHERE (name ILIKE ?) OR (vname ILIKE ?) ORDER BY name ASC, vname ASC;';
+
+    protected
+	$vname	= '-',
+        $name   = '';
 
     function __construct($nr = null) {
-            if(isset($nr)) self::get($nr);
+            if(isset($nr) AND is_int($nr)) self::get($nr);
     }
 
     protected function get($nr) {
     // Diese Funktion initilisiert das Objekt
         $db =& MDB2::singleton();
-        $this->id = $nr;
-        $sql = 'SELECT name,notiz FROM ONLY p_alias WHERE id = ?;';
-        $data = $db->extended->getRow($sql, null, $this->id, 'integer');
+        parent::get($nr);
+        $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
         IsDbError($data);
+        $this->vname = $data['vname'];
         $this->name = $data['name'];
-        $this->notiz = $data['notiz'];
     }
 
-    static function getAlias($nr) {
-    // Diese Funktion gibt den Namen zurück
+    function add($status = null) {
+    /**********************************************************
+    Aufgabe: Neuanlage eines Namens
+    Aufruf: false   für Erstaufruf
+            true    Verarbeitung nach Formular
+    **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
         $db =& MDB2::singleton();
-        if (empty($nr)) return null;
-        $sql = 'SELECT name FROM ONLY p_alias WHERE id = ?;';
-        $data = $db->extended->getRow($sql, null, $nr, 'integer');
-        IsDbError($data);
-        return $data['name'];
+        $types  = array(	// Reihenfolge einhalten
+                'text',         // vname
+                'text',         // name
+                'integer',      // id
+                'text',		// bereich
+                'text',         // Beschreibung
+                'array',	// bild
+                'text',         // notiz
+                'boolean',	// isvalid
+                'boolean',	// delete
+                'integer',	// Zeitstempel
+                'integer'       // uid des bearbeiters
+        );
+
+        if (empty($status)) :
+            // begin TRANSACTION anlage name
+            $db->beginTransaction('newName'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getOne("SELECT nextval('entity_id_seq');");
+            IsDbError($data);
+            $this->id = $data;
+            $this->bereich = 'N';	// Namen
+            $this->edit();
+        else :
+            $this->edit(true);
+            foreach($this as $key => $wert) $data[$key] = $wert;
+            $erg = $db->extended->autoExecute('p_namen', $data,
+                        MDB2_AUTOQUERY_INSERT, null, $types);
+            IsDbError($erg);
+            $db->commit('newName'); IsDbError($db);
+            // ende TRANSACTION
+        endif;
     }
 
-    static function getAliasList() {
+    function edit($status = null) {
+    /**********************************************************
+    Aufgabe:    Obj ändern
+    Aufruf:     false   Formularanforderung
+                true    Auswertung
+    Return:     Fehlercode
+    Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
+                haften Eingaben.
+    **********************************************************/
+        global $myauth, $smarty;
+
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        
+        if(empty($status)) :
+            // Daten einsammeln und für Dialog bereitstellen :-)
+            $data = array(
+                // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
+                new d_feld('id',    $this->id),
+                new d_feld('vname', $this->vname, EDIT,   516),
+                new d_feld('name',  $this->name,  EDIT,   517),
+                new d_feld('notiz', $this->notiz, EDIT,   514),
+                new d_feld('kopf',  null,      	  VIEW,   4013));                
+            $smarty->assign('dialog', a_display($data));
+            $smarty->display('person_dialog.tpl');
+            $myauth->setAuthData('obj', serialize($this));
+        else :	    // Status
+            // Reinitialisierung muss vom aufrufenden Programm erledigt werden
+            // Formular auswerten
+	    try {
+
+		if(isset($_POST['vname']))
+		    if (empty($_POST['vname'])) $this->vname = '-';
+			else $this->vname = $_POST['vname'];
+
+		if(isset($_POST['name'])) {
+		    if(!empty($_POST['name'])) $this->name = $_POST['name'];
+		    else throw new Exception(null, 107);
+		}
+
+		if(isset($_POST['notiz'])) $this->notiz = $_POST['notiz'];
+	    }
+
+	    catch (Exception $e) {
+		feedback($e->getcode(), 'error');
+	    }
+            $this->setSignum();		// Bearbeiter und Zeit setzen
+        endif;
+    }
+
+    static function search($s) {
+    /**********************************************************
+    Aufgabe:    Sucht in Vor- und Nachnamen (nicht Literal)
+    Aufruf:     $s = Suchmuster
+    Return:     array(id) oder null
+    **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
+        $erg = array();
+        $s = "%".$s."%";        // Suche nach Teilstring
         $db =& MDB2::singleton();
-        $sql = 'SELECT id, name FROM ONLY p_alias;';
-        $data = $db->extended->getAll($sql, array('integer','text'));
+
+        $data =&$db->extended->getAll(self::SEARCH, 'integer', array($s,$s));
+        IsDbError($data);
+        foreach($data as $wert) $erg[] = $wert['id'];
+
+        if ($erg) return array_unique($erg);     // id's der gefundenen Namen
+        else return 1;
+    }
+    
+    static function getNameList() {
+    /**********************************************************
+    Aufgabe:    Liefert die Namensliste für Drop-Down-Menü
+    Return:     array(id, vname+name)
+    **********************************************************/
+        $db =& MDB2::singleton();
+        $sql = 'SELECT id, vname, name FROM ONLY p_namen ORDER BY name, vname ASC;';
+        $data = $db->extended->getAll($sql, array('integer','text','text'));
         IsDbError($data);
 
-        $alist=array('-- ohne --');
-        foreach($data as $val) {
-            $alist[$val['id']] = $val['name'];
-        }
+        $alist = array(d_feld::getString(0));		// kein Eintrag
+        foreach($data as $val) :
+	    if ($val['vname'] === '-') :
+		$alist[$val['id']] = $val['name'];
+	    else :
+		$alist[$val['id']] = $val['vname'].' '.$val['name'];
+	    endif;
+        endforeach;
         return $alist;
+    }
+
+    function lview() {
+	$data = parent::lview();
+	$data[] = new d_feld('vname',	$this->vname,	VIEW);
+	$data[] = new d_feld('name',	$this->name,	VIEW);
+	return $data;
+    }
+
+    function view() {
+	$data = parent::view();
+	$data[] = new d_feld('vname',	$this->vname,	VIEW);
+	$data[] = new d_feld('name',	$this->name,	VIEW);
+	return $data;
     }
 }
 
 /** ===========================================================
                                 PERSONEN
-=========================================================== **/
+=========================================================== **
 interface iPerson {
     const
             SQL_getPersLi   = 'SELECT id, vname, name FROM p_person
@@ -79,7 +217,7 @@ interface iPerson {
     public function view();
 }
 
-class Person extends Alias implements iPerson {
+class Person extends name implements iPerson {
 /**************************************************************
 func: __construct($)
       get($!)     // holt db-felder -> this
@@ -96,7 +234,7 @@ func: __construct($)
 - Variablennamen, die sich auf die db-Tabelle beziehen müssen identisch
   mit den Spaltennamen sein, damit die Iteration gelingen kann.
 
-**************************************************************/
+**************************************************************
     public
         $vname  = null,
         $gtag   = null,       // Geburtstag
@@ -109,10 +247,7 @@ func: __construct($)
         $tel    = null,       // Telefonnummer
         $mail   = null,       // mailadresse;
         $biogr  = null,       // Kurzbiografie
-        $aliases = null,
-        $bild   = null,       // id auf Bilddatenbank
-        $editdate = null,
-        $editfrom = null;
+        $aliases = array();
 
     const
         SQL_isLink      = 'SELECT COUNT(*) FROM f_cast WHERE pid = ?;',
@@ -128,7 +263,7 @@ func: __construct($)
     * Aufgabe: Datensatz holen, in @self schreiben
     *  Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
     *  Return: none
-    **********************************************************/
+    **********************************************************
         $db =& MDB2::singleton();
         $sql = 'SELECT * FROM p_person WHERE id = ?;';
         $data = $db->extended->getRow($sql, null, $nr);
@@ -143,7 +278,7 @@ func: __construct($)
     /**********************************************************
     *  Aufgabe: Liefert den zusammngesetzten Namen zurück
     *   Return: bool
-    **********************************************************/
+    **********************************************************
         if(empty($this->id)) return;
             $data = $this->fiVname().$this->name;
         return '<a href="index.php?aktion=view&id='.$this->id.'">'.$data.'</a>';
@@ -154,7 +289,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe: Geburtstagsfilter
     *  Return: (int Geburtstag | null)
-    ****************************************************************/
+    ****************************************************************
         if (($this->gtag === '0001-01-01') OR ($this->gtag === '01.01.0001'))
             return ; else return $this->gtag;
     }
@@ -163,7 +298,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe: Ausfiltern des default-Wertes von Vorname
     *  Return: string (null | vname)
-    ****************************************************************/
+    ****************************************************************
         if ($this->vname === '-') return; else return $this->vname.' ';
     }
 
@@ -171,7 +306,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe:
     *  Return:
-    ****************************************************************/
+    ****************************************************************
         $db =& MDB2::singleton();
         $data = $db->extended->getRow(
             self::SQL_ifDouble, null, array($this->gtag, $this->vname, $this->name));
@@ -182,7 +317,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe: Personenliste
     *  Return: array([id] => vname+name)
-    ****************************************************************/
+    ****************************************************************
         $db =& MDB2::singleton();
         $list = $db->extended->getAll(self::SQL_getPersLi);
         IsDbError($list);
@@ -197,7 +332,7 @@ func: __construct($)
     /****************************************************************
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
     *   Return: array(vname, name, tid, pid, job)
-    ****************************************************************/
+    ****************************************************************
         $db =& MDB2::singleton();
         if (empty($this->id)) return;
         $data = $db->extended->getALL(
@@ -221,7 +356,7 @@ func: __construct($)
     /****************************************************************
     * Aufgabe: Prüft ob der Datensatz verknüpft ist
     *  Return: 0 = frei / Nr = Anzahl
-    ****************************************************************/
+    ****************************************************************
         $db =& MDB2::singleton();
         // Prüfkandidaten: f_cast.pid / ...?
         $data = $db->extended->getRow(self::SQL_isLink, null, $this->id);
@@ -237,7 +372,7 @@ func: __construct($)
     Return:     Fehlercode
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
-    ****************************************************************/
+    ****************************************************************
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if($stat == false) {
@@ -255,7 +390,7 @@ func: __construct($)
                 new d_feld('gtag', $this->gtag,    EDIT,   502, 10000),
                 new d_feld('gort', $this->gort,    EDIT,   4014),
                 new d_feld('ttag', $this->ttag,    EDIT,   509, 10000),
-                new d_feld('tort', $this->tort,    EDIT,   4014/*,10005*/),
+                new d_feld('tort', $this->tort,    EDIT,   4014/*,10005*),
                 new d_feld('strasse',$this->strasse,IEDIT, 510),
                 new d_feld('wort', $this->wort,    IEDIT),
                 new d_feld('plz',  $this->plz,     IEDIT),
@@ -272,7 +407,7 @@ func: __construct($)
             // Formular auswerten
 
 
-/** ====== Neue Fehlerbehandlung ==== **/
+/** ====== Neue Fehlerbehandlung ==== **
 
 
             if(isset($_POST['vname']))
@@ -317,7 +452,7 @@ func: __construct($)
                 $this->mail = null;
                 $this->tel = null;
             } else {
-*/
+*
             if(!empty($_POST['strasse']))
                 if (isValid($_POST['strasse'], NAMEN)) $this->strasse = $_POST['strasse']; else feedback(109, 'warng');
 
@@ -355,7 +490,7 @@ func: __construct($)
     Aufgabe: Neuanlage einer Person
     Aufruf: false   für Erstaufruf
             true    Verarbeitung nach Formular
-    ****************************************************************/
+    ****************************************************************
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
@@ -405,7 +540,7 @@ func: __construct($)
     Aufgabe: schreibt das Obj. via Update in die DB zurück
     Return: 0  alles ok
             4  leerer Datensatz
-    ****************************************************************/
+    ****************************************************************
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
@@ -443,7 +578,7 @@ func: __construct($)
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
         /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
-        knüpft ist oder problemlos gelöscht werden kann */
+        knüpft ist oder problemlos gelöscht werden kann *
 
         if(self::isLinked()) feedback(10006, 'warng');
         $db =& MDB2::singleton();
@@ -460,7 +595,7 @@ func: __construct($)
     Return: 0   gibt ein Array der gefunden Personen-ID's zurück
             1   nichts gefunden
     Anm.: statisch
-    ****************************************************************/
+    ****************************************************************
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
@@ -479,7 +614,7 @@ func: __construct($)
         SELECT verleihe.name FROM verleihe WHERE verleihe.name LIKE 'W%'
         UNION
         SELECT schauspieler.name FROM schauspielerWHERE schauspieler.name LIKE 'W%';
-        */
+        *
         $data =&$db->extended->getAll($sql, null, array($s,$s));
         IsDbError($data);
         foreach($data as $wert) $erg[] = intval($wert['id']);
@@ -491,7 +626,7 @@ func: __construct($)
     function sview() {
     /****************************************************************
     * Aufgabe: Anzeige eines Datensatzes (Listenansicht
-    ****************************************************************/
+    ****************************************************************
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         // Zuweisungen und ausgabe an pers_dat.tpl
@@ -519,7 +654,7 @@ func: __construct($)
     Aufruf:  DYNA
     Return:  void
     Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
-    ****************************************************************/
+    ****************************************************************
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
@@ -562,4 +697,5 @@ func: __construct($)
         $smarty->display('pers_dat.tpl');
     }
 }   // end Personen-klasse
+*/
 ?>
