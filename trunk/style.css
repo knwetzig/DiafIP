@@ -183,6 +183,8 @@ textarea.small {
 
 input[type='text'],[type='password'] {
     width:250px;
+	padding:3px;
+	border:1px #EEE solid;
 }
 
 input[type='text'].halb {
@@ -195,7 +197,9 @@ input[type='text'].lang {
 
 input[type='submit'],[type='button'] {
     width:125px;
-    margin:2px
+    margin:2px;
+	padding:3px;
+	border:1px #EEE solid;
 }
 
 select {
