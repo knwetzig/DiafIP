@@ -1,0 +1,54 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin:0;
+	padding:0;
+	border:0;
+	outline:0;
+	font-weight:inherit;
+	font-style:inherit;
+	font-size:100%;
+	font-family:inherit;
+	vertical-align:baseline;
+	/*list-style:none;*/
+}
+
+BODY {background-color:#EFEFEF;font-family:Arial,Verdana,sans-serif;font-size:12px;color:#333333;}
+
+P {line-height:140%;margin-bottom:.5em;}
+
+/* LINKS */
+A {color:#0063AF; text-decoration:none;}
+A:HOVER {text-decoration:underline;color:#00529E;}
+
+/* HEADLINES */
+H1, H2, H3, H4, H5, H6 {font-weight:700;margin-bottom:1em;color:#333399;}
+H1 {font-size:180%;}
+H2 {font-size:160%;}
+H3 {font-size:140%;}
+H4 {font-size:120%;}
+H5 {font-size:100%;}
+H6 {font-size:80%;}
+
+/* LISTS */
+UL, OL {margin-left:1.2em;margin-bottom:1em;}
+UL LI {line-height:140%;}
+OL LI {}
+
+/* TABLES */
+TABLE {}
+TABLE THEAD {background-color:#E0E0E0;}
+TABLE THEAD TH {font-weight:700;padding:.25em;}
+TABLE TBODY {background-color:#F0F0F0;}
+TABLE TBODY TD {padding:.25em;}
+TABLE TFOOT {font-size:90%;}
+
+/* FORMS */
+DIV.form-element {}
+DIV.form-element LABEL {width:150px;float:left;}
+DIV.form-element LABEL {width:150px;float:left;}
