@@ -3,10 +3,10 @@
 
     Personen-Klasse V2
 
-$Rev:  $
-$Author:  $
-$Date:  $
-$URL:  $
+$Rev$
+$Author$
+$Date$
+$URL$
 
 ToDo:
     Altlastenbefreiung
@@ -24,7 +24,7 @@ interface iName {
     function view();
 }
 
-class name extends entity implements iName {
+class Name extends entity implements iName {
     const
 	GETDATA = 'SELECT * FROM ONLY p_namen WHERE id = ?;',
 	SEARCH =  'SELECT id FROM ONLY p_namen
@@ -104,7 +104,7 @@ class name extends entity implements iName {
         global $myauth, $smarty;
 
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        
+
         if(empty($status)) :
             // Daten einsammeln und für Dialog bereitstellen :-)
             $data = array(
@@ -113,7 +113,7 @@ class name extends entity implements iName {
                 new d_feld('vname', $this->vname, EDIT,   516),
                 new d_feld('name',  $this->name,  EDIT,   517),
                 new d_feld('notiz', $this->notiz, EDIT,   514),
-                new d_feld('kopf',  null,      	  VIEW,   4013));                
+                new d_feld('kopf',  null,      	  VIEW,   4013));
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
@@ -161,7 +161,7 @@ class name extends entity implements iName {
         if ($erg) return array_unique($erg);     // id's der gefundenen Namen
         else return 1;
     }
-    
+
     static function getNameList() {
     /**********************************************************
     Aufgabe:    Liefert die Namensliste für Drop-Down-Menü
@@ -217,7 +217,7 @@ interface iPerson {
     public function view();
 }
 
-class Person extends name implements iPerson {
+class Person extends Name implements iPerson {
 /**************************************************************
 func: __construct($)
       get($!)     // holt db-felder -> this
