@@ -3,12 +3,13 @@
 
     Basisbibliothek
 
-$Rev:  $
-$Author:  $
-$Date:  $
-$URL:  $
+$Rev$
+$Author$
+$Date$
+$URL$
 
 ToDo:
+
 
 **************************************************************/
 
@@ -69,7 +70,7 @@ abstract class entity implements iEntity {
     abstract protected function add($status);
     abstract protected function edit($status);
     abstract static function search($s);
-    
+
     final function getBearbeiter() {
     /**********************************************************
      * Aufgabe: Ermittelt den Realnamen des Bearbeiters
