@@ -45,7 +45,7 @@ abstract class entity implements iEntity {
                                 // abschließend bearbeitet wurde
         $del        = false,    // Löschflag
         $editfrom   = null,     // uid des Bearbeiters
-        $editdate   = null;        // bigint,
+        $editdate   = null;     // timestamp width Timezone
 
     function __construct($nr = null) {
             if(isset($nr) AND is_int($nr)) self::get($nr);
@@ -130,7 +130,8 @@ abstract class entity implements iEntity {
             new d_feld('descr',  changetext($this->descr),  VIEW,   513),   // Beschreibung
             new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514),   // Notiz
             // Bearbeitungssymbole und -ausgaben
-            new d_feld('chdatum', date('ymd',$this->editdate), EDIT),
+
+            new d_feld('chdatum', $this->editdate, EDIT),
             new d_feld('chname', $this->getBearbeiter(),    EDIT)
         );
         return array_merge(self::lview(), $data);
