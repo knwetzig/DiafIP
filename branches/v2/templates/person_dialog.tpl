@@ -7,10 +7,10 @@ class:  Namen
 proc:   edit
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
-$Rev:  $
-$Author:  $
-$Date:  $
-$URL:  $
+$Rev$
+$Author$
+$Date$
+$URL$
 
 **************************************************************}
 
