@@ -1,5 +1,11 @@
 <?php
-/**************************************************************
+/***** DEPRECATED *********************************************
+
+
+Diese Version ist zur Löschung vorgesehen. Keine Änderungen mehr
+vornehmen. Statt dessen class.person.php entwickeln
+
+
 Enthält alle Klassenbibliotheken zu Personendaten
 
 $Rev$
