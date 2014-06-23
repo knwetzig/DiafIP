@@ -132,7 +132,8 @@ abstract class entity implements iEntity {
             // Bearbeitungssymbole und -ausgaben
 
             new d_feld('chdatum', $this->editdate, EDIT),
-            new d_feld('chname', $this->getBearbeiter(),    EDIT)
+            new d_feld('chname', $this->getBearbeiter(), EDIT),
+            new d_feld('isvalid', $this->isvalid, IVIEW)
         );
         return array_merge(self::lview(), $data);
     }
