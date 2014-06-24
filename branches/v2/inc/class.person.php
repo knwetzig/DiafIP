@@ -9,7 +9,8 @@ $Date$
 $URL$
 
 ToDo:
-    Altlastenbefreiung
+    - $types in set()/add() und edit anpassen
+    - add und edit bearbeiten und mit Template abgleichen
 **************************************************************/
 
 /** ===========================================================
@@ -20,6 +21,7 @@ interface iName {
     function getName();
     function add($stat = null);
     function edit($stat = null);
+    function del();
     static function search($s);
     function lview();
     function view();
@@ -41,7 +43,7 @@ class Name extends entity implements iName {
         $nname  = '';
 
     function __construct($nr = null) {
-        if(isset($nr) AND is_int($nr)) self::get($nr);
+        if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
@@ -153,6 +155,8 @@ class Name extends entity implements iName {
         endif;
     }
 
+    function del() {}
+
     protected function fiVname() {
     /**********************************************************
     * Aufgabe: Ausfiltern des default-Wertes von Vorname
@@ -215,15 +219,15 @@ class Name extends entity implements iName {
 
     function lview() {
         $data = parent::lview();
-        $data[] = new d_feld('vname',	$this->vname,	VIEW);
-        $data[] = new d_feld('nname',	$this->nname,	VIEW);
+        $data[] = new d_feld('vname', $this->fiVname(),	VIEW);
+        $data[] = new d_feld('nname', $this->nname,	VIEW);
         return $data;
     }
 
     function view() {
         $data = parent::view();
-        $data[] = new d_feld('vname',	$this->vname,	VIEW);
-        $data[] = new d_feld('nname',	$this->nname,	VIEW);
+        $data[] = new d_feld('vname', $this->fiVname(), VIEW);
+        $data[] = new d_feld('nname', $this->nname, VIEW);
         return $data;
     }
 }
@@ -260,8 +264,6 @@ class Person extends Name implements iPerson {
         GETPERLI =
             'SELECT id, vname, nname FROM ONLY p_person2
              ORDER BY nname, vname ASC;',
-        ISLINK =
-            'SELECT COUNT(*) FROM f_cast WHERE pid = ?;',
         // Casting-Liste
         GETCALI   =
             'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
@@ -270,7 +272,7 @@ class Person extends Name implements iPerson {
 			 WHERE gtag = ? AND vname = ? AND nname = ?;';
 
     function __construct($nr = NULL) {
-        if (isset($nr) AND is_int($nr)) self::get($nr);
+        if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
@@ -281,8 +283,21 @@ class Person extends Name implements iPerson {
     **********************************************************/
         $db =& MDB2::singleton();
 
+        $types = array(
+            'date',         // Geburtstag
+            'integer',      // Geburtsstadt
+            'date',         // Todestag
+            'integer',      // Sterbeort
+            'text',         // Strasse + HNr. und Adresszusätze
+            'text',         // PLZ des Wohnortes (wegen vorlaufender Nullen)
+            'integer',      // Wohnort (Ort, land))
+            'text',         // Telefonnummer
+            'text',         // mailadresse;
+            'text'          // $aliases = null;
+        );
+
         parent::get($nr);
-        $data = $db->extended->getRow(self::GETDATA, null, $nr);
+        $data = $db->extended->getRow(self::GETDATA, $types, $nr);
         IsDbError($data);
         // Ergebnis -> Objekt schreiben
         if($data) :
@@ -309,7 +324,7 @@ class Person extends Name implements iPerson {
 
     protected function ifDouble() {
     /**********************************************************
-    * Aufgabe:
+    * Aufgabe: Ermitteln ob gleiche Person schon existiert
     *  Return:
     **********************************************************/
         $db =& MDB2::singleton();
@@ -343,7 +358,7 @@ class Person extends Name implements iPerson {
     // gibt ein Array der Namen zurück
         if(is_array($this->aliases)) :
             foreach($this->aliases as $val) :
-                $e = new Name((int)$val);
+                $e = new Name(intval($val));
                 $data[] = $e->getName();
             endforeach;
             return $data;
@@ -376,16 +391,54 @@ class Person extends Name implements iPerson {
         return $f;
     }
 
-    protected function isLinked() {
+    public function add($stat = null) {
     /**********************************************************
-    * Aufgabe: Prüft ob der Datensatz verknüpft ist
-    *  Return: 0 = frei / Nr = Anzahl
+    Aufgabe: Neuanlage einer Person
+    Aufruf: false   für Erstaufruf
+            true    Verarbeitung nach Formular
     **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+
+        $types  = array(
+                'text',         // vname
+                'date',         // gtag
+                'integer',      // idx_gort
+                'date',         // ttag
+                'integer',      // idx_tort
+                'text',         // str
+                'text',         // plz (string!)
+                'integer',      // wort
+                'text',         // tel
+                'text',         // mail
+                'text',         // biogr
+                'integer',      // aliases
+                'integer',      // bild
+                'timestamp',    // Zeitstempel
+                'integer',      // uid des bearbeiters
+                'text',         // name (geerbt von Entity)
+                'text',         // notiz (geerbt von Entity)
+                'text'          // id
+        );
         $db =& MDB2::singleton();
-        // Prüfkandidaten: f_cast.pid / ...?
-        $data = $db->extended->getRow(self::ISLINK, null, $this->id);
-        IsDbError($data);
-        return $data['count'];
+
+        if ($stat == false) {
+            // begin TRANSACTION anlage person
+            $db->beginTransaction('newPerson'); IsDbError($db);
+            // neue id besorgen
+            $data = $db->extended->getOne("SELECT nextval('id_seq');");
+            IsDbError($data);
+            $this->id = $data;
+            $this->edit(false);
+        } else {
+            $this->edit(true);
+            foreach($this as $key => $wert) $data[$key] = $wert;
+            $erg = $db->extended->autoExecute('p_person', $data,
+                        MDB2_AUTOQUERY_INSERT, null, $types);
+            IsDbError($erg);
+            $db->commit('newPerson'); IsDbError($db);
+            // ende TRANSACTION
+        }
     }
 
     public function edit($stat = null) {
@@ -510,59 +563,10 @@ class Person extends Name implements iPerson {
 */
     }
 
-    public function add($stat = null) {
-    /**********************************************************
-    Aufgabe: Neuanlage einer Person
-    Aufruf: false   für Erstaufruf
-            true    Verarbeitung nach Formular
-    **********************************************************/
-        global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-
-        $types  = array(
-                'text',         // vname
-                'date',         // gtag
-                'integer',      // idx_gort
-                'date',         // ttag
-                'integer',      // idx_tort
-                'text',         // str
-                'text',         // plz (string!)
-                'integer',      // wort
-                'text',         // tel
-                'text',         // mail
-                'text',         // biogr
-                'integer',      // aliases
-                'integer',      // bild
-                'timestamp',    // Zeitstempel
-                'integer',      // uid des bearbeiters
-                'text',         // name (geerbt von Entity)
-                'text',         // notiz (geerbt von Entity)
-                'text'          // id
-        );
-        $db =& MDB2::singleton();
-
-        if ($stat == false) {
-            // begin TRANSACTION anlage person
-            $db->beginTransaction('newPerson'); IsDbError($db);
-            // neue id besorgen
-            $data = $db->extended->getOne("SELECT nextval('id_seq');");
-            IsDbError($data);
-            $this->id = $data;
-            $this->edit(false);
-        } else {
-            $this->edit(true);
-            foreach($this as $key => $wert) $data[$key] = $wert;
-            $erg = $db->extended->autoExecute('p_person', $data,
-                        MDB2_AUTOQUERY_INSERT, null, $types);
-            IsDbError($erg);
-            $db->commit('newPerson'); IsDbError($db);
-            // ende TRANSACTION
-        }
-    }
-
     private function set(){
     /**********************************************************
     Aufgabe: schreibt das Obj. via Update in die DB zurück
+             wird bei add/edit/del gebraucht
     Return: 0  alles ok
             4  leerer Datensatz
     **********************************************************/
@@ -599,21 +603,18 @@ class Person extends Name implements iPerson {
         return 0;
     }
 
-/*
     function del() {
+    /**********************************************************
+    Aufgabe: Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB
+    Anm:     Alternativ kann man diese Funktion nutzen um das Element wieder aus dem
+             Papierkorb zu holen.
+    **********************************************************/
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
-        /* Es exisitiert an dieser Stelle noch keine Abfrage, ob der Datensatz ver-
-        knüpft ist oder problemlos gelöscht werden kann *
-
-        if(self::isLinked()) feedback(10006, 'warng');
-        $db =& MDB2::singleton();
-
-        IsDbError($db->extended->autoExecute('p_person', null,
-            MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->id, 'integer')));
-        feedback(3, 'erfolg'); return 0;
+        self::setDel();
+        self::set();
     }
-*/
+
     function lview() {
     /****************************************************************
     * Aufgabe: Anzeige eines Datensatzes (Listenansicht)
@@ -623,7 +624,7 @@ class Person extends Name implements iPerson {
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data = parent::lview();
-        $data[] = new d_feld('aliases', $this->aliases, VIEW, 515);
+        $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);
         $data[] = new d_feld('gtag',   $this->fiGtag(), VIEW, 502);
         $data[] = new d_feld('gort',   Ort::getOrt($this->gort), VIEW,  4014);
         $data[] = new d_feld('ttag',   $this->ttag, VIEW, 509);

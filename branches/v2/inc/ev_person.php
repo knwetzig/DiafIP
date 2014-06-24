@@ -1,10 +1,10 @@
 <?php /****************************************************
 Eventhandler für Aktionen der Personenverwaltung
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 50 $
+$Author: knwetzig $
+$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+$URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
 
 ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
         wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
@@ -21,7 +21,7 @@ $data = a_display(array(
         // name,inhalt,rechte, optional-> $label,$tooltip,valString
         new d_feld('bereich', d_feld::getString(4012)),
         new d_feld('sstring', d_feld::getString(4011)),
-        new d_feld('sektion', 'person'),
+        new d_feld('sektion', 'P'),
         new d_feld('add', true, EDIT, null, 10001)));
 $smarty->assign('dialog', $data);
 $smarty->assign('darkBG', 0);
@@ -30,7 +30,7 @@ $smarty->display('main_bereich.tpl');
 if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
     $smarty->assign('aktion', $_REQUEST['aktion']);
 
-    // switch:action => add | edit | search | del | view
+    // switch:aktion => add | edit | search | del | view
     switch($_REQUEST['aktion']) :
         case "add":
             if(isset($_POST['form'])) {
@@ -43,7 +43,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                 $np->add(true);
                 $np->view();
             }
-        break; // Ende --add--
+            break; // Ende --add--
 
         case "edit" :
             if (isset($_POST['form'])) {
@@ -57,41 +57,42 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                 if ($erg) feedback($erg, 'error');
                 $ePer->view();
             }
-        break; // Ende --edit --
+            break; // Ende --edit --
 
         case "search" :
             if (isset($_POST['sstring'])) {
-            /* Suchanfrage musste entschärft werden
-                if (!preg_match('/'.NAMEN.'|[*]/',$_POST['sstring'])) {
-                    feedback(d_feld::getString(101), 'warng');
-                    break;
-                } else {
-            */
                 $myauth->setAuthData('search', $_POST['sstring']);
-                $plist = Person::search($myauth->getAuthData('search'));
-            // }
-            if (!empty($plist) AND is_array($plist)) :
-                // Ausgabe
-                $bg = 1;
-                foreach(($plist) as $nr) :
-                    ++$bg; $smarty->assign('darkBG', $bg % 2);
-                    $pers = new Person($nr);
-                    $pers->sview();
-                endforeach;
-            else : feedback(102, 'hinw'); // kein Ergebnis
-            endif;
-        }
-        break; // Ende --search--
+
+                if(isset($_REQUEST['id'])) :
+                    /* Da eine Nummer gesucht wurde, wird hier die ermittelte id ausge-
+                    wertet. Es wird die Detailansicht geladen */
+                    $pers = new Person($_REQUEST['id']);
+                    $pers->view();
+                else :
+                    $plist = Person::search($myauth->getAuthData('search'));
+                    if (!empty($plist) AND is_array($plist)) :
+                        // Ausgabe
+                        $bg = 1;
+                        foreach(($plist) as $nr) :
+                            ++$bg; $smarty->assign('darkBG', $bg % 2);
+                            $pers = new Person($nr);
+                            $pers->lview();
+                        endforeach;
+                    else : feedback(102, 'hinw'); // kein Ergebnis
+                    endif;
+                endif;
+            }
+            break; // Ende --search--
 
         case "del" :
             $pers = new Person($_POST['id']);
             $pers->del();
-        break;
+            break;
 
         case "view" :
             $pers = new Person((int)$_REQUEST['id']);
             $pers->view();
-        break;  // Endview
+            break;  // Endview
     endswitch;
 }  // aus iwelchen Gründen wurde keine 'aktion' ausgelöst?
 ?>

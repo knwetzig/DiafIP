@@ -48,18 +48,31 @@ abstract class entity implements iEntity {
         $editdate   = null;     // timestamp width Timezone
 
     function __construct($nr = null) {
-            if(isset($nr) AND is_int($nr)) self::get($nr);
+            if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
     // Diese Funktion initialisiert das Objekt
+        $types = array(
+            'integer',
+            'text',     // bereich
+            'text',     // descr
+            'text',     // bilder (eigtl ein array)
+            'text',     // notiz
+            'boolean',  // isvalid
+            'boolean',  // del
+            'integer',  // uid
+            'date'      // editdate (soll nicht konvertiert werden!)
+        );
+
         $db =& MDB2::singleton();
-        $data = $db->extended->getRow(self::GETDATA,null,$nr,'integer');
+        $data = $db->extended->getRow(self::GETDATA,$types,$nr,'integer');
         IsDbError($data);
         if($data) :
             foreach($data as $key => $val) $this->$key = $val;
             if($this->bilder) :
                 $this->bilder = preg_split("/[,{}]/", $this-> bilder, null, PREG_SPLIT_NO_EMPTY);
+                // Achtung Elemente liegen als Text vor! (nicht integer)
             endif;
         else :
             feedback(4,'warng');

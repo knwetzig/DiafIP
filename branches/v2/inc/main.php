@@ -9,34 +9,49 @@ $Author$
 $Date$
 $URL$
 
-Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' AND NOT 'action'!!!
-***** (c) DIAF e.V. *******************************************/
+Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' und nicht 'action'!!!
+**************************************************************/
 
-    echo "<div id='main'>";
-    if(!empty($_REQUEST['id'])) :
-        /* Da eine 'id angegeben wurde' wird hier zwangsweise die 'sektion'
-           ermittelt und gegebenfalls überschrieben!  */
-        $bereich = array(
-            'person'    => 'p_person',
-            'film'      => 'f_film',
-            'i_planar'  => 'i_planar',
-            'i_3dobj'   => 'i_3dobj',
-            'i_fkop'    => 'i_fkop');
+const ISEXIST = 'SELECT COUNT(*) FROM entity WHERE id = ?;';
 
-        foreach($bereich as $key => $wert) :
-            $data = $db->extended->getRow(
-                'SELECT COUNT(*) FROM '.$wert.' WHERE id = ?;',
-                'integer', $_REQUEST['id'], 'integer');
-            IsDbError($data);
-            if($data['count']) :
-                $_REQUEST['sektion'] = $key;
-                break;
-            endif;
-        endforeach;
-    endif;                              // Abschluß der Testreihe
+echo "<div id='main'>";
+if(!empty($_REQUEST)) :
+    /* Da hier offensichtlich was steht wird versucht die 'sektion'
+        zuzuweisen und evt. eine id zu ermitteln
+        zulässige Parameter:  $_REQUEST['sektion'] = 'F' | $_REQUEST['F'] = 123
+        Beides würde and den Eventhandler filmogr. Daten übergeben werden */
 
-    if(isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']]))
-        include $datei[$_REQUEST['sektion']];
-    else include 'default.php';
-    echo "</div>";
+// Variante: $_REQUEST['F'] = 123 ohne weitere Parameter
+    if(is_numeric(current($_REQUEST))) :
+        // Test ob Nr. als id in der DB existiert
+        $nr = (int)current($_REQUEST);
+        $data = $db->extended->getRow(ISEXIST, null, $nr);
+        IsDbError($data);
+        if($data['count']) $_REQUEST['id'] = $nr;
+    endif;
+
+    switch(key($_REQUEST)) :
+        case 'N' :                  //Namen
+        case 'P' :
+            $_REQUEST['sektion'] = 'P';    // Person
+            break;
+        case 'F' :
+            $_REQUEST['sektion'] = 'F';    // filmogr.
+            break;
+        case 'Y' :
+            $_REQUEST['sektion'] = 'Y';    // planar
+            break;
+        case 'Z' :
+            $_REQUEST['sektion'] = 'Z';    // körper
+            break;
+        case 'K' :
+            $_REQUEST['sektion'] = 'K';    //filmkopie
+    endswitch;
+endif;
+
+// Variante: $_REQUEST['sektion'] = 'F' und A++++++++++++++-------uswertung vorige
+if(isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']]))
+    include $datei[$_REQUEST['sektion']];
+else include 'default.php';
+echo "</div>";
 ?>

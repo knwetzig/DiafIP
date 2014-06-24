@@ -51,13 +51,13 @@ const
 
 // Sektion für 'sektion'
 $datei = array(
-    'admin'     => "configs/admin.php",
-    'film'	    => "inc/ev_figd.php",		    // filmografische Daten
-    'person'    => "inc/ev_pers.php",           // Personenverzeichnis
-    'i_planar'  => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
-    'i_3dobj'   => 'inc/ev_item_3dobj.php',
-    'i_fkop'    => 'inc/ev_item_fkop.php',
-    'news'      => 'inc/news.php'
+    'admin' => "configs/admin.php",
+    'F'	    => "inc/ev_figd.php",		    // filmografische Daten
+    'P'     => "inc/ev_person.php",         // Personenverzeichnis
+    'Y'     => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
+    'Z'     => 'inc/ev_item_3dobj.php',
+    'K'     => 'inc/ev_item_fkop.php',
+    'news'  => 'inc/news.php'
 );
 
 // Admin-Array
