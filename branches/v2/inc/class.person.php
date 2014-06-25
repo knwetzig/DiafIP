@@ -9,9 +9,23 @@ $Date$
 $URL$
 
 ToDo:
+    - name.add() vervollständigen. (Baustelle)
     - $types in set()/add() und edit anpassen
     - add und edit bearbeiten und mit Template abgleichen
 **************************************************************/
+       $types  = array( // Reihenfolge einhalten!
+            'text',         // vname
+            'text',         // name
+            'integer',      // id
+            'text',     // bereich
+            'text',         // Beschreibung
+            'array',    // bild
+            'text',         // notiz
+            'boolean',  // isvalid
+            'boolean',  // delete
+            'integer',  // Zeitstempel
+            'integer'       // uid des bearbeiters
+        );
 
 /** ===========================================================
                                 NAMEN
@@ -39,8 +53,7 @@ class Name extends entity implements iName {
              ORDER BY nname ASC, vname ASC;';
 
     protected
-        $vname	= '-',
-        $nname  = '';
+        $names = array('vname' => '-', 'nname' => '');
 
     function __construct($nr = null) {
         if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
@@ -54,8 +67,8 @@ class Name extends entity implements iName {
         $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
         IsDbError($data);
         if($data) :
-            $this->vname = $data['vname'];
-            $this->nname = $data['nname'];
+            $this->names['vname'] = $data['vname'];
+            $this->names['nname'] = $data['nname'];
         else :
             feedback(4,'warng');
             exit(4);
@@ -72,19 +85,6 @@ class Name extends entity implements iName {
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db =& MDB2::singleton();
-        $types  = array(	// Reihenfolge einhalten!
-            'text',         // vname
-            'text',         // name
-            'integer',      // id
-            'text',	// bereich
-            'text',         // Beschreibung
-            'array',	// bild
-            'text',         // notiz
-            'boolean',	// isvalid
-            'boolean',	// delete
-            'integer',	// Zeitstempel
-            'integer'       // uid des bearbeiters
-        );
 
         if (empty($status)) :
             // begin TRANSACTION anlage name
@@ -92,14 +92,19 @@ class Name extends entity implements iName {
             // neue id besorgen
             $data = $db->extended->getOne("SELECT nextval('entity_id_seq');");
             IsDbError($data);
-            $this->id = $data;
-            $this->bereich = 'N';	// Namen
+            $this->content['id'] = $data;
+            $this->content['bereich'] = 'N';	// Namen
             $this->edit();
         else :
             $this->edit(true);
+// kurze Denkpause, damits dann schneller geht
+// Ziel: EIN array für den DB-Export, dazu ein type-array
+// inhalt: entity + names
+
             foreach($this as $key => $wert) $data[$key] = $wert;
+
             $erg = $db->extended->autoExecute('p_namen', $data,
-                        MDB2_AUTOQUERY_INSERT, null, $types);
+                        MDB2_AUTOQUERY_INSERT, null, parent::types);
             IsDbError($erg);
             $db->commit('newName'); IsDbError($db);
             // ende TRANSACTION

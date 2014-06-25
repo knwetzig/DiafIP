@@ -105,6 +105,14 @@ function isValid($val, $muster) {
     return preg_match($muster, $val);
 }
 
+function dez2hex($wert) {
+    return sprintf('%x', $wert);
+}
+
+function hex2dez($wert) {
+    return intval($wert, 16);
+}
+
 function list2array($list) {
     // parst die DB-Liste in ein PHP-Array
     if (!is_string($list)) return 1;
