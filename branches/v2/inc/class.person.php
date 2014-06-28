@@ -12,65 +12,50 @@ ToDo:
     - name.add() vervollständigen. (Baustelle)
     - $types in set()/add() und edit anpassen
     - add und edit bearbeiten und mit Template abgleichen
-**************************************************************/
-       $types  = array( // Reihenfolge einhalten!
-            'text',         // vname
-            'text',         // name
-            'integer',      // id
-            'text',     // bereich
-            'text',         // Beschreibung
-            'array',    // bild
-            'text',         // notiz
-            'boolean',  // isvalid
-            'boolean',  // delete
-            'integer',  // Zeitstempel
-            'integer'       // uid des bearbeiters
-        );
+***********************************************************/
 
-/** ===========================================================
+/**===========================================================
                                 NAMEN
 =========================================================== **/
-interface iName {
-    static function getNameList();	// Listet alle Aliasname (nicht Personen)
+interface iPName extends iEntity {
     function getName();
+    static function getNameList();	// Listet alle Aliasname (nicht Personen)
     function add($stat = null);
     function edit($stat = null);
     function del();
-    static function search($s);
-    function lview();
-    function view();
+    function view();                // Liefert die Daten für die Ausgabe
 }
 
-class Name extends entity implements iName {
+class PName extends Entity implements iPName {
     const
-        GETDATA = 'SELECT * FROM p_namen WHERE id = ?;',
+        TYPENAME = 'text,text',
+        GETDATA = 'SELECT vname, nname FROM p_namen WHERE id = ?;',
         GETNAMLI =
             'SELECT id, vname, nname FROM ONLY p_namen
              ORDER BY nname, vname ASC;',
         SEARCH =
-            'SELECT id FROM p_namen
+            'SELECT id,bereich FROM p_namen
              WHERE (nname ILIKE ?) OR (vname ILIKE ?)
-             ORDER BY nname ASC, vname ASC;';
-
-    protected
-        $names = array('vname' => '-', 'nname' => '');
+             ORDER BY nname,vname,id LIMIT ? OFFSET ?;';
 
     function __construct($nr = null) {
+        parent::__construct($nr);
+        $this->content['vname'] = '-';
+        $this->content['nname'] = '';
         if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
-    // Diese Funktion initilisiert das Objekt
+    // Diese Funktion initialisiert das Objekt
         $db =& MDB2::singleton();
 
-        parent::get($nr);
         $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
         IsDbError($data);
         if($data) :
-            $this->names['vname'] = $data['vname'];
-            $this->names['nname'] = $data['nname'];
+            $this->content['vname'] = $data['vname'];
+            $this->content['nname'] = $data['nname'];
         else :
-            feedback(4,'warng');
+            feedback(4,'error');
             exit(4);
         endif;
     }
@@ -80,7 +65,7 @@ class Name extends entity implements iName {
     Aufgabe: Neuanlage eines Namens
     Aufruf: false   für Erstaufruf
             true    Verarbeitung nach Formular
-    **********************************************************/
+    **********************************************************
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
@@ -99,16 +84,16 @@ class Name extends entity implements iName {
             $this->edit(true);
 // kurze Denkpause, damits dann schneller geht
 // Ziel: EIN array für den DB-Export, dazu ein type-array
-// inhalt: entity + names
 
             foreach($this as $key => $wert) $data[$key] = $wert;
 
-            $erg = $db->extended->autoExecute('p_namen', $data,
-                        MDB2_AUTOQUERY_INSERT, null, parent::types);
+            $erg = $db->extended->autoExecute('p_namen',$data,MDB2_AUTOQUERY_INSERT,
+                null, list2array(parent.TYPEENTITY.parent::TYPENAME.self::TYPEPERSON));
             IsDbError($erg);
             $db->commit('newName'); IsDbError($db);
             // ende TRANSACTION
         endif;
+*/
     }
 
     function edit($stat = null) {
@@ -119,7 +104,7 @@ class Name extends entity implements iName {
     Return:     Fehlercode
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
-    **********************************************************/
+    **********************************************************
         global $myauth, $smarty;
 
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
@@ -128,11 +113,11 @@ class Name extends entity implements iName {
             // Daten einsammeln und für Dialog bereitstellen :-)
             $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-                new d_feld('id',    $this->id),
-                new d_feld('vname', $this->vname, EDIT,   516),
-                new d_feld('nname', $this->nname, EDIT,   517),
-                new d_feld('notiz', $this->notiz, EDIT,   514),
-                new d_feld('kopf',  null,      	  VIEW,   4013));
+                new d_feld('id',    $this->content['id']),
+                new d_feld('vname', $this->content['vname'], EDIT, 516),
+                new d_feld('nname', $this->content['nname'], EDIT, 517),
+                new d_feld('notiz', $this->content['notiz'], EDIT, 514),
+                new d_feld('kopf', null, VIEW, 4013));
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
@@ -140,17 +125,16 @@ class Name extends entity implements iName {
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
             // Formular auswerten
 	    try {
+            if(isset($_POST['vname']))
+                if (empty($_POST['vname'])) $this->content['vname'] = '-';
+                else $this->content['vname'] = $_POST['vname'];
 
-		if(isset($_POST['vname']))
-		    if (empty($_POST['vname'])) $this->vname = '-';
-			else $this->vname = $_POST['vname'];
+            if(isset($_POST['nname'])) {
+                if(!empty($_POST['nname'])) $this->content['nname'] = $_POST['nname'];
+                else throw new Exception(null, 107);
+            }
 
-		if(isset($_POST['nname'])) {
-		    if(!empty($_POST['mname'])) $this->nname = $_POST['nname'];
-		    else throw new Exception(null, 107);
-		}
-
-		if(isset($_POST['notiz'])) $this->notiz = $_POST['notiz'];
+            if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
 	    }
 
 	    catch (Exception $e) {
@@ -158,6 +142,7 @@ class Name extends entity implements iName {
 	    }
             $this->setSignum();		// Bearbeiter und Zeit setzen
         endif;
+*/
     }
 
     function del() {}
@@ -167,38 +152,42 @@ class Name extends entity implements iName {
     * Aufgabe: Ausfiltern des default-Wertes von Vorname
     *  Return: string (null | vname)
     **********************************************************/
-        if ($this->vname === '-') return; else return $this->vname.' ';
+        if ($this->content['vname'] === '-') return; else return $this->content['vname'].'&nbsp';
     }
 
     static function search($s) {
     /**********************************************************
     Aufgabe:    Sucht in Vor- und Nachnamen (nicht Literal)
     Aufruf:     $s = Suchmuster
-    Return:     array(id) oder null
+    Return:     array(id) oder null (Namen und Personen)
     **********************************************************/
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
-        $erg = array();
-        $s = "%".$s."%";        // Suche nach Teilstring
         $db =& MDB2::singleton();
+        $max = $db->extended->getOne('SELECT COUNT(*) FROM p_namen WHERE del = false;','integer');
+        IsDbError($max);
+        $limit = null;
+        $offset = null;
 
-        $data =&$db->extended->getAll(self::SEARCH, 'integer', array($s,$s));
+       // Suche nach Teilstring
+        $erg = array();
+        $s = "%".$s."%";
+
+        $data =&$db->extended->getAll(
+            self::SEARCH, array('integer','text'), array($s,$s,$limit,$offset));
         IsDbError($data);
-        foreach($data as $wert) $erg[] = $wert['id'];
 
-        if ($erg) return array_unique($erg);     // id's der gefundenen Namen
-        else return 1;
+        if ($data) return $data; else return 102;
     }
 
     function getName() {
     /**********************************************************
-    *  Aufgabe: Liefert den zusammngesetzten Namen zurück
-    *   Return: bool
+    Aufgabe: Liefert den zusammngesetzten und verlinkten Namen zurück
+    Return: string
     **********************************************************/
-        if(empty($this->id)) return;
-        $data = $this->fiVname().$this->nname;
-        return '<a href="index.php?'.$this->bereich.'='.$this->id.'">'.$data.'</a>';
+        if(empty($this->content['id'])) return;
+        $data = self::fiVname().$this->content['nname'];
+        return '<a href="index.php?'.$this->content['bereich'].'='.$this->content['id'].'">'.$data.'</a>';
     }
 
     static function getNameList() {
@@ -222,17 +211,9 @@ class Name extends entity implements iName {
         return $alist;
     }
 
-    function lview() {
-        $data = parent::lview();
-        $data[] = new d_feld('vname', $this->fiVname(),	VIEW);
-        $data[] = new d_feld('nname', $this->nname,	VIEW);
-        return $data;
-    }
-
     function view() {
         $data = parent::view();
-        $data[] = new d_feld('vname', $this->fiVname(), VIEW);
-        $data[] = new d_feld('nname', $this->nname, VIEW);
+        $data[] = new d_feld('pname', self::getName(), VIEW);
         return $data;
     }
 }
@@ -240,29 +221,18 @@ class Name extends entity implements iName {
 /** ===========================================================
                                 PERSONEN
 =========================================================== **/
-interface iPerson extends iName {
+interface iPerson extends iPName {
     static function getPersList();  // Listet alle Personen (ohne Aliasnamen)
     function getAliases();          // gibt ein Array der Namen zurück
 }
 
-class Person extends Name implements iPerson {
+class Person extends PName implements iPerson {
 /**************************************************************
 - Variablennamen, die sich auf die db-Tabelle beziehen müssen identisch
   mit den Spaltennamen sein, damit die Iteration gelingen kann.
 **************************************************************/
-    protected
-        $gtag   = null,       // Geburtstag
-        $gort   = null,       // Geburtsstadt
-        $ttag   = null,       // Todestag
-        $tort   = null,       // Sterbeort
-        $strasse = null,      // Strasse + HNr. und Adresszusätze
-        $plz    = null,       // PLZ des Wohnortes
-        $wort   = null,       // Wohnort (Ort, land))
-        $tel    = null,       // Telefonnummer
-        $mail   = null,       // mailadresse;
-        $aliases = null;
-
     const
+        TYPEPERSON = 'date,integer,date,integer,text,text,integer,text,text,text',
         GETDATA	=
             'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
              FROM p_person2 WHERE id = ?;',
@@ -276,7 +246,23 @@ class Person extends Name implements iPerson {
             'SELECT id FROM p_person2
 			 WHERE gtag = ? AND vname = ? AND nname = ?;';
 
-    function __construct($nr = NULL) {
+    function __construct($nr = null) {
+        parent::__construct($nr);
+if(!empty($nr) AND $nr > 1000) :
+  feedback('Datensatz #'.$nr.' wird initialisiert');
+  _v($this);
+  return;
+endif;
+        $this->content['gtag'] = '0001-01-01'; // Geburtstag
+        $this->content['gort'] = null;      // Geburtsort
+        $this->content['ttag'] = null;      // Todestag
+        $this->content['tort'] = null;      // Sterbeort
+        $this->content['strasse'] = null;   // + HNr. und Adresszusätze
+        $this->content['plz'] = null;       // PLZ des Wohnortes
+        $this->content['wort'] = null;      // Wohnort (Ort, land))
+        $this->content['tel'] = null;       // Telefonnummer
+        $this->content['mail'] = null;      // mailadresse
+        $this->content['aliases'] = null;
         if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
@@ -288,32 +274,18 @@ class Person extends Name implements iPerson {
     **********************************************************/
         $db =& MDB2::singleton();
 
-        $types = array(
-            'date',         // Geburtstag
-            'integer',      // Geburtsstadt
-            'date',         // Todestag
-            'integer',      // Sterbeort
-            'text',         // Strasse + HNr. und Adresszusätze
-            'text',         // PLZ des Wohnortes (wegen vorlaufender Nullen)
-            'integer',      // Wohnort (Ort, land))
-            'text',         // Telefonnummer
-            'text',         // mailadresse;
-            'text'          // $aliases = null;
-        );
-
-        parent::get($nr);
-        $data = $db->extended->getRow(self::GETDATA, $types, $nr);
+        $data = $db->extended->getRow(self::GETDATA,null, $nr);
         IsDbError($data);
         // Ergebnis -> Objekt schreiben
         if($data) :
-            foreach($data as $key => $val) $this->$key = $val;
-
-            // Konstrukt "{123,45,678}" in ein indiz Array überführen
-            if($this->aliases) :
-                $this->aliases = preg_split("/[,{}]/", $this->aliases, null, PREG_SPLIT_NO_EMPTY);
+            foreach($data as $key => $val) :
+                $this->content[$key] = $val;
+            endforeach;
+            if($this->content['aliases']) :
+                $this->content['aliases'] = list2array($this->content['aliases']);
             endif;
         else :
-            feedback(4,'warng');
+            feedback(4,'error');
             exit(4);
         endif;
     }
@@ -323,11 +295,11 @@ class Person extends Name implements iPerson {
     * Aufgabe: Geburtstagsfilter
     *  Return: (int Geburtstag | null)
     **********************************************************/
-        if (($this->gtag === '0001-01-01') OR ($this->gtag === '01.01.0001'))
-            return ; else return $this->gtag;
+        if (($this->content['gtag'] === '0001-01-01') OR ($this->content['gtag'] === '01.01.0001'))
+            return ; else return $this->content['gtag'];
     }
 
-    protected function ifDouble() {
+    private function ifDouble() {
     /**********************************************************
     * Aufgabe: Ermitteln ob gleiche Person schon existiert
     *  Return:
@@ -351,24 +323,29 @@ class Person extends Name implements iPerson {
         $alist = array(d_feld::getString(0));       // kein Eintrag
         foreach($data as $val) :
             if ($val['vname'] === '-') :
-            $alist[$val['id']] = $val['nname'];
+                $alist[$val['id']] = $val['nname'];
             else :
-            $alist[$val['id']] = $val['vname'].' '.$val['nname'];
+                $alist[$val['id']] = $val['vname'].'&nbsp;'.$val['nname'];
             endif;
         endforeach;
         return $alist;
     }
 
     function getAliases() {
-    // gibt ein Array der Namen zurück
-        if(is_array($this->aliases)) :
-            foreach($this->aliases as $val) :
-                $e = new Name(intval($val));
-                $data[] = $e->getName();
+    /**********************************************************
+    Aufgabe: Ermitteln der/des Aliasnamen
+    Rückgabe: Liste der verlinkten Namen. Der Link zeigt dabei auf die Person und nicht
+              den Namenseintrag
+    Return: array(string)
+    **********************************************************/
+        if(is_array($this->content['aliases'])) :
+            $data = array();
+            foreach($this->content['aliases'] as $val) :
+                $e = new PName(intval($val));
+                $data[] = $e->fiVname().$e->content['nname'];
+//                $data[] = '<a href="index.php?'.$this->content['bereich'].'='.$this->content['id'].'">'.$e->fiVname().$e->content['nname'].'</a>';
             endforeach;
             return $data;
-        else :
-            return;
         endif;
     }
 
@@ -405,26 +382,6 @@ class Person extends Name implements iPerson {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        $types  = array(
-                'text',         // vname
-                'date',         // gtag
-                'integer',      // idx_gort
-                'date',         // ttag
-                'integer',      // idx_tort
-                'text',         // str
-                'text',         // plz (string!)
-                'integer',      // wort
-                'text',         // tel
-                'text',         // mail
-                'text',         // biogr
-                'integer',      // aliases
-                'integer',      // bild
-                'timestamp',    // Zeitstempel
-                'integer',      // uid des bearbeiters
-                'text',         // name (geerbt von Entity)
-                'text',         // notiz (geerbt von Entity)
-                'text'          // id
-        );
         $db =& MDB2::singleton();
 
         if ($stat == false) {
@@ -620,25 +577,6 @@ class Person extends Name implements iPerson {
         self::set();
     }
 
-    function lview() {
-    /****************************************************************
-    * Aufgabe: Anzeige eines Datensatzes (Listenansicht)
-    *          Zuweisungen und ausgabe an pers_dat.tpl
-    ****************************************************************/
-        global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
-        $data = parent::lview();
-        $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);
-        $data[] = new d_feld('gtag',   $this->fiGtag(), VIEW, 502);
-        $data[] = new d_feld('gort',   Ort::getOrt($this->gort), VIEW,  4014);
-        $data[] = new d_feld('ttag',   $this->ttag, VIEW, 509);
-        $data[] = new d_feld('tort',   Ort::getOrt($this->tort), VIEW,  4014);
-
-        $smarty->assign('dialog', a_display($data), 'nocache');
-        $smarty->display('pers_ldat.tpl');
-    }
-
     function view() {
     /****************************************************************
     Aufgabe: Anzeige eines Datensatzes, Einstellen der Rechteparameter
@@ -652,21 +590,16 @@ class Person extends Name implements iPerson {
         $data = parent::view();
         $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);
         $data[] = new d_feld('gtag',   $this->fiGtag(), VIEW, 502);
-        $data[] = new d_feld('gort',   Ort::getOrt($this->gort), VIEW,  4014);
-        $data[] = new d_feld('ttag',   $this->ttag, VIEW, 509);
-        $data[] = new d_feld('tort',   Ort::getOrt($this->tort), VIEW,  4014);
-        $data[] = new d_feld('strasse',$this->strasse,            IVIEW,  510);   // Anschrift
-        $data[] = new d_feld('wort',   Ort::getOrt($this->wort),  IVIEW);         // Wohnort
-        $data[] = new d_feld('plz',    $this->plz,                IVIEW);         // PLZ
-        $data[] = new d_feld('tel',    $this->tel,                IVIEW,  511);   // Telefonnr.
-        $data[] = new d_feld('mail',   $this->mail,               IVIEW,  512);   // email
-        $data[] = new d_feld('biogr',  changetext($this->descr),  VIEW,   513);   // Biografie
-        $data[] = new d_feld('castLi', $this->getCastList(),      VIEW);          // Verw. Film
-        $data[] = new d_feld('notiz',  changetext($this->notiz),  IVIEW,  514);   // Notiz
-        $data[] = new d_feld('bild',   $this->bilder,               VIEW);
-
-        $smarty->assign('dialog', a_display($data), 'nocache');
-        $smarty->display('pers_dat.tpl');
+        $data[] = new d_feld('gort',   Ort::getOrt($this->content['gort']),VIEW,4014);
+        $data[] = new d_feld('ttag',   $this->content['ttag'], VIEW, 509);
+        $data[] = new d_feld('tort',   Ort::getOrt($this->content['tort']),VIEW,4014);
+        $data[] = new d_feld('strasse',$this->content['strasse'], IVIEW,510);
+        $data[] = new d_feld('wort',   Ort::getOrt($this->content['wort']),IVIEW);
+        $data[] = new d_feld('plz',    $this->content['plz'],IVIEW);
+        $data[] = new d_feld('tel',    $this->content['tel'],IVIEW,511);
+        $data[] = new d_feld('mail',   $this->content['mail'],IVIEW,512);
+        $data[] = new d_feld('castLi', $this->getCastList(),VIEW);// Verw. Film
+        return $data;
     }
 
 }   // end Personen-klasse

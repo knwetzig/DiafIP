@@ -33,7 +33,7 @@ class db_stat {
         $this->statistic[d_feld::getString(4001)] = $data;
 
         // Anzahl Personendaten
-        $sql = 'SELECT COUNT(*) FROM p_person WHERE del = false;';
+        $sql = 'SELECT COUNT(*) FROM p_person2 WHERE del = false;';
         $data = $db->extended->getOne($sql,'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4003)] = $data;
