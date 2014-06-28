@@ -18,20 +18,22 @@ ToDo:
 =========================================================== **/
 interface iEntity {
     function getBearbeiter();   // ermittelt Realnamen des Bearbeiters
+    static function IsInDB($nr, $bereich); // Test ob id/bereich in der DB existiert
+    static function getBereich($nr); // Holt zur ID die Bereichskennung
     static function search($s); // liefert die ID's des Suchmusters
     function setValid();        // Set/Unset Flag
     function setDel();          // -- dito--
-    function lview();           // array mit Objekten Listenansicht
-    function view();            // dito Detailansicht
+    static function display($data, $vorlage);
 }
 
-abstract class entity implements iEntity {
+abstract class Entity implements iEntity {
     /**********************************************************
     * Interne Methoden:
     *       get($nr)
     *       setSignum()
     **********************************************************/
     const
+        TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text',
         GETDATA = 'SELECT * FROM entity WHERE id = ?;';
 
     protected
@@ -49,43 +51,31 @@ abstract class entity implements iEntity {
             'editdate'   => null     // timestamp width Timezone
         );
 
-    private
-        $types = array(
-        'integer',
-        'text',     // bereich
-        'text',     // descr
-        'text',     // bilder (eigtl ein array)
-        'text',     // notiz
-        'boolean',  // isvalid
-        'boolean',  // del
-        'integer',  // uid
-        'date'      // editdate (soll nicht konvertiert werden!)
-    );
 
     function __construct($nr = null) {
-            if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
+        if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
     // Diese Funktion initialisiert das Objekt
 
         $db =& MDB2::singleton();
-        $data = $db->extended->getRow(self::GETDATA,$this->types,$nr,'integer');
+        $data = $db->extended->getRow(self::GETDATA,list2array(self::TYPEENTITY),$nr,'integer');
         IsDbError($data);
         if($data) :
             foreach($data as $key => $val) $this->content[$key] = $val;
             if($this->content['bilder']) :
-                $this->content['bilder'] = preg_split("/[,{}]/", $this->content['bilder'], null, PREG_SPLIT_NO_EMPTY);
+                $this->content['bilder'] = list2array($this->content['bilder']);
                 // Achtung Elemente liegen als Text vor! (nicht integer)
             endif;
         else :
-            feedback(4,'warng');
+            feedback(4,'error');
             exit(4);
         endif;
     }
 
-    abstract protected function add($status);
-    abstract protected function edit($status);
+    abstract function add($stat = null);
+    abstract function edit($stat = null);
     abstract static function search($s);
 
     final function getBearbeiter() {
@@ -101,6 +91,38 @@ abstract class entity implements iEntity {
             IsDbError($bearbeiter);
         endif;
         if($bearbeiter) return $bearbeiter[0];
+    }
+
+    static function IsInDB($nr, $bereich) {
+    /**********************************************************
+    Aufg.:  Test ob Nr. als id mit diesem Bereichbuchstaben in der DB existiert
+    Input: $nr als Dezimal-Wert / $bereich = Großbuchstabe
+    **********************************************************/
+        $db =& MDB2::singleton();
+
+        if(is_numeric($nr) AND is_string($bereich) AND (strlen($bereich) == 1)) :
+            $data = $db->extended->getRow(
+                'SELECT COUNT(*) FROM entity WHERE id = ? and bereich = ?;',
+                null, array($nr,$bereich));
+            IsDbError($data);
+
+            if($data['count']) :
+                return true;
+            endif;
+        endif;
+    }
+
+    static function getBereich($nr) {
+    // Holt zur ID die Bereichskennung
+        $db =& MDB2::singleton();
+
+        if($nr AND is_numeric($nr)) :
+            $data = $db->extended->getRow('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
+            IsDbError($data);
+            if(!empty($data)) :
+                return $data['bereich'];
+            endif;
+        endif;
     }
 
     final protected function setSignum() {
@@ -129,30 +151,32 @@ abstract class entity implements iEntity {
         if($this->content['del']) $this->content['del'] = false; else $this->content['del'] = true;
     }
 
-    function lview() {
+    protected function view() {
         $data = array(
         // name,inhalt optional-> $rechte,$label,$tooltip,valString
-            new d_feld('id', dez2hex($this->content['id']), VIEW),
+            new d_feld('id', $this->content['id'], VIEW),
             new d_feld('bereich',$this->content['bereich'], VIEW),
+            new d_feld('descr',  changetext($this->content['descr']), VIEW,513), // Beschreibung
             new d_feld('bilder', $this->content['bilder'], VIEW),
+            new d_feld('notiz',  changetext($this->content['notiz']), IVIEW, 514),
+            new d_feld('isvalid', $this->content['isvalid'], IVIEW),
+            new d_feld('chdatum', $this->content['editdate'], EDIT),
+            new d_feld('chname', $this->getBearbeiter(), EDIT),
             new d_feld('edit', null, EDIT, null, 4013), // edit-Button
             new d_feld('del', null, DELE, null, 4020), // Lösch-Button
         );
         return $data;
     }
 
-    function view() {
-        $data = array(
-        // name,inhalt optional-> $rechte,$label,$tooltip,valString
-            new d_feld('descr',  changetext($this->content['descr']), VIEW,513), // Beschreibung
-            new d_feld('notiz',  changetext($this->content['notiz']), IVIEW, 514),
-            // Bearbeitungssymbole und -ausgaben
-
-            new d_feld('chdatum', $this->content['editdate'], EDIT),
-            new d_feld('chname', $this->getBearbeiter(), EDIT),
-            new d_feld('isvalid', $this->content['isvalid'], IVIEW)
-        );
-        return array_merge(self::lview(), $data);
+    static function display($data, $vorlage) {
+        global $smarty;
+        $smarty->assign('dialog', a_display($data), 'nocache');
+        $smarty->display($vorlage);
     }
 }
 ?>
+
+<!--
+$zeit = microtime(true);
+$zeit=microtime(true)-$zeit;feedback('Dauer: '.sprintf('%1.6f',$zeit), 'warng');
+-->

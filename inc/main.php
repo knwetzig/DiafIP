@@ -2,17 +2,15 @@
 /***************************************************************
 
     Das Ladeprogramm für die Hauptseite
-    Hier wird nur die "sektion" Fraktion ausgewertet
 
 $Rev$
 $Author$
 $Date$
 $URL$
 
-Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' und nicht 'action'!!!
+Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' und nicht 'action'.
+Der Browser wird es dir danken, indem er nicht mehr durcheinander kommt.
 **************************************************************/
-
-const ISEXIST = 'SELECT COUNT(*) FROM entity WHERE id = ?;';
 
 echo "<div id='main'>";
 if(!empty($_REQUEST)) :
@@ -22,16 +20,16 @@ if(!empty($_REQUEST)) :
         Beides würde and den Eventhandler filmogr. Daten übergeben werden */
 
 // Variante: $_REQUEST['F'] = 123 ohne weitere Parameter
-    if(is_numeric(current($_REQUEST))) :
-        // Test ob Nr. als id in der DB existiert
-        $nr = (int)current($_REQUEST);
-        $data = $db->extended->getRow(ISEXIST, null, $nr);
-        IsDbError($data);
-        if($data['count']) $_REQUEST['id'] = $nr;
+    $nr = current($_REQUEST);
+    if(Entity::IsInDB($nr,key($_REQUEST))) :
+        $_REQUEST['id'] = $nr;
+        $_REQUEST['aktion'] = 'view';
     endif;
 
     switch(key($_REQUEST)) :
-        case 'N' :                  //Namen
+        case 'N' :                         //Namen
+            feedback('Name angewählt in main.php', 'warng');
+            break;
         case 'P' :
             $_REQUEST['sektion'] = 'P';    // Person
             break;
@@ -47,9 +45,21 @@ if(!empty($_REQUEST)) :
         case 'K' :
             $_REQUEST['sektion'] = 'K';    //filmkopie
     endswitch;
+
+// Variante: Es wurde im Suchfeld eine Nr. eingegeben
+    if(!empty($_POST['sstring']) AND is_numeric($_POST['sstring'])) :
+        $nr = intval($_POST['sstring']);
+        $bereich = Entity::getBereich($nr);
+        if($bereich) :
+            unset ($_POST, $_REQUEST['sstring']);
+            $_REQUEST['sektion'] = $bereich;
+            $_REQUEST['aktion'] = 'view';
+            $_REQUEST['id'] = $nr;
+        endif;
+    endif;
 endif;
 
-// Variante: $_REQUEST['sektion'] = 'F' und A++++++++++++++-------uswertung vorige
+// Variante: $_REQUEST['sektion'] = 'F' und Auswertung vorige
 if(isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']]))
     include $datei[$_REQUEST['sektion']];
 else include 'default.php';

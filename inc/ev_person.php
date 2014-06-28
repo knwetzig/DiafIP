@@ -60,28 +60,28 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             break; // Ende --edit --
 
         case "search" :
-            if (isset($_POST['sstring'])) {
+            if (isset($_POST['sstring'])) :
                 $myauth->setAuthData('search', $_POST['sstring']);
 
-                if(isset($_REQUEST['id'])) :
-                    /* Da eine Nummer gesucht wurde, wird hier die ermittelte id ausge-
-                    wertet. Es wird die Detailansicht geladen */
-                    $pers = new Person($_REQUEST['id']);
-                    $pers->view();
-                else :
-                    $plist = Person::search($myauth->getAuthData('search'));
-                    if (!empty($plist) AND is_array($plist)) :
-                        // Ausgabe
-                        $bg = 1;
-                        foreach(($plist) as $nr) :
-                            ++$bg; $smarty->assign('darkBG', $bg % 2);
-                            $pers = new Person($nr);
-                            $pers->lview();
-                        endforeach;
-                    else : feedback(102, 'hinw'); // kein Ergebnis
-                    endif;
+                $plist = PName::search($myauth->getAuthData('search'));
+                if (!empty($plist) AND is_array($plist)) :
+                    // Ausgabe
+                    $bg = 1;
+                    foreach(($plist) as $val) :
+                        ++$bg; $smarty->assign('darkBG', $bg % 2);
+                        switch($val['bereich']) :
+                            case 'N' :
+                                $nam = new PName($val['id']);
+                                Entity::display($nam->view(), 'pers_ldat.tpl');
+                                break;
+                            case 'P' :
+                                $pers = new Person($val['id']);
+                                Entity::display($pers->view(), 'pers_ldat.tpl');
+                        endswitch;
+                    endforeach;
+                else : feedback(102, 'hinw'); // kein Ergebnis
                 endif;
-            }
+            endif;
             break; // Ende --search--
 
         case "del" :
@@ -90,8 +90,8 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             break;
 
         case "view" :
-            $pers = new Person((int)$_REQUEST['id']);
-            $pers->view();
+            $pers = new Person($_REQUEST['id']);
+            $pers->display($pers->view(), 'pers_dat.tpl');
             break;  // Endview
     endswitch;
 }  // aus iwelchen Gründen wurde keine 'aktion' ausgelöst?

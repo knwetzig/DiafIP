@@ -23,8 +23,7 @@ $URL$
     <tr>
         <td colspan="2">
             <div style="white-space:normal" class="fett">
-            {if !empty($dialog['vname'][1])}{$dialog['vname'][1]}&nbsp;{/if}
-            {if !empty($dialog['nname'][1])} {$dialog['nname'][1]}{/if}
+            {if !empty($dialog['pname'][1])} {$dialog['pname'][1]}{/if}
             {if !empty($dialog['aliases'][1])}
                 <span style="font-weight:normal">&nbsp;
                 ({foreach from=$dialog['aliases'][1] item=alias}{$alias}{/foreach})</span>

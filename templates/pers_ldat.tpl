@@ -23,8 +23,7 @@ $URL$
     <tr>
         <td colspan="2">
             <div style="white-space:normal" class="fett">
-            {if !empty($dialog['vname'][1])}{$dialog['vname'][1]}&nbsp;{/if}
-            {if !empty($dialog['nname'][1])}{$dialog['nname'][1]}{/if}
+            {if !empty($dialog['pname'][1])}{$dialog['pname'][1]}{/if}
             {if !empty($dialog['aliases'][1])}
                 <span style="font-weight:normal">&nbsp;
                 ({foreach from=$dialog['aliases'][1] item=alias}{$alias}{/foreach})</span>
@@ -36,12 +35,6 @@ $URL$
         <td class="re">
             <form action='{$dlg['phpself']}' method="post">
                 <span class="note">ID:&nbsp;{$dialog['id'][1]}&nbsp;</span>
-
-                <button
-                    class={if $darkBG}"small_dk"{else}"small"{/if}
-                    name="aktion"
-                    value="view"><img src="images/view_detailed.png" />
-                </button>
 
                 {if isset($dialog['edit'])}
                     <button

@@ -36,6 +36,8 @@ echo <<<FORM
 FORM;
 }
 
+/** **** Datenbank Tools *************************************/
+
 function IsDbError($obj) { // Übergabe Datenbankobjekt
     if(PEAR::isError($obj)) :
         $db =& MDB2::singleton();
@@ -46,10 +48,10 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
         echo "</fieldset>\n";
         exit();
     endif;
-    return false;
+    return;
 }
 
-/** **** Bitfeldfunktionen / Checkboxen ************************************/
+/** **** Bitfeldfunktionen / Checkboxen **********************/
 function setBit(&$bitFeld, $n) {
 	// Ueberprueft, ob der Wert zwischen 0-31 liegt
 	// $n ist die Position (0 beginnend)
@@ -114,11 +116,9 @@ function hex2dez($wert) {
 }
 
 function list2array($list) {
-    // parst die DB-Liste in ein PHP-Array
+//  parst die DB-Liste in ein PHP-Array  {12,34,56} --> array(12,34,56)
     if (!is_string($list)) return 1;
-    $list = substr($list,1,-1);
-    $list = str_getcsv($list);
-    return $list;
+    return preg_split("/[,{}]/", $list, null, PREG_SPLIT_NO_EMPTY);
 }
 
 function array2list($arr) {
