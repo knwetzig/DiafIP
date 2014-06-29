@@ -28,7 +28,7 @@ if(!empty($_REQUEST)) :
 
     switch(key($_REQUEST)) :
         case 'N' :                         //Namen
-            feedback('Name angewählt in main.php', 'warng');
+            $_REQUEST['sektion'] = 'N';
             break;
         case 'P' :
             $_REQUEST['sektion'] = 'P';    // Person

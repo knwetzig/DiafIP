@@ -15,7 +15,7 @@ require_once	'configs/config.php';
 $_POST = normtext($_POST);              // Filter für htmlentities
 $_GET = normtext($_GET);
 
-// Anbindung an Datenkern
+// --- Anbindung an Datenkern ---
 $options = array(
 //    'debug'             => 5,
 //    'ssl'               => true,
@@ -26,7 +26,7 @@ $db =& MDB2::singleton($dsn, $options); isDbError($db);
 $db->setFetchMode(MDB2_FETCHMODE_ASSOC); isDbError($db);
 $db->loadModule('Extended'); isDbError($db);
 
-// Authentifizierung
+// --- Authentifizierung ---
 $params = array(
     "dsn"           => $dsn,
     "table"         => "s_auth",
@@ -49,11 +49,10 @@ if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
     case 'fr' :
 
     $myauth->setAuthData('lang', $_GET['aktion']);
-    if ($myauth->getAuthData('rechte') >= EDIT) :
+    if ($myauth->getAuthData('uid') != 4) :
         IsDbError($db->extended->autoExecute('s_auth',
-        array('lang' => $_GET['aktion']), MDB2_AUTOQUERY_UPDATE,
-        'uid = '.$db->quote($myauth->getAuthData('uid'),
-        'integer'), 'text'));
+            array('lang' => $_GET['aktion']), MDB2_AUTOQUERY_UPDATE,
+            'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
     endif;
 endswitch;
 
@@ -86,12 +85,12 @@ require_once 'class.statistik.php';
 
 // --- Laden Menübereich ---
 $menue = array(
-    'fgraf'     => d_feld::getString(4008),
-    'i2d'       => d_feld::getString(4028),
-    'pers'      => d_feld::getString(4003),
+    'F'         => d_feld::getString(4008),
+    'Y'         => d_feld::getString(4028),
+    'P'         => d_feld::getString(4003),
     'stat'      => d_feld::getString(4009),
-    'i3d'       => d_feld::getString(4032),
-    'fkop'      => d_feld::getString(4038),
+    'Z'         => d_feld::getString(4032),
+    'K'         => d_feld::getString(4038),
 //    'login'     => d_feld::getString(4004),
     'logout'    => d_feld::getString(4005),
     'realname'  => $myauth->getAuthData('realname'),

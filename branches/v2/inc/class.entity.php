@@ -23,7 +23,7 @@ interface iEntity {
     static function search($s); // liefert die ID's des Suchmusters
     function setValid();        // Set/Unset Flag
     function setDel();          // -- dito--
-    static function display($data, $vorlage);
+    function display($vorlage);
 }
 
 abstract class Entity implements iEntity {
@@ -33,7 +33,7 @@ abstract class Entity implements iEntity {
     *       setSignum()
     **********************************************************/
     const
-        TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text',
+        TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text,',
         GETDATA = 'SELECT * FROM entity WHERE id = ?;';
 
     protected
@@ -168,9 +168,9 @@ abstract class Entity implements iEntity {
         return $data;
     }
 
-    static function display($data, $vorlage) {
+    function display($vorlage) {
         global $smarty;
-        $smarty->assign('dialog', a_display($data), 'nocache');
+        $smarty->assign('dialog', a_display($this->view()));
         $smarty->display($vorlage);
     }
 }

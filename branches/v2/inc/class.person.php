@@ -18,6 +18,7 @@ ToDo:
                                 NAMEN
 =========================================================== **/
 interface iPName extends iEntity {
+    function getPerson();           // Ermittelt die Person zum Aliasnamen
     function getName();
     static function getNameList();	// Listet alle Aliasname (nicht Personen)
     function add($stat = null);
@@ -28,8 +29,9 @@ interface iPName extends iEntity {
 
 class PName extends Entity implements iPName {
     const
-        TYPENAME = 'text,text',
+        TYPENAME = 'text,text,',
         GETDATA = 'SELECT vname, nname FROM p_namen WHERE id = ?;',
+        GETPERSON = 'SELECT id FROM p_person2 WHERE ? = ANY(aliases);',
         GETNAMLI =
             'SELECT id, vname, nname FROM ONLY p_namen
              ORDER BY nname, vname ASC;',
@@ -38,8 +40,12 @@ class PName extends Entity implements iPName {
              WHERE (nname ILIKE ?) OR (vname ILIKE ?)
              ORDER BY nname,vname,id LIMIT ? OFFSET ?;';
 
+    protected
+        $alias = null;              // Verweis auf die Person die den Alias verwendet
+
     function __construct($nr = null) {
         parent::__construct($nr);
+        $this->content['bereich'] = 'N';
         $this->content['vname'] = '-';
         $this->content['nname'] = '';
         if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
@@ -54,9 +60,24 @@ class PName extends Entity implements iPName {
         if($data) :
             $this->content['vname'] = $data['vname'];
             $this->content['nname'] = $data['nname'];
+            $this->alias = self::getPerson();
         else :
             feedback(4,'error');
             exit(4);
+        endif;
+    }
+
+    function getPerson() {
+    /**********************************************************
+    Aufgabe: Ermittelt die Person zum Aliasnamen
+    Return:  null : Es existiert keine Person, Datensatz frei zum löschen
+             id     Zum Benutzer des Alias
+    **********************************************************/
+        $db =& MDB2::singleton();
+        if($this->content['bereich'] === 'N') :
+            $p = $db->extended->getOne(self::GETPERSON, 'integer', $this->content['id'], 'integer');
+            IsDbError($p);
+            return $p;
         endif;
     }
 
@@ -65,11 +86,12 @@ class PName extends Entity implements iPName {
     Aufgabe: Neuanlage eines Namens
     Aufruf: false   für Erstaufruf
             true    Verarbeitung nach Formular
-    **********************************************************
+    **********************************************************/
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db =& MDB2::singleton();
+        $types = list2array(self::TYPEENTITY.self::TYPENAME);
 
         if (empty($status)) :
             // begin TRANSACTION anlage name
@@ -82,18 +104,11 @@ class PName extends Entity implements iPName {
             $this->edit();
         else :
             $this->edit(true);
-// kurze Denkpause, damits dann schneller geht
-// Ziel: EIN array für den DB-Export, dazu ein type-array
-
-            foreach($this as $key => $wert) $data[$key] = $wert;
-
-            $erg = $db->extended->autoExecute('p_namen',$data,MDB2_AUTOQUERY_INSERT,
-                null, list2array(parent.TYPEENTITY.parent::TYPENAME.self::TYPEPERSON));
-            IsDbError($erg);
+            IsDbError($db->extended->autoExecute(
+                'p_namen',$this->content,MDB2_AUTOQUERY_INSERT, null, $types));
             $db->commit('newName'); IsDbError($db);
             // ende TRANSACTION
         endif;
-*/
     }
 
     function edit($stat = null) {
@@ -104,9 +119,8 @@ class PName extends Entity implements iPName {
     Return:     Fehlercode
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
-    **********************************************************
+    **********************************************************/
         global $myauth, $smarty;
-
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if(empty($status)) :
@@ -119,6 +133,7 @@ class PName extends Entity implements iPName {
                 new d_feld('notiz', $this->content['notiz'], EDIT, 514),
                 new d_feld('kopf', null, VIEW, 4013));
             $smarty->assign('dialog', a_display($data));
+$smarty->assign('sektion', 'N');
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
         else :	    // Status
@@ -142,18 +157,9 @@ class PName extends Entity implements iPName {
 	    }
             $this->setSignum();		// Bearbeiter und Zeit setzen
         endif;
-*/
     }
 
     function del() {}
-
-    protected function fiVname() {
-    /**********************************************************
-    * Aufgabe: Ausfiltern des default-Wertes von Vorname
-    *  Return: string (null | vname)
-    **********************************************************/
-        if ($this->content['vname'] === '-') return; else return $this->content['vname'].'&nbsp';
-    }
 
     static function search($s) {
     /**********************************************************
@@ -180,6 +186,14 @@ class PName extends Entity implements iPName {
         if ($data) return $data; else return 102;
     }
 
+    protected function fiVname() {
+    /**********************************************************
+    * Aufgabe: Ausfiltern des default-Wertes von Vorname
+    *  Return: string (null | vname)
+    **********************************************************/
+        if ($this->content['vname'] === '-') return; else return $this->content['vname'].'&nbsp';
+    }
+
     function getName() {
     /**********************************************************
     Aufgabe: Liefert den zusammngesetzten und verlinkten Namen zurück
@@ -187,7 +201,14 @@ class PName extends Entity implements iPName {
     **********************************************************/
         if(empty($this->content['id'])) return;
         $data = self::fiVname().$this->content['nname'];
-        return '<a href="index.php?'.$this->content['bereich'].'='.$this->content['id'].'">'.$data.'</a>';
+        switch ($this->content['bereich']) :
+            case 'N' :
+                $i = $this->alias;
+                break;
+            case 'P' :
+                $i = $this->content['id'];
+        endswitch;
+        return '<a href="index.php?'.'P='.$i.'">'.$data.'</a>';
     }
 
     static function getNameList() {
@@ -248,11 +269,6 @@ class Person extends PName implements iPerson {
 
     function __construct($nr = null) {
         parent::__construct($nr);
-if(!empty($nr) AND $nr > 1000) :
-  feedback('Datensatz #'.$nr.' wird initialisiert');
-  _v($this);
-  return;
-endif;
         $this->content['gtag'] = '0001-01-01'; // Geburtstag
         $this->content['gort'] = null;      // Geburtsort
         $this->content['ttag'] = null;      // Todestag
@@ -334,8 +350,7 @@ endif;
     function getAliases() {
     /**********************************************************
     Aufgabe: Ermitteln der/des Aliasnamen
-    Rückgabe: Liste der verlinkten Namen. Der Link zeigt dabei auf die Person und nicht
-              den Namenseintrag
+    Rückgabe: Liste der Namen.
     Return: array(string)
     **********************************************************/
         if(is_array($this->content['aliases'])) :
@@ -355,13 +370,13 @@ endif;
     *   Return: array(vname, name, tid, pid, job)
     **********************************************************/
         $db =& MDB2::singleton();
-        if (empty($this->id)) return;
+        if (empty($this->content['id'])) return;
         $data = $db->extended->getALL(
-            self::GETCALI, null, $this->id, 'integer');
+            self::GETCALI, null, $this->content['id'], 'integer');
         IsDbError($data);
-        $f=array();
 
         // Übersetzung für die Tätigkeit und Namen holen
+        $f=array();
         foreach($data as $wert) :
             if(!Film::is_Del($wert['fid'])) :
                 $g = array();

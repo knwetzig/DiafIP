@@ -11,8 +11,8 @@ $URL$
 <head>
     <title>{#title#}</title>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-    <meta http-equiv='Pragma' content='no-cache' />
-    <meta http-equiv='Cache-Control' content='post-check=0, pre-check=0, FALSE' />
+<!--    <meta http-equiv='Pragma' content='no-cache' />
+    <meta http-equiv='Cache-Control' content='post-check=0, pre-check=0, FALSE' /> -->
     <meta http-equiv='Id' content='$Id$' />
     <link rel='stylesheet' type='text/css' href='style.css' />
     <link rel='shortcut icon' href='favicon.ico' />

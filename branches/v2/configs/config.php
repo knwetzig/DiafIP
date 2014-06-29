@@ -51,9 +51,10 @@ const
 
 // Sektion für 'sektion'
 $datei = array(
-    'admin' => "configs/admin.php",
-    'F'	    => "inc/ev_figd.php",		    // filmografische Daten
-    'P'     => "inc/ev_person.php",         // Personenverzeichnis
+    'admin' => 'configs/admin.php',
+    'N'     => 'inc/ev_name',
+    'P'     => 'inc/ev_person.php',         // Personenverzeichnis
+    'F'     => "inc/ev_figd.php",           // filmografische Daten
     'Y'     => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
     'Z'     => 'inc/ev_item_3dobj.php',
     'K'     => 'inc/ev_item_fkop.php',
@@ -64,7 +65,6 @@ $datei = array(
 $adm_site = array(
     'self'  => 'adm_self.php',
     'string'=> 'adm_strings.php',
-    'alias' => 'adm_aliasname.php',
     'orte'  => 'adm_orte.php',
     'lort'  => 'adm_lort.php',
     'user'  => 'adm_user.php'

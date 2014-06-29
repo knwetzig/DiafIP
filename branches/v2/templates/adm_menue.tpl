@@ -32,7 +32,6 @@ $URL$
     <td class="top">     {*rechts*}
         <form method="post">
             <fieldset><legend>&nbsp;Listen&nbsp;</legend>
-                <button name="site" value="alias">Alias verwalten</button><br />
                 <button name="site" value="orte">Orte verwalten</button><br />
                 <button name="site" value="lort">Lagerorte verwalten</button>
                 <input type="hidden" name="sektion" value="admin" />
