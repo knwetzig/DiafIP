@@ -32,9 +32,18 @@ $URL$
 </div>
 {/if}
 
-{if isset($dialog['add'])}
 <div id='bereichssymbole'>
+{if isset($dialog['add'])}
     <form action='{$dlg['phpself']}' method='post'>
+    {if isset($dialog['extra'])}
+            <button
+                class='small'
+                name='aktion'
+                value='extra'
+                onmouseover="return overlib('{$dialog['extra'][3]}', DELAY, 1000);"
+                onmouseout="return nd();"
+            >{$dialog['extra'][1]}</button>
+    {/if}
         <button
             class='small'
             name='aktion'
@@ -53,6 +62,7 @@ $URL$
         value="{$dialog['sektion'][1]}"
         />
     </form>
-</div>
 {/if}
+</div>
+
 <div class='bereich_fuss'></div>

@@ -118,9 +118,9 @@ $URL$
 
 
 {* --Biografiezeile-- *}
-    {if !empty($dialog['biogr'][1])}<tr>
-            <td class="re" style="vertical-align:top">{$dialog['biogr'][2]}:</td>
-            <td colspan="2" style="white-space:normal">{$dialog['biogr'][1]|nl2br}</td>
+    {if !empty($dialog['descr'][1])}<tr>
+            <td class="re" style="vertical-align:top">{$dialog['descr'][2]}:</td>
+            <td colspan="2" style="white-space:normal">{$dialog['descr'][1]|nl2br}</td>
     </tr>{/if}
 
 {* --Verweis auf Filmografie-- *}
