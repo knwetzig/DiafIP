@@ -141,6 +141,24 @@ function _v($text, $titel = null) {
     }
 }
 
+function _vp($text, $titel = null) {
+// wie _v aber in einem seperaten Popup-Fenster
+    if($text) :
+        $inh = <<<'VIS'
+<html><head><style>body {font-family:monospace;white-space: pre;color:#004000;background-color: #eeffee;padding: 5px;}h3 {border:1px dotted #004000; padding:5px}</style></head><body><h3>
+VIS;
+$text = str_replace( "\n", '<br />', print_r($text, true));
+        echo "<script type=\"text/javascript\">
+                mywindow = window.open(\"\", \"visor\", \"width=800px, height=600px, scrollbars=yes, resizable=yes\");
+                mywindow.document.write(\"$inh\");
+                mywindow.document.write(\"$titel\");
+                mywindow.document.write(\"</h3>\");
+                mywindow.document.writeln(\"$text\");
+                mywindow.document.write(\"</body></html>\");
+        </script>";
+    endif;
+}
+
 function feedback($msg, $form = null) {
     if(is_numeric($msg))
         echo "<div class=$form>".d_feld::getString((int)$msg)."</div>";
