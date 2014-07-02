@@ -194,7 +194,7 @@ $smarty->assign('sektion', 'N');
         if ($this->content['vname'] === '-') return; else return $this->content['vname'].'&nbsp';
     }
 
-    function getName() {
+    public function getName() {
     /**********************************************************
     Aufgabe: Liefert den zusammngesetzten und verlinkten Namen zurück
     Return: string
@@ -232,7 +232,7 @@ $smarty->assign('sektion', 'N');
         return $alist;
     }
 
-    function view() {
+    public function view() {
         $data = parent::view();
         $data[] = new d_feld('pname', self::getName(), VIEW);
         return $data;
@@ -269,6 +269,7 @@ class Person extends PName implements iPerson {
 
     function __construct($nr = null) {
         parent::__construct($nr);
+        $this->content['bereich'] = 'P';
         $this->content['gtag'] = '0001-01-01'; // Geburtstag
         $this->content['gort'] = null;      // Geburtsort
         $this->content['ttag'] = null;      // Todestag
@@ -358,7 +359,6 @@ class Person extends PName implements iPerson {
             foreach($this->content['aliases'] as $val) :
                 $e = new PName(intval($val));
                 $data[] = $e->fiVname().$e->content['nname'];
-//                $data[] = '<a href="index.php?'.$this->content['bereich'].'='.$this->content['id'].'">'.$e->fiVname().$e->content['nname'].'</a>';
             endforeach;
             return $data;
         endif;
@@ -546,7 +546,7 @@ class Person extends PName implements iPerson {
              wird bei add/edit/del gebraucht
     Return: 0  alles ok
             4  leerer Datensatz
-    **********************************************************/
+    **********************************************************
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
@@ -578,6 +578,7 @@ class Person extends PName implements iPerson {
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
         IsDbError($erg);
         return 0;
+*/
     }
 
     function del() {

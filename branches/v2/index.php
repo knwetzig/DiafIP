@@ -30,8 +30,7 @@ $db->loadModule('Extended'); isDbError($db);
 $params = array(
     "dsn"           => $dsn,
     "table"         => "s_auth",
-    "sessionName"   => "diafip",
-    "db_fields"     => "rechte, lang, uid, realname, notiz"
+    "db_fields"     => "rechte,lang,uid,realname,notiz,profil"
 );
 $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
@@ -47,19 +46,15 @@ if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
     case 'de' :
     case 'en' :
     case 'fr' :
-
-    $myauth->setAuthData('lang', $_GET['aktion']);
-    if ($myauth->getAuthData('uid') != 4) :
-        IsDbError($db->extended->autoExecute('s_auth',
-            array('lang' => $_GET['aktion']), MDB2_AUTOQUERY_UPDATE,
-            'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
-    endif;
+        $myauth->setAuthData('lang', $_GET['aktion']);
+        if ($myauth->getAuthData('uid') != 4) :
+            IsDbError($db->extended->autoExecute('s_auth',
+                array('lang' => $_GET['aktion']), MDB2_AUTOQUERY_UPDATE,
+                'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
+        endif;
 endswitch;
 
-$lang = $myauth->getAuthData('lang');
-$smarty->assign('lang', $lang);
-
-switch($lang) :                         // Datumsformat der DB einstellen
+switch($myauth->getAuthData('lang')) :         // locale der DB einstellen
     case 'de' :
         $db->query("SET datestyle TO German");
         break;
@@ -95,6 +90,8 @@ $menue = array(
     'logout'    => d_feld::getString(4005),
     'realname'  => $myauth->getAuthData('realname'),
     'userid'    => $myauth->getAuthData('uid'),
+    'lang'      => $myauth->getAuthData('lang'),
+    'profile'   => $myauth->getAuthData('profil'),
     'phpself'   => $_SERVER['PHP_SELF']);
 
 if($myauth->getAuthData('uid') != 4) {

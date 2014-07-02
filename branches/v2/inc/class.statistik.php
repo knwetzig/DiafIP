@@ -14,7 +14,8 @@ class db_stat {
         $statistic  = array();
 
     function __construct() {
-        $this->getStat();
+        global $myauth;
+        if($myauth->getAuthData('uid') != 4) $this->getStat();
     }
 
     function getStat() {
@@ -40,12 +41,12 @@ class db_stat {
 
         // Runtime
         $laufzeit += gettimeofday(true);
-        $this->statistic[d_feld::getString(580)] = sprintf('%f', $laufzeit);
+        $this->statistic[d_feld::getString(580)] = sprintf('%1.6f', $laufzeit);
 
         // Processtime Laufzeit - Zeit die Ausgaberoutinen verschlungen haben
         if (!empty($outtime)) :
             $ptime = $laufzeit - $outtime;
-            $this->statistic[d_feld::getString(9)] = sprintf('%f', $ptime);
+            $this->statistic[d_feld::getString(9)] = sprintf('%1.6f', $ptime);
         endif;
     }
 
