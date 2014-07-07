@@ -1,7 +1,5 @@
 <?php
-/**************************************************************
-
-    Basisbibliothek
+/************* BASIS-KLASSE ***********************************
 
 $Rev$
 $Author$
@@ -9,7 +7,11 @@ $Date$
 $URL$
 
 ToDo:
-
+    - Bildauswertung
+        [codefragment]
+            $this->content['bilder'] = list2array($this->content['bilder']);
+            // Achtung Elemente liegen als Text vor! (nicht integer)
+        [/codefragment]
 
 **************************************************************/
 
@@ -20,9 +22,9 @@ interface iEntity {
     function getBearbeiter();   // ermittelt Realnamen des Bearbeiters
     static function IsInDB($nr, $bereich); // Test ob id/bereich in der DB existiert
     static function getBereich($nr); // Holt zur ID die Bereichskennung
-    static function search($s); // liefert die ID's des Suchmusters
     function setValid();        // Set/Unset Flag
-    function setDel();          // -- dito--
+    function del();             // Schaltet Löschflag in DB um
+    static function getTrash(); // schnüffelt im Papierkorb
     function display($vorlage);
 }
 
@@ -33,8 +35,9 @@ abstract class Entity implements iEntity {
     *       setSignum()
     **********************************************************/
     const
-        TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text,',
-        GETDATA = 'SELECT * FROM entity WHERE id = ?;';
+        TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,timestamp,',
+        GETDATA = 'SELECT * FROM entity WHERE id = ?;',
+        GETMUELL = 'SELECT id, bereich FROM entity WHERE del = true;';
 
     protected
         $content = array(
@@ -42,7 +45,7 @@ abstract class Entity implements iEntity {
             'bereich'    => '',      // Enthält die Kennung zu welchem Bereich die
                                      // Entität gehört....
             'descr'      => '',      // Beschreibung bzw. Biografie bei Personen
-            'bilder'     => array(),
+            'bilder'     => '',
             'notiz'      => '',      // selbsterklärend ;-)
             'isvalid'    => false,   // Flag zur Kennzeichnung, das dieser Datensatz
                                      // abschließend bearbeitet wurde
@@ -51,6 +54,10 @@ abstract class Entity implements iEntity {
             'editdate'   => null     // timestamp width Timezone
         );
 
+    abstract function add($status = null);
+    abstract function edit($status = null);
+    abstract function save();
+    abstract static function search($s);
 
     function __construct($nr = null) {
         if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
@@ -64,19 +71,11 @@ abstract class Entity implements iEntity {
         IsDbError($data);
         if($data) :
             foreach($data as $key => $val) $this->content[$key] = $val;
-            if($this->content['bilder']) :
-                $this->content['bilder'] = list2array($this->content['bilder']);
-                // Achtung Elemente liegen als Text vor! (nicht integer)
-            endif;
         else :
             feedback(4,'error');
             exit(4);
         endif;
     }
-
-    abstract function add($stat = null);
-    abstract function edit($stat = null);
-    abstract static function search($s);
 
     final function getBearbeiter() {
     /**********************************************************
@@ -112,16 +111,13 @@ abstract class Entity implements iEntity {
         endif;
     }
 
-    static function getBereich($nr) {
-    // Holt zur ID die Bereichskennung
+    static function getBereich($nr) {    // Holt zur ID die Bereichskennung
         $db =& MDB2::singleton();
 
         if($nr AND is_numeric($nr)) :
-            $data = $db->extended->getRow('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
+            $data = $db->extended->getOne('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
             IsDbError($data);
-            if(!empty($data)) :
-                return $data['bereich'];
-            endif;
+            if(!empty($data)) return $data;
         endif;
     }
 
@@ -132,7 +128,7 @@ abstract class Entity implements iEntity {
      **********************************************************/
         global $myauth;
             $this->content['editfrom'] = $myauth->getAuthData('uid');
-            $this->content['editdate'] = $_SERVER['REQUEST_TIME'];
+            $this->content['editdate'] = date('c',$_SERVER['REQUEST_TIME']);
     }
 
     function setValid() {
@@ -140,15 +136,38 @@ abstract class Entity implements iEntity {
      * Aufgabe: Bearbeitungsflag setzen (Kippschalter)
      *  Return: none
      **********************************************************/
-        if($this->content['isValid']) $this->content['isValid'] = false; else $this->content['isValid'] = true;
+        if($this->content['isValid']) $this->content['isValid'] = false;
+            else $this->content['isValid'] = true;
     }
 
-    function setDel() {
+    public function del() {
     /**********************************************************
-     * Aufgabe: Löschflag setzen (Kipschalter)
-     *  Return: none
-     **********************************************************/
-        if($this->content['del']) $this->content['del'] = false; else $this->content['del'] = true;
+    Aufgabe: Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB
+    Anm:     Alternativ kann man diese Funktion nutzen um das Element wieder aus dem
+             Papierkorb zu holen.
+    **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+        if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
+
+        // Aufgabe: Löschflag setzen (Kipschalter)
+        if($this->content['del']) $this->content['del'] = false;
+            else $this->content['del'] = true;
+        $this->save();
+    }
+
+    public static function getTrash() {
+    /**********************************************************
+    Aufgabe:    Bringt alles zum Vorschein was ein Löschbit trägt
+    Return:     array(Id, Bereich)
+    **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+
+        $db =& MDB2::singleton();
+        $data = $db->extended->getAll(self::GETMUELL, array('integer','text'));
+        IsDbError($data);
+        return $data;
     }
 
     protected function view() {
@@ -178,5 +197,5 @@ abstract class Entity implements iEntity {
 
 <!--
 $zeit = microtime(true);
-$zeit=microtime(true)-$zeit;feedback('Dauer: '.sprintf('%1.6f',$zeit), 'warng');
+$zeit=microtime(true)-$zeit; feedback('Dauer: '.sprintf('%1.6f',$zeit), 'warng');
 -->

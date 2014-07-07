@@ -2,8 +2,8 @@
 
     Template für den Eingabedialog-Namen
 
-call:   person_class.php
-class:  Namen
+call:   class.person.php
+class:  PName/Person
 proc:   edit
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
@@ -16,8 +16,9 @@ $URL$
 
 <form action='{$dlg['phpself']}' method='post'>
   <fieldset>
-    <legend>{$dialog['kopf'][2]}</legend>
+    <legend>{$dialog['kopf'][2]}&nbsp;#{$dialog['id'][1]}</legend>
       <table><colgroup><col><col><col><col></colgroup>
+
 <!-- Vorname/Name -->
         <tr>
 {if isset($dialog['vname'])}
@@ -34,6 +35,21 @@ $URL$
           <td><input type='text' name="{$dialog['nname'][0]}" value="{$dialog['nname'][1]}" /></td>
 {/if}
         </tr>
+
+<!-- Aliasnamen anzeigen -->
+{if isset($dialog['aliases'])}
+          <td>{$dialog['aliases'][2]}</td>
+          <td>{$dialog['aliases'][1]}</td>
+{/if}
+
+{if isset($alist)}
+        <tr>
+          <td>{$dialog['addalias'][2]}</td>
+          <td>
+            {html_options name={$dialog['addalias'][0]} options=$alist}
+          </td>
+        </tr>
+{/if}
 
 <!-- Geb.-tag/-Ort -->
 {if isset($dialog['gtag'])}
@@ -178,3 +194,5 @@ $URL$
       value='{$aktion}'
     />
 </form>
+
+

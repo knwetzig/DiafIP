@@ -1,5 +1,6 @@
 <?php /****************************************************
-Eventhandler für Aktionen der Personenverwaltung
+
+    Eventhandler für Aktionen der Personenverwaltung
 
 $Rev: 50 $
 $Author: knwetzig $
@@ -43,7 +44,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
                 $np = unserialize($myauth->getAuthData('obj'));
                 // Formular auswerten
                 $np->add(true);
-                $np->view();
+                $np->display('pers_dat.tpl');
             endif;
             break; // Ende --addPerson--
 
@@ -55,9 +56,9 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             else :
                 $ePer = unserialize($myauth->getAuthData('obj'));
                 $ePer->edit(true);
-                $erg = $ePer->set();
+                $erg = $ePer->save();
                 if ($erg) feedback($erg, 'error');
-                $ePer->view();
+                $ePer->display('pers_dat.tpl');
             endif;
             break; // Ende --edit --
 

@@ -19,9 +19,9 @@ $URL$
         onfocus="if(this.value=='{$dialog['sstring'][1]}'){literal}{this.value='';}{/literal}"
         />
         <input
-        type="hidden"
-        name="sektion"
-        value="{$dialog['sektion'][1]}"
+        type='hidden'
+        name='sektion'
+        value='{$sektion}'
         />
         <input
         type='hidden'

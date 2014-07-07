@@ -107,6 +107,12 @@ function isValid($val, $muster) {
     return preg_match($muster, $val);
 }
 
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
 function dez2hex($wert) {
     return sprintf('%x', $wert);
 }

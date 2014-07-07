@@ -18,11 +18,11 @@ $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');
 
 if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
-    $smarty->assign('aktion', $_REQUEST['aktion']);
 
     // switch:aktion => add | edit | search | del | view
     switch($_REQUEST['aktion']) :
-        case 'extra','add':
+        case 'extra':
+        case 'add':
             if(isset($_POST['form'])) :
                 // neues Formular
                 $n = new PName;
@@ -43,7 +43,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
             else :
                 $n = unserialize($myauth->getAuthData('obj'));
                 $n->edit(true);
-                $erg = $n->set();
+                $erg = $n->save();
                 if ($erg) feedback($erg, 'error');
                 $n->view();
             endif;
