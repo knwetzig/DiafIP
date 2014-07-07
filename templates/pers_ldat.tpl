@@ -55,7 +55,7 @@ $URL$
                 {/if}
 
                 <input type="hidden" name="form" value="true" />
-                <input type="hidden" name="sektion" value="P" />
+                <input type="hidden" name="sektion" value="{$dialog['bereich'][1]}" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
             </form>
         </td>

@@ -9,9 +9,14 @@ $Date$
 $URL$
 
 ToDo:
-    - name.add() vervollständigen. (Baustelle)
-    - $types in set()/add() und edit anpassen
     - add und edit bearbeiten und mit Template abgleichen
+
+
+<codesnippet>
+            if($this->content['aliases']) :
+                $this->content['aliases'] = list2array($this->content['aliases']);
+            endif;
+</codesnippet>
 ***********************************************************/
 
 /**===========================================================
@@ -20,10 +25,11 @@ ToDo:
 interface iPName extends iEntity {
     function getPerson();           // Ermittelt die Person zum Aliasnamen
     function getName();
-    static function getNameList();	// Listet alle Aliasname (nicht Personen)
-    function add($stat = null);
-    function edit($stat = null);
-    function del();
+    static function getNameList();	// Listet alle unbenutzten Aliasnamen (nicht Personen)
+    static function search($s);     // liefert die ID's+Bereich des Suchmusters
+    function add($status = null);
+    function edit($status = null);
+    function save();
     function view();                // Liefert die Daten für die Ausgabe
 }
 
@@ -32,12 +38,18 @@ class PName extends Entity implements iPName {
         TYPENAME = 'text,text,',
         GETDATA = 'SELECT vname, nname FROM p_namen WHERE id = ?;',
         GETPERSON = 'SELECT id FROM p_person2 WHERE ? = ANY(aliases);',
-        GETNAMLI =
-            'SELECT id, vname, nname FROM ONLY p_namen
-             ORDER BY nname, vname ASC;',
+        GETALIAS =
+            'SELECT DISTINCT p_namen.id, p_namen.vname, p_namen.nname
+             FROM ONLY p_namen,p_person2
+             WHERE (p_namen.del = false) AND (p_namen.id = ANY(p_person2.aliases))
+             ORDER BY p_namen.nname, p_namen.vname;',
+        GETALLNAMES =
+            'SELECT id,vname,nname FROM ONLY p_namen
+             WHERE del = false
+             ORDER BY nname,vname;',
         SEARCH =
             'SELECT id,bereich FROM p_namen
-             WHERE (nname ILIKE ?) OR (vname ILIKE ?)
+             WHERE (del = false) AND (nname ILIKE ?) OR (vname ILIKE ?)
              ORDER BY nname,vname,id LIMIT ? OFFSET ?;';
 
     protected
@@ -81,7 +93,7 @@ class PName extends Entity implements iPName {
         endif;
     }
 
-    function add($stat = null) {
+    function add($status = null) {
     /**********************************************************
     Aufgabe: Neuanlage eines Namens
     Aufruf: false   für Erstaufruf
@@ -111,7 +123,7 @@ class PName extends Entity implements iPName {
         endif;
     }
 
-    function edit($stat = null) {
+    public function edit($status = null) {
     /**********************************************************
     Aufgabe:    Obj ändern
     Aufruf:     false   Formularanforderung
@@ -127,39 +139,56 @@ class PName extends Entity implements iPName {
             // Daten einsammeln und für Dialog bereitstellen :-)
             $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
+                new d_feld('kopf', null, VIEW, 4013),
                 new d_feld('id',    $this->content['id']),
                 new d_feld('vname', $this->content['vname'], EDIT, 516),
                 new d_feld('nname', $this->content['nname'], EDIT, 517),
-                new d_feld('notiz', $this->content['notiz'], EDIT, 514),
-                new d_feld('kopf', null, VIEW, 4013));
+                new d_feld('notiz', $this->content['notiz'], EDIT, 514));
             $smarty->assign('dialog', a_display($data));
-$smarty->assign('sektion', 'N');
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
         else :	    // Status
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
             // Formular auswerten
-	    try {
-            if(isset($_POST['vname']))
-                if (empty($_POST['vname'])) $this->content['vname'] = '-';
-                else $this->content['vname'] = $_POST['vname'];
+            try {
+                if(isset($_POST['vname']))
+                    if (empty($_POST['vname'])) $this->content['vname'] = '-';
+                    else $this->content['vname'] = $_POST['vname'];
 
-            if(isset($_POST['nname'])) {
-                if(!empty($_POST['nname'])) $this->content['nname'] = $_POST['nname'];
-                else throw new Exception(null, 107);
+                if(isset($_POST['nname'])) :
+                    if(!empty($_POST['nname'])) $this->content['nname'] = $_POST['nname'];
+                    else throw new Exception(null, 107);
+                endif;
+
+                if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
             }
 
-            if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
-	    }
+            catch (Exception $e) {
+                feedback($e->getcode(), 'error');
+                exit;
+            }
 
-	    catch (Exception $e) {
-		feedback($e->getcode(), 'error');
-	    }
             $this->setSignum();		// Bearbeiter und Zeit setzen
         endif;
     }
 
-    function del() {}
+    public function save() {
+    /**********************************************************
+    Aufgabe: schreibt das Obj. via Update in die DB zurück
+             wird bei add/edit/del gebraucht
+    Return: 4 = leerer Datensatz
+    **********************************************************/
+        global $myauth;
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
+
+        $db =& MDB2::singleton();
+        $types = list2array(self::TYPEENTITY.self::TYPENAME);
+
+        IsDbError($db->extended->autoExecute('p_namen', $this->content,
+            MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->content['id'], 'integer'), $types));
+    }
+
 
     static function search($s) {
     /**********************************************************
@@ -191,7 +220,8 @@ $smarty->assign('sektion', 'N');
     * Aufgabe: Ausfiltern des default-Wertes von Vorname
     *  Return: string (null | vname)
     **********************************************************/
-        if ($this->content['vname'] === '-') return; else return $this->content['vname'].'&nbsp';
+        if ($this->content['vname'] === '-') return;
+            else return $this->content['vname'].'&nbsp;';
     }
 
     public function getName() {
@@ -201,35 +231,43 @@ $smarty->assign('sektion', 'N');
     **********************************************************/
         if(empty($this->content['id'])) return;
         $data = self::fiVname().$this->content['nname'];
-        switch ($this->content['bereich']) :
-            case 'N' :
-                $i = $this->alias;
-                break;
-            case 'P' :
-                $i = $this->content['id'];
-        endswitch;
-        return '<a href="index.php?'.'P='.$i.'">'.$data.'</a>';
+        $i = $this->content['id'];
+        if(!empty($this->alias)) $i = $this->alias;
+        return '<a href="index.php?'.$this->content['bereich'].'='.$i.'">'.$data.'</a>';
     }
 
     static function getNameList() {
     /**********************************************************
     Aufgabe:    Liefert die Namensliste für Drop-Down-Menü
     Return:     array(id, vname+name)
+    Anm.:       Vielleicht findet sich ja mal ein Held der die
+                Datenbankabfrage optimiert und dieses recht
+                komplizierte Konstrukt auflöst ;-)
     **********************************************************/
+        function arrpack($arr) {
+            $erg = array();
+            foreach($arr as $val) :
+                if ($val['vname'] === '-') :
+                    $erg[$val['id']] = $val['nname'];
+                else :
+                    $erg[$val['id']] = $val['vname'].' '.$val['nname'];
+                endif;
+            endforeach;
+            return $erg;
+        }
+
         $db =& MDB2::singleton();
         $data = $db->extended->getAll(
-            self::GETNAMLI, array('integer','text','text'));
+            self::GETALIAS, array('integer','text','text'));
         IsDbError($data);
-
-        $alist = array(d_feld::getString(0));		// kein Eintrag
-        foreach($data as $val) :
-            if ($val['vname'] === '-') :
-            $alist[$val['id']] = $val['nname'];
-            else :
-            $alist[$val['id']] = $val['vname'].' '.$val['nname'];
-            endif;
-        endforeach;
-        return $alist;
+        $data = arrpack($data);
+        $all = $db->extended->getAll(
+            self::GETALLNAMES, array('integer','text','text'));
+        IsDbError($all);
+        $all = arrpack($all);
+        $erg[0] = d_feld::getString(0);        // kein Eintrag
+        $erg += array_diff($all,$data);
+        return $erg;
     }
 
     public function view() {
@@ -258,14 +296,12 @@ class Person extends PName implements iPerson {
             'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
              FROM p_person2 WHERE id = ?;',
         GETPERLI =
-            'SELECT id, vname, nname FROM ONLY p_person2
+            'SELECT id, vname, nname FROM ONLY p_person2 WHERE del = false
              ORDER BY nname, vname ASC;',
         // Casting-Liste
-        GETCALI   =
-            'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
-        IFDOUBLE  =
-            'SELECT id FROM p_person2
-			 WHERE gtag = ? AND vname = ? AND nname = ?;';
+        GETCALI = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
+        IFDOUBLE =
+            'SELECT id FROM p_person2 WHERE gtag = ? AND vname = ? AND nname = ?;';
 
     function __construct($nr = null) {
         parent::__construct($nr);
@@ -298,9 +334,7 @@ class Person extends PName implements iPerson {
             foreach($data as $key => $val) :
                 $this->content[$key] = $val;
             endforeach;
-            if($this->content['aliases']) :
-                $this->content['aliases'] = list2array($this->content['aliases']);
-            endif;
+
         else :
             feedback(4,'error');
             exit(4);
@@ -322,9 +356,12 @@ class Person extends PName implements iPerson {
     *  Return:
     **********************************************************/
         $db =& MDB2::singleton();
-        $data = $db->extended->getRow(
-            self::SQL_ifDouble, null, array($this->gtag, $this->vname, $this->nname));
-        return $data['id'];
+        $data = $db->extended->getOne(self::IFDOUBLE, null, array(
+            $this->content['gtag'],
+            $this->content['vname'],
+            $this->content['nname']));
+        IsDbError($data);
+        return $data;
     }
 
     static function getPersList() {
@@ -348,20 +385,30 @@ class Person extends PName implements iPerson {
         return $alist;
     }
 
-    function getAliases() {
+    public function getAliases() {
     /**********************************************************
     Aufgabe: Ermitteln der/des Aliasnamen
     Rückgabe: Liste der Namen.
     Return: array(string)
     **********************************************************/
-        if(is_array($this->content['aliases'])) :
+        if($this->content['aliases']) :
             $data = array();
-            foreach($this->content['aliases'] as $val) :
+            foreach(list2array($this->content['aliases']) as $val) :
                 $e = new PName(intval($val));
                 $data[] = $e->fiVname().$e->content['nname'];
             endforeach;
             return $data;
         endif;
+    }
+
+    private function addAlias($nr) {
+    /**********************************************************
+    Aufgabe:    Fügt die ID eines PName-Objekts der Aliases-Liste hinzu
+    Return:     void
+    **********************************************************/
+        if(!is_int($nr)) return;
+        $this->content['aliases'] =
+            substr_replace($this->content['aliases'], ','.$nr.'}',-1,1);
     }
 
     final protected function getCastList() {
@@ -388,7 +435,7 @@ class Person extends PName implements iPerson {
         return $f;
     }
 
-    public function add($stat = null) {
+    public function add($status = null) {
     /**********************************************************
     Aufgabe: Neuanlage einer Person
     Aufruf: false   für Erstaufruf
@@ -398,27 +445,27 @@ class Person extends PName implements iPerson {
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db =& MDB2::singleton();
+        $types = list2array(self::TYPEENTITY.self::TYPENAME.self::TYPEPERSON);
 
-        if ($stat == false) {
+        if ($status == false) :
             // begin TRANSACTION anlage person
             $db->beginTransaction('newPerson'); IsDbError($db);
             // neue id besorgen
-            $data = $db->extended->getOne("SELECT nextval('id_seq');");
+            $data = $db->extended->getOne("SELECT nextval('entity_id_seq');");
             IsDbError($data);
-            $this->id = $data;
+            $this->content['id'] = $data;
+            $this->content['bereich'] = 'P';    // Namen
             $this->edit(false);
-        } else {
+        else :
             $this->edit(true);
-            foreach($this as $key => $wert) $data[$key] = $wert;
-            $erg = $db->extended->autoExecute('p_person', $data,
-                        MDB2_AUTOQUERY_INSERT, null, $types);
-            IsDbError($erg);
+            IsDbError($db->extended->autoExecute('p_person2', $this->content,
+                        MDB2_AUTOQUERY_INSERT, null, $types));
             $db->commit('newPerson'); IsDbError($db);
             // ende TRANSACTION
-        }
+        endif;
     }
 
-    public function edit($stat = null) {
+    public function edit($status = null) {
     /****************************************************************
     Aufgabe:    Obj ändern
     Aufruf:     false   Formularanforderung
@@ -426,171 +473,158 @@ class Person extends PName implements iPerson {
     Return:     Fehlercode
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
-    ****************************************************************
+    ****************************************************************/
+        function arr2str($arr) {
+            $str = '';
+            foreach($arr as $val) $str .= $val.'<br />';
+            return $str;
+        }
+
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if($stat == false) {
+
+        if($status == false) :
             // Liste mit Alias erstellen und smarty übergeben
-            $smarty->assign('alist', parent::getAliasList());
+            if(self::IsInDB($this->content['id'], $this->content['bereich'])) :
+                $smarty->assign('alist', parent::getNameList());
+            endif;
             $smarty->assign('ortlist', Ort::getOrtList());
 
             // Daten einsammeln und für Dialog bereitstellen :-)
-            $data = a_display(array(
+            $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-                new d_feld('id',   $this->id),
-                new d_feld('vname',$this->vname,   EDIT,   516),
-                new d_feld('name', $this->name,    EDIT,   517),
-                new d_feld('aliases',$this->aliases, EDIT, 515),
-                new d_feld('gtag', $this->gtag,    EDIT,   502, 10000),
-                new d_feld('gort', $this->gort,    EDIT,   4014),
-                new d_feld('ttag', $this->ttag,    EDIT,   509, 10000),
-                new d_feld('tort', $this->tort,    EDIT,   4014/*,10005*),
-                new d_feld('strasse',$this->strasse,IEDIT, 510),
-                new d_feld('wort', $this->wort,    IEDIT),
-                new d_feld('plz',  $this->plz,     IEDIT),
-                new d_feld('tel',  $this->tel,     IEDIT,  511,10002),
-                new d_feld('mail', $this->mail,    IEDIT,  512),
-                new d_feld('biogr',$this->biogr,   EDIT,   513),
-                new d_feld('notiz',$this->notiz,   EDIT,   514),
-                new d_feld('bereich',   null,      VIEW,   4013)));
-            $smarty->assign('dialog', $data);
-            $smarty->display('pers_dialog.tpl');
+                new d_feld('kopf', null, VIEW, 4013),
+                new d_feld('id',    $this->content['id']),
+                new d_feld('vname', $this->content['vname'],EDIT,516),
+                new d_feld('nname', $this->content['nname'],EDIT,517),
+                new d_feld('aliases',arr2str($this->getAliases()),VIEW),
+                new d_feld('addalias', null,EDIT,515),
+                new d_feld('notiz', $this->content['notiz'],EDIT,514),
+                new d_feld('gtag', $this->content['gtag'],EDIT,502, 10000),
+                new d_feld('gort', $this->content['gort'],EDIT,4014),
+                new d_feld('ttag', $this->content['ttag'],EDIT,509,10000),
+                new d_feld('tort', $this->content['tort'],EDIT,4014),
+                new d_feld('strasse',$this->content['strasse'],IEDIT,510),
+                new d_feld('wort', $this->content['wort'],IEDIT),
+                new d_feld('plz',  $this->content['plz'],IEDIT),
+                new d_feld('tel',  $this->content['tel'],IEDIT,511,10002),
+                new d_feld('mail', $this->content['mail'],IEDIT,512),
+                new d_feld('biogr',$this->content['descr'],EDIT,513));
+            $smarty->assign('dialog', a_display($data));
+            $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
-        } else {    // Status
+        else :    // Formular auswerten
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
-            // Formular auswerten
 
+            try {
+                if(isset($_POST['vname'])) :
+                    if (empty($_POST['vname'])) $this->content['vname'] = '-';
+                    else $this->content['vname'] = $_POST['vname'];
+                endif;
 
-/** ====== Neue Fehlerbehandlung ==== **
+                if(isset($_POST['nname'])) :
+                    if(!empty($_POST['nname'])) : $this->content['nname'] = $_POST['nname'];
+                    else :  throw new ErrorException(null,107,E_ERROR); endif;
+                endif;
 
+                if(isset($_POST['addalias'])) :
+                    if(!empty($_POST['addalias']))
+                        $this->addAlias(intval($_POST['addalias']));
+                endif;
 
-            if(isset($_POST['vname']))
-                if (empty($_POST['vname'])) $this->vname = '-';
-                    else $this->vname = $_POST['vname'];
+                if(isset($_POST['gtag'])) :
+                    if($_POST['gtag']) :
+                        if(isValid($_POST['gtag'],DATUM)) //prüft nur den String !Kalender
+                            $this->content['gtag'] = $_POST['gtag'];
+                        else throw new ErrorException(null,103,E_WARNING);
+                    else : $this->content['gtag'] = '0001-01-01'; endif;
+                endif;
 
-            if(isset($_POST['name'])) {
-                if(!empty($_POST['name'])) $this->name = $_POST['name'];
-                else feedback(107, 'error');
+                if(isset($_POST['gort'])) :
+                    if($_POST['gort'] == 0) $this->content['gort'] = null;
+                    else $this->content['gort'] = $_POST['gort'];
+                endif;
+
+                if(isset($_POST['ttag'])) :
+                    if($_POST['ttag']) :
+                        if(isValid($_POST['ttag'], DATUM))
+                            $this->content['ttag'] = $_POST['ttag'];
+                        else throw new ErrorException(null,103,E_WARNING);
+                    else : $this->content['ttag'] = null; endif;
+                endif;
+
+                if(isset($_POST['tort'])) :
+                    if($_POST['tort'] == 0) $this->content['tort'] = null;
+                    else $this->content['tort'] = $_POST['tort'];
+                endif;
+
+                if(!empty($_POST['strasse'])) :
+                    if (isValid($_POST['strasse'], NAMEN))
+                        $this->content['strasse'] = $_POST['strasse'];
+                    else throw new ErrorException(null,109,E_WARNING);
+                endif;
+
+                if(isset($_POST['wort'])) :
+                    if($_POST['wort'] == 0) $this->content['wort'] = null;
+                    else $this->content['wort'] = intval($_POST['wort']);
+                endif;
+
+                if(!empty($_POST['plz'])) :
+                    if(isValid($_POST['plz'], PLZ)) $this->content['plz'] = $_POST['plz'];
+                    else throw new ErrorException(null,104,E_WARNING);
+                else : $this->content['plz'] = null; endif;
+
+                if(!empty($_POST['tel'])) :
+                    if(isValid($_POST['tel'], TELNR)) $this->content['tel'] = $_POST['tel'];
+                    else throw new ErrorException(null,105,E_WARNING);
+                else : $this->content['tel'] = null; endif;
+
+                if(!empty($_POST['mail'])) :
+                    if(isValid($_POST['mail'], EMAIL))
+                        $this->content['mail'] = $_POST['mail'];
+                    else throw new ErrorException(null,106,E_WARNING);
+                else : $this->content['mail'] = null; endif;
+
+                if(isset($_POST['biogr'])) $this->content['descr'] = $_POST['biogr'];
+                if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
+
+                // doppelten Datensatz abfangen
+                $number = self::ifDouble();
+                if (!empty($number) AND $number != $this->content['id'])
+                    throw new ErrorException(null,128,E_ERROR);
+
+                $this->setsignum();
             }
 
-            if (isset($_POST['aliases'])) $this->aliases = $_POST['aliases'];
+            catch (Exception $e) {
+                switch($e->getSeverity()) :
+                    case E_WARNING :
+                        feedback($e->getcode(),'warng');
+                        break;
 
-            if(isset($_POST['gtag'])) {
-                if($_POST['gtag']) {
-                    if(isValid($_POST['gtag'], DATUM)) $this->gtag = $_POST['gtag'];
-                    else feedback(103, 'warng');
-                } else $this->gtag = '0001-01-01';
+                    case E_ERROR :
+                        feedback($e->getcode(),'error');
+                        exit;
+                endswitch;
             }
-
-            if(isset($_POST['gort'])) {
-                if($_POST['gort'] == 0) $this->gort = null; else $this->gort = $_POST['gort'];
-            }
-
-            if(isset($_POST['ttag'])) {
-                if($_POST['ttag']) {
-                    if(isValid($_POST['ttag'], DATUM)) $this->ttag = $_POST['ttag'];
-                    else feedback(103, 'warng');
-                } else $this->ttag = null;
-            }
-
-            if(isset($_POST['tort'])) {
-                if($_POST['tort'] == 0) $this->tort = null; else $this->tort = $_POST['tort'];
-            }
-
-/* Testweise ISSUE #4
-            if($this->tort OR $this->ttag) {
-                // Tote haben keine Postanschrift
-                $this->strasse = null;
-                $this->wort = null;
-                $this->plz = null;
-                $this->mail = null;
-                $this->tel = null;
-            } else {
-*
-            if(!empty($_POST['strasse']))
-                if (isValid($_POST['strasse'], NAMEN)) $this->strasse = $_POST['strasse']; else feedback(109, 'warng');
-
-            if(isset($_POST['wort']))
-                if($_POST['wort'] == 0) $this->wort = null; else $this->wort = intval($_POST['wort']);
-
-            if(!empty($_POST['plz']))
-                if(isValid($_POST['plz'], PLZ)) $this->plz = $_POST['plz'];
-                else feedback(104, 'warng');
-            else $this->plz = null;
-
-            if(!empty($_POST['tel']))
-                if(isValid($_POST['tel'], TELNR)) $this->tel = $_POST['tel'];
-                else feedback(105, 'warng');
-            else $this->tel = null;
-
-            if(!empty($_POST['mail']))
-                if(isValid($_POST['mail'], EMAIL)) $this->mail = $_POST['mail'];
-                else feedback(106, 'warng');
-            else $this->mail = null;
-
-            if(isset($_POST['biogr'])) $this->biogr = $_POST['biogr'];
-            if(isset($_POST['notiz'])) $this->notiz = $_POST['notiz'];
-            $this->editfrom = $myauth->getAuthData('uid');
-            $this->editdate = date('c', $_SERVER['REQUEST_TIME']);
-
-            // doppelten Datensatz abfangen
-            $number = self::ifDouble();
-            if (!empty($number) AND $number != $this->id) feedback(128, 'error');
-        }
-*/
+        endif; // Status
     }
 
-    private function set(){
+    public function save() {
     /**********************************************************
     Aufgabe: schreibt das Obj. via Update in die DB zurück
-             wird bei add/edit/del gebraucht
-    Return: 0  alles ok
-            4  leerer Datensatz
-    **********************************************************
-        global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if (!$this->id) return 4;   // Abbruch weil leerer Datensatz
-
-        $types = array(
-                'text',         // vname
-                'date',         // gtag
-                'integer',      // gort
-                'date',         // ttag
-                'integer',      // tort
-                'text',         // str
-                'text',         // plz
-                'integer',      // wort
-                'text',         // tel
-                'text',         // mail
-                'text',         // biogr
-                'integer',      // aliases
-                'integer',      // bild
-                'timestamp',    // Zeitstempel
-                'integer',      // uid des bearbeiters
-                'text',         // name -> Alias
-                'text',         // notiz -> Alias
-                'integer',      // id -> Alias
-        );
-        $db =& MDB2::singleton();
-        foreach($this as $key => $wert) $data[$key] = $wert;
-
-        $erg = $db->extended->autoExecute('p_person', $data,
-            MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
-        IsDbError($erg);
-        return 0;
-*/
-    }
-
-    function del() {
-    /**********************************************************
-    Aufgabe: Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB
-    Anm:     Alternativ kann man diese Funktion nutzen um das Element wieder aus dem
-             Papierkorb zu holen.
+             wird bei edit/del gebraucht
+    Return: 4 = leerer Datensatz
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
-        self::setDel();
-        self::set();
+        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
+
+        $db =& MDB2::singleton();
+        $types = list2array(self::TYPEENTITY.self::TYPENAME.self::TYPEPERSON);
+
+        IsDbError($db->extended->autoExecute('p_person2', $this->content,
+            MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->content['id'], 'integer'), $types));
     }
 
     function view() {

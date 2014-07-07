@@ -52,7 +52,7 @@ const
 // Sektion für 'sektion'
 $datei = array(
     'admin' => 'configs/admin.php',
-    'N'     => 'inc/ev_name',
+    'N'     => 'inc/ev_name.php',
     'P'     => 'inc/ev_person.php',         // Personenverzeichnis
     'F'     => "inc/ev_figd.php",           // filmografische Daten
     'Y'     => 'inc/ev_item_planar.php',    // Eventhandler Plangegenstände
