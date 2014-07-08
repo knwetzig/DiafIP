@@ -92,9 +92,7 @@ $URL$
     {if !empty($dialog['prod_land'][1])}<tr>
         <td class="re">{$dialog['prod_land'][2]}:</td>
         <td>
-          {foreach from=$dialog['prod_land'][1] item=wert}
-            {$wert}&nbsp;
-          {/foreach}
+          {foreach $dialog['prod_land'][1] as $wert}{$wert}&nbsp;{/foreach}
         </td>
     </tr>{/if}
 
@@ -113,7 +111,7 @@ $URL$
 {* --prodtech-- *}
     {if !empty($dialog['prodtech'][1])}<tr>
         <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
-        <td>{foreach from=$dialog['prodtech'][1] item=wert}{$wert}<br />{/foreach}</td>
+        <td>{foreach $dialog['prodtech'][1] as $wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
 {* --laenge-- *}
@@ -149,12 +147,12 @@ $URL$
 {* --mediaspezi-- *}
     {if !empty($dialog['mediaspezi'][1])}<tr>
         <td class="re" style="vertical-align:top">{$dialog['mediaspezi'][2]}:</td>
-        <td>{foreach from=$dialog['mediaspezi'][1] item=wert}{$wert}<br />{/foreach}</td>
+        <td>{foreach $dialog['mediaspezi'][1] as $wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
 {* --Besetzung-- *}
     {if !empty($dialog['cast'][1])}
-    {foreach from=$dialog['cast'][1] item=cast}<tr>
+    {foreach $dialog['cast'][1] as $cast}<tr>
         <td class="re">{$cast['job']}:</td>
         <td>{$cast['name']}</td>
     </tr>{/foreach}

@@ -13,8 +13,8 @@ $URL$
 {if !empty($stat)}
     <b>{$dlg['stat']}</b>
     <table>
-        {foreach from=$stat item=wert key=schluessel}
-        <tr><td>{$schluessel}:</td><td class='re'>{$wert}</td></tr>
+        {foreach $stat as $wert}
+        <tr><td>{$wert@key}:</td><td class='re'>{$wert}</td></tr>
         {/foreach}
     </table><br />
 {/if}

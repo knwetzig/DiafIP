@@ -39,7 +39,7 @@ $URL$
 <!-- Aliasnamen anzeigen -->
 {if isset($dialog['aliases'])}
           <td>{$dialog['aliases'][2]}</td>
-          <td>{$dialog['aliases'][1]}</td>
+          <td>({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}{else},&nbsp;{/if}{/foreach})</td>
 {/if}
 
 {if isset($alist)}

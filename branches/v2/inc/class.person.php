@@ -250,7 +250,7 @@ class PName extends Entity implements iPName {
                 if ($val['vname'] === '-') :
                     $erg[$val['id']] = $val['nname'];
                 else :
-                    $erg[$val['id']] = $val['vname'].' '.$val['nname'];
+                    $erg[$val['id']] = $val['vname'].'&nbsp;'.$val['nname'];
                 endif;
             endforeach;
             return $erg;
@@ -474,12 +474,6 @@ class Person extends PName implements iPerson {
     Anm.:       Speichert in jedem Fall das Objekt. Verwirft allerdings alle fehler-
                 haften Eingaben.
     ****************************************************************/
-        function arr2str($arr) {
-            $str = '';
-            foreach($arr as $val) $str .= $val.'<br />';
-            return $str;
-        }
-
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
@@ -497,7 +491,7 @@ class Person extends PName implements iPerson {
                 new d_feld('id',    $this->content['id']),
                 new d_feld('vname', $this->content['vname'],EDIT,516),
                 new d_feld('nname', $this->content['nname'],EDIT,517),
-                new d_feld('aliases',arr2str($this->getAliases()),VIEW),
+                new d_feld('aliases',$this->getAliases(),VIEW),
                 new d_feld('addalias', null,EDIT,515),
                 new d_feld('notiz', $this->content['notiz'],EDIT,514),
                 new d_feld('gtag', $this->content['gtag'],EDIT,502, 10000),
