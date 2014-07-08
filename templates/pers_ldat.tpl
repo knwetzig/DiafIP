@@ -25,8 +25,11 @@ $URL$
             <div style="white-space:normal" class="fett">
             {if !empty($dialog['pname'][1])}{$dialog['pname'][1]}{/if}
             {if !empty($dialog['aliases'][1])}
-                <span style="font-weight:normal">&nbsp;
-                ({foreach from=$dialog['aliases'][1] item=alias}{$alias}{/foreach})</span>
+                <span style="font-weight:normal">                (
+                    {foreach $dialog['aliases'][1] as $alias}
+                        {$alias}{if $alias@last}{else},&nbsp;{/if}
+                    {/foreach}
+                </span>
             {/if}
             </div>
         </td>

@@ -70,7 +70,7 @@ $URL$
 {* --prodtech-- *}
     {if !empty($dialog['prodtech'][1])}<tr>
         <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
-        <td>{foreach from=$dialog['prodtech'][1] item=wert}{$wert}<br />{/foreach}</td>
+        <td>{foreach $dialog['prodtech'][1] as $wert}{$wert}<br />{/foreach}</td>
     </tr>{/if}
 
 </table>

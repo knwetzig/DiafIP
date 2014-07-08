@@ -36,10 +36,8 @@ $URL$
         <td class="re">{$dialog['stitel'][2]}:</td>
         <td><select size='1' name='sid'>
             <option>-- Keine Serie --</option>
-            {foreach
-                from=$dialog['serTitel'][1]
-                item=titel key=id}
-                <option {if $id == $dialog['sid'][1]} selected=selected {/if} value='{$id}'>{$titel}</option>
+            {foreach $dialog['serTitel'][1] as $titel}
+                <option {if $titel@key == $dialog['sid'][1]} selected=selected {/if} value='{$titel@key}'>{$titel}</option>
             {/foreach}
         </select></td>
     </tr>{/if}
