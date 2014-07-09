@@ -134,4 +134,9 @@ $URL$
             <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
             <td colspan="2" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
     </tr>{/if}
+
+{* --isvalid-- Eintrag *}
+    {if !empty($dialog['isVal'][1])}<tr>
+        <td colspan="3" class="re"><img src="images/ok.png" />&nbsp;{$dialog['isVal'][2]}</td>
+    </tr>{/if}
 </table>
