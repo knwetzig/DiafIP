@@ -31,27 +31,6 @@ if(!empty($_REQUEST)) :
         $_REQUEST['aktion'] = 'view';
         $_REQUEST['sektion'] = key($_REQUEST);
     endif;
-/*
-    switch(key($_REQUEST)) :
-        case 'N' :                         //Namen
-            $_REQUEST['sektion'] = 'N';
-            break;
-        case 'P' :
-            $_REQUEST['sektion'] = 'P';    // Person
-            break;
-        case 'F' :
-            $_REQUEST['sektion'] = 'F';    // filmogr.
-            break;
-        case 'Y' :
-            $_REQUEST['sektion'] = 'Y';    // planar
-            break;
-        case 'Z' :
-            $_REQUEST['sektion'] = 'Z';    // körper
-            break;
-        case 'K' :
-            $_REQUEST['sektion'] = 'K';    //filmkopie
-    endswitch;
-*/
 
 // Variante: Es wurde im Suchfeld eine Nr. eingegeben
     if(!empty($_POST['sstring']) AND is_numeric($_POST['sstring'])) :
@@ -71,7 +50,12 @@ if(isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']])) :
     if(!empty($_REQUEST['aktion'])) $smarty->assign('aktion', $_REQUEST['aktion']);
     $smarty->assign('sektion', $_REQUEST['sektion']);
     include $datei[$_REQUEST['sektion']];
-else : include 'default.php';
+else :
+    // mehrsprachige Vorgabeseite
+    $data = $db->extended->getOne(
+        'SELECT '.$myauth->getAuthData('lang').' FROM s_strings WHERE id = 13;');
+    IsDbError($data);
+    echo $data;
 endif;
 echo "</div>";
 ?>
