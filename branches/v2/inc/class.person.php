@@ -231,9 +231,13 @@ class PName extends Entity implements iPName {
     **********************************************************/
         if(empty($this->content['id'])) return;
         $data = self::fiVname().$this->content['nname'];
+        $b = $this->content['bereich'];
         $i = $this->content['id'];
-        if(!empty($this->alias)) $i = $this->alias;
-        return '<a href="index.php?'.$this->content['bereich'].'='.$i.'">'.$data.'</a>';
+        if(!empty($this->alias)) :
+            $i = $this->alias;
+            $b = 'P';
+        endif;
+        return '<a href="index.php?'.$b.'='.$i.'">'.$data.'</a>';
     }
 
     static function getNameList() {
@@ -508,8 +512,7 @@ class Person extends PName implements iPerson {
                 new d_feld('plz',  $this->content['plz'],IEDIT),
                 new d_feld('tel',  $this->content['tel'],IEDIT,511,10002),
                 new d_feld('mail', $this->content['mail'],IEDIT,512),
-                new d_feld('biogr',$this->content['descr'],EDIT,513));
-_vp($this->content);
+                new d_feld('descr',$this->content['descr'],EDIT,513));
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
