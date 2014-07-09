@@ -178,7 +178,7 @@ abstract class Entity implements iEntity {
             new d_feld('descr',  changetext($this->content['descr']), VIEW,513), // Beschreibung
             new d_feld('bilder', $this->content['bilder'], VIEW),
             new d_feld('notiz',  changetext($this->content['notiz']), IVIEW, 514),
-            new d_feld('isvalid', $this->content['isvalid'], IVIEW),
+            new d_feld('isVal', $this->content['isvalid'], IVIEW, 10009),
             new d_feld('chdatum', $this->content['editdate'], EDIT),
             new d_feld('chname', $this->getBearbeiter(), EDIT),
             new d_feld('edit', null, EDIT, null, 4013), // edit-Button

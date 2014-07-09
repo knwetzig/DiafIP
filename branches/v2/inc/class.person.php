@@ -49,7 +49,7 @@ class PName extends Entity implements iPName {
              ORDER BY nname,vname;',
         SEARCH =
             'SELECT id,bereich FROM p_namen
-             WHERE (del = false) AND (nname ILIKE ?) OR (vname ILIKE ?)
+             WHERE (del = false) AND ((nname ILIKE ?) OR (vname ILIKE ?))
              ORDER BY nname,vname,id LIMIT ? OFFSET ?;';
 
     protected
@@ -407,8 +407,12 @@ class Person extends PName implements iPerson {
     Return:     void
     **********************************************************/
         if(!is_int($nr)) return;
-        $this->content['aliases'] =
-            substr_replace($this->content['aliases'], ','.$nr.'}',-1,1);
+        if(empty($this->content['aliases'])) :
+            $this->content['aliases'] = '{'.$nr.'}';
+        else :
+            $this->content['aliases'] =
+                substr_replace($this->content['aliases'], ','.$nr.'}',-1,1);
+        endif;
     }
 
     final protected function getCastList() {
@@ -494,6 +498,7 @@ class Person extends PName implements iPerson {
                 new d_feld('aliases',$this->getAliases(),VIEW),
                 new d_feld('addalias', null,EDIT,515),
                 new d_feld('notiz', $this->content['notiz'],EDIT,514),
+                new d_feld('isvalid', $this->content['isvalid'],SEDIT, 10009),
                 new d_feld('gtag', $this->content['gtag'],EDIT,502, 10000),
                 new d_feld('gort', $this->content['gort'],EDIT,4014),
                 new d_feld('ttag', $this->content['ttag'],EDIT,509,10000),
@@ -504,6 +509,7 @@ class Person extends PName implements iPerson {
                 new d_feld('tel',  $this->content['tel'],IEDIT,511,10002),
                 new d_feld('mail', $this->content['mail'],IEDIT,512),
                 new d_feld('biogr',$this->content['descr'],EDIT,513));
+_vp($this->content);
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
@@ -586,6 +592,11 @@ class Person extends PName implements iPerson {
                 $number = self::ifDouble();
                 if (!empty($number) AND $number != $this->content['id'])
                     throw new ErrorException(null,128,E_ERROR);
+
+                $this->content['isvalid'] = false;
+                if(isset($_POST['isvalid'])) :
+                    if ($_POST['isvalid']) $this->content['isvalid'] = true;
+                endif;
 
                 $this->setsignum();
             }

@@ -37,7 +37,7 @@ $URL$
         </tr>
 
 <!-- Aliasnamen anzeigen -->
-{if isset($dialog['aliases'])}
+{if !empty($dialog['aliases'][1])}
           <td>{$dialog['aliases'][2]}</td>
           <td>({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}{else},&nbsp;{/if}{/foreach})</td>
 {/if}
@@ -175,6 +175,19 @@ $URL$
           </td>
         </tr>
 {/if}
+
+{* --- isvalid --- *}
+    {if isset($dialog['isvalid'])}<tr>
+        <td>&nbsp;</td>
+        <td>
+            <input
+                type="checkbox"
+                name="isvalid"
+                {if $dialog['isvalid'][1]}checked="checked"{/if}
+                value='true' />
+            {$dialog['isvalid'][2]}
+        </td>
+    </tr>{/if}
 
         <tr>
           <td></td>

@@ -114,7 +114,7 @@ if(isset($_POST['aktion'])) switch ($_POST['aktion']) :
         $types = array('text','text','integer','text','date','integer');
         $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
             'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
-        if(!IsDbError($data)) erfolg("Die Daten wurden erfolgreich aktualisiert");
+        if(!IsDbError($data)) feedback("Die Daten wurden erfolgreich aktualisiert", 'hinw');
         break;
 
     case "addUser" :
