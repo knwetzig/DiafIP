@@ -22,16 +22,15 @@ $options = array(
     'use_transactions'  => true,
     'persistent'        => true,
 );
-$db =& MDB2::singleton($dsn, $options); isDbError($db);
-$db->setFetchMode(MDB2_FETCHMODE_ASSOC); isDbError($db);
-$db->loadModule('Extended'); isDbError($db);
+$db = MDB2::singleton($dsn, $options);
+isDbError($db);
+$db->setFetchMode(MDB2_FETCHMODE_ASSOC);
+$db->loadModule('Extended');
 
 // --- Authentifizierung ---
-$params = array(
-    "dsn"           => $dsn,
-    "table"         => "s_auth",
-    "db_fields"     => "rechte,lang,uid,realname,notiz,profil"
-);
+$params = array('dsn'           => $dsn,
+                'table'         => 's_auth',
+                'db_fields'     => 'rechte,lang,uid,realname,notiz,profil');
 $myauth = new Auth("MDB2", $params, "loginFunction");
 $myauth->start();
 if (!$myauth->checkAuth()) exit();        // erfolglose Anmeldung
@@ -73,7 +72,7 @@ require_once 'class.view.php';
 require_once 'class.s_location.php';
 require_once 'class.entity.php';        // Basisklasse V2
 require_once 'class.person.php';        // Personenklasse V2
-require_once 'class.figd.php';
+require_once 'class.figd2.php';         // Biblio-/Filmogr. Daten V2
 require_once 'class.media.php';
 require_once 'class.item.php';
 require_once 'class.statistik.php';

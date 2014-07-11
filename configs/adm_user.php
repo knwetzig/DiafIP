@@ -25,7 +25,7 @@ if(!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
 
 function getUserList(){
 // Nutzerauswahlliste erstellen
-    $db =& MDB2::singleton();
+    $db = MDB2::singleton();
     $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
     $data = $db->extended->getAll($sql);
     IsDbError($data);

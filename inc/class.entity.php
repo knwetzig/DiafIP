@@ -57,7 +57,7 @@ abstract class Entity implements iEntity {
     abstract function add($status = null);
     abstract function edit($status = null);
     abstract function save();
-    abstract static function search($s);
+    abstract function search($s);
 
     function __construct($nr = null) {
         if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
@@ -65,8 +65,7 @@ abstract class Entity implements iEntity {
 
     protected function get($nr) {
     // Diese Funktion initialisiert das Objekt
-
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(self::GETDATA,list2array(self::TYPEENTITY),$nr,'integer');
         IsDbError($data);
         if($data) :
@@ -82,7 +81,7 @@ abstract class Entity implements iEntity {
      * Aufgabe: Ermittelt den Realnamen des Bearbeiters
      *  Return: string | none
      **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $bearbeiter = null;
         if(!empty($this->content['editfrom'])) :
             $bearbeiter = $db->extended->getCol(
@@ -97,7 +96,7 @@ abstract class Entity implements iEntity {
     Aufg.:  Test ob Nr. als id mit diesem Bereichbuchstaben in der DB existiert
     Input: $nr als Dezimal-Wert / $bereich = Großbuchstabe
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         if(is_numeric($nr) AND is_string($bereich) AND (strlen($bereich) == 1)) :
             $data = $db->extended->getRow(
@@ -112,7 +111,7 @@ abstract class Entity implements iEntity {
     }
 
     static function getBereich($nr) {    // Holt zur ID die Bereichskennung
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         if($nr AND is_numeric($nr)) :
             $data = $db->extended->getOne('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
@@ -164,7 +163,7 @@ abstract class Entity implements iEntity {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getAll(self::GETMUELL, array('integer','text'));
         IsDbError($data);
         return $data;

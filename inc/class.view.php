@@ -43,7 +43,7 @@ Repräsentiert ein Ein-/Ausgabeelement
         global $lang;
         if(empty($nr) OR !is_numeric($nr)) return null;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(
             'SELECT de, en, fr FROM s_strings WHERE id = ?;', null, $nr);
         if(!empty($data[$lang])) $st = $data[$lang]; else $st = $data['de'];

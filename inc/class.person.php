@@ -26,7 +26,7 @@ interface iPName extends iEntity {
     function getPerson();           // Ermittelt die Person zum Aliasnamen
     function getName();
     static function getNameList();	// Listet alle unbenutzten Aliasnamen (nicht Personen)
-    static function search($s);     // liefert die ID's+Bereich des Suchmusters
+    function search($s);            // liefert die ID's+Bereich des Suchmusters
     function add($status = null);
     function edit($status = null);
     function save();
@@ -65,7 +65,7 @@ class PName extends Entity implements iPName {
 
     protected function get($nr) {
     // Diese Funktion initialisiert das Objekt
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
         IsDbError($data);
@@ -85,7 +85,7 @@ class PName extends Entity implements iPName {
     Return:  null : Es existiert keine Person, Datensatz frei zum löschen
              id     Zum Benutzer des Alias
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if($this->content['bereich'] === 'N') :
             $p = $db->extended->getOne(self::GETPERSON, 'integer', $this->content['id'], 'integer');
             IsDbError($p);
@@ -102,7 +102,7 @@ class PName extends Entity implements iPName {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME);
 
         if (empty($status)) :
@@ -182,7 +182,7 @@ class PName extends Entity implements iPName {
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME);
 
         IsDbError($db->extended->autoExecute('p_namen', $this->content,
@@ -190,7 +190,7 @@ class PName extends Entity implements iPName {
     }
 
 
-    static function search($s) {
+    public function search($s) {
     /**********************************************************
     Aufgabe:    Sucht in Vor- und Nachnamen (nicht Literal)
     Aufruf:     $s = Suchmuster
@@ -198,7 +198,7 @@ class PName extends Entity implements iPName {
     **********************************************************/
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $max = $db->extended->getOne('SELECT COUNT(*) FROM p_namen WHERE del = false;','integer');
         IsDbError($max);
         $limit = null;
@@ -260,7 +260,7 @@ class PName extends Entity implements iPName {
             return $erg;
         }
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getAll(
             self::GETALIAS, array('integer','text','text'));
         IsDbError($data);
@@ -329,7 +329,7 @@ class Person extends PName implements iPerson {
     *  Aufruf: nr  ID des Personendatensatzes (NOT STATIC)
     *  Return: none
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         $data = $db->extended->getRow(self::GETDATA,null, $nr);
         IsDbError($data);
@@ -359,7 +359,7 @@ class Person extends PName implements iPerson {
     * Aufgabe: Ermitteln ob gleiche Person schon existiert
     *  Return:
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne(self::IFDOUBLE, null, array(
             $this->content['gtag'],
             $this->content['vname'],
@@ -373,7 +373,7 @@ class Person extends PName implements iPerson {
     Aufgabe:    Liefert die Namensliste für Drop-Down-Menü
     Return:     array(id, vname+name)
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getAll(
             self::GETPERLI, array('integer','text','text'));
         IsDbError($data);
@@ -424,7 +424,7 @@ class Person extends PName implements iPerson {
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
     *   Return: array(vname, name, tid, pid, job)
     **********************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if (empty($this->content['id'])) return;
         $data = $db->extended->getALL(
             self::GETCALI, null, $this->content['id'], 'integer');
@@ -452,7 +452,7 @@ class Person extends PName implements iPerson {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME.self::TYPEPERSON);
 
         if ($status == false) :
@@ -628,14 +628,14 @@ class Person extends PName implements iPerson {
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME.self::TYPEPERSON);
 
         IsDbError($db->extended->autoExecute('p_person2', $this->content,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->content['id'], 'integer'), $types));
     }
 
-    function view() {
+    public function view() {
     /****************************************************************
     Aufgabe: Anzeige eines Datensatzes, Einstellen der Rechteparameter
             Auflösen von Listen und holen der Strings aus der Tabelle
