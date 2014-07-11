@@ -108,7 +108,7 @@ abstract class Item implements iItem {
     *  Aufgabe: gibt den Ein-/Ausgaberecord zurück
     *   Return: array
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         switch ($set) :
           case 'edit' :
@@ -181,7 +181,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Initialisiert das Objekt (auch gelöschte)
     *   Return: void
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $this->types, $nr, 'integer');
         IsDbError($data);
         if (empty($data)) feedback(4, 'hinw');    // kein Datensatz vorhanden
@@ -268,7 +268,7 @@ abstract class Item implements iItem {
     *   Return: int (ID des letzten Datensatzes | null )
     ****************************************************************/
 /**
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_ifDouble, null, $this->titel);
         IsDbError($data);
         return $data['id'];
@@ -281,7 +281,7 @@ abstract class Item implements iItem {
     *   Return: Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
@@ -295,7 +295,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Testet ob die Löschflagge gesetzt ist
     *   Return: bool
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(empty($this->id)) return;
         $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $this->id, 'integer');
@@ -309,7 +309,7 @@ abstract class Item implements iItem {
     *   Aufruf: int $nr
     *   Return: bool
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne(
             self::SQL_isDel, 'boolean', $nr, 'integer');
         IsDbError($data);
@@ -321,7 +321,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Prüft ob der Datensatz verknüpft ist
     *   Return: int $Anzahl
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         // Prüfkandidaten:  ...?
         $data = $db->extended->getOne(self::SQL_isLink, null, $this->id);
         IsDbError($data);
@@ -333,7 +333,7 @@ abstract class Item implements iItem {
     *  Aufgabe: Testet ob der Datensatz einer Überarbeitung bedarf (a la Wiki)
     *   Return: bool
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne(
             self::SQL_isVal, 'boolean', $this->id, 'integer');
         IsDbError($data);
@@ -395,7 +395,7 @@ final class Planar extends Item implements iPlanar {
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         $data = $db->extended->getOne(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
@@ -410,7 +410,7 @@ final class Planar extends Item implements iPlanar {
     *  Aufgabe: Liefert eine Array der Arten (dok/plakat etc)
     *   Return: array()
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $list = $db->extended->getCol('SELECT id FROM i_planar_art;', 'integer');
         IsDbError($list);
         $data = array();
@@ -430,7 +430,7 @@ final class Planar extends Item implements iPlanar {
         global $myauth;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if ($stat == false) :
             $db->beginTransaction('new2Ditem'); IsDbError($db);
             // neue id besorgen
@@ -501,7 +501,7 @@ final class Planar extends Item implements iPlanar {
         $types = $this->types;
         array_unshift($types, 'integer');
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $erg = $db->extended->autoExecute('i_planar', $data,
             MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($this->id, 'integer'), $types);
         IsDbError($erg);
@@ -514,7 +514,7 @@ final class Planar extends Item implements iPlanar {
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
         $s = "%".$s."%";
 
@@ -587,7 +587,7 @@ final class Obj3d extends Item implements iPlanar {
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
         if (empty($data)) feedback(4 ,'hinw');   // kein Datensatz vorhanden
@@ -602,7 +602,7 @@ final class Obj3d extends Item implements iPlanar {
     *  Aufgabe: Liefert eine Array der Arten
     *   Return: array()
     ****************************************************************/
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $list = $db->extended->getCol('SELECT id FROM i_3dobj_art;', 'integer');
         IsDbError($list);
         $data = array();
@@ -620,7 +620,7 @@ final class Obj3d extends Item implements iPlanar {
     *   Return:  Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if ($stat == false) :
             $db->beginTransaction('new3Ditem'); IsDbError($db);
@@ -652,7 +652,7 @@ final class Obj3d extends Item implements iPlanar {
     *   Return: none
     ****************************************************************/
         global $myauth, $smarty;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if($stat == false) :        // Formular anzeigen
@@ -686,7 +686,7 @@ final class Obj3d extends Item implements iPlanar {
     *    Return: Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
 
@@ -708,7 +708,7 @@ final class Obj3d extends Item implements iPlanar {
     *   Return: Array der gefunden ID's | Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $s = "%".$s."%";
@@ -790,7 +790,7 @@ final class FilmKopie extends Item implements iPlanar {
     *   Return: void
     ****************************************************************/
         parent::get($nr);
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, 'integer', $nr, 'integer');
         IsDbError($data);
         if (empty($data)) feedback(4 ,'hinw');   // kein Datensatz vorhanden
@@ -809,7 +809,7 @@ final class FilmKopie extends Item implements iPlanar {
 
     protected function getMedium($nr) {
         //DB->i_medium
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne('
             SELECT medium FROM i_medium WHERE id = ?;', 'text', $nr);
         IsDbError($data);
@@ -817,7 +817,7 @@ final class FilmKopie extends Item implements iPlanar {
     }
 
     protected function getMediumLi() {
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $erg = $db->extended->getAll('
             SELECT * FROM i_medium ORDER BY id;');
         IsDbError($erg);
@@ -828,7 +828,7 @@ final class FilmKopie extends Item implements iPlanar {
     }
 
     protected function getMaterial($nr) {
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne('
             SELECT material FROM i_material WHERE id = ?;', 'text', $nr);
         IsDbError($data);
@@ -836,7 +836,7 @@ final class FilmKopie extends Item implements iPlanar {
     }
 
     protected function getMaterialLi() {
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $erg = $db->extended->getAll('
             SELECT * FROM i_material ORDER BY id;');
         IsDbError($erg);
@@ -848,7 +848,7 @@ final class FilmKopie extends Item implements iPlanar {
 
     protected function getTonart($nr) {
         //DB->i_tonart
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getOne('
             SELECT audiotyp FROM i_tonart WHERE id = ?;', 'text', $nr);
         IsDbError($data);
@@ -856,7 +856,7 @@ final class FilmKopie extends Item implements iPlanar {
     }
 
     protected function getTonartLi() {
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $erg = $db->extended->getAll('
             SELECT * FROM i_tonart ORDER BY id;');
         IsDbError($erg);
@@ -873,7 +873,7 @@ final class FilmKopie extends Item implements iPlanar {
     *   Return:  Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         if ($stat == false) :
@@ -906,7 +906,7 @@ final class FilmKopie extends Item implements iPlanar {
     ****************************************************************/
         global $myauth, $smarty;
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
 
         if($stat == false) :        // Formular anzeigen
             $data = a_display(self::ea_struct('edit'));
@@ -973,7 +973,7 @@ final class FilmKopie extends Item implements iPlanar {
     *    Return: Fehlercode
     ****************************************************************/
         global $myauth;
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if(!$this->id) return 4;         // Abbruch: leerer Datensatz
 
@@ -999,7 +999,7 @@ final class FilmKopie extends Item implements iPlanar {
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $s = "%".$s."%";
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         // Suche in Bezeichner (rudimentär)
         $data = $db->extended->getCol(
             'SELECT id FROM ONLY i_fkop

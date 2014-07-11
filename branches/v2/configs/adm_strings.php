@@ -21,7 +21,7 @@ if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
 }
 
 function getStrList() {
-    $db =& MDB2::singleton();
+    $db = MDB2::singleton();
 	$sql = 'SELECT id AS nr, de FROM s_strings ORDER BY de ASC;';
 	$data = $db->extended->getAll($sql, array('integer','text'));
 	IsDbError($data);
@@ -31,7 +31,7 @@ function getStrList() {
 }
 
 function getStrings($nr) {
-    $db =& MDB2::singleton();
+    $db = MDB2::singleton();
     $data = $db->extended->getRow(
         'SELECT id AS nr, de, en, fr FROM s_strings WHERE id = ?;', null, $nr, 'integer');
     IsDbError($data);
@@ -60,7 +60,7 @@ function viewEdit($satz) {
 $smarty->assign('dialog', array('bereich' =>
                             array( 1 => d_feld::getString(4036))));
 $smarty->display('main_bereich.tpl');
-$db =& MDB2::singleton();
+$db = MDB2::singleton();
 // Auswertung edit
 if(isset($_POST['aktion']) AND $_POST['aktion'] === 'edit') :
     $data = array('en' => $_POST['en'], 'fr' => $_POST['fr']);

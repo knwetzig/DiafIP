@@ -39,8 +39,8 @@ FORM;
 /** **** Datenbank Tools *************************************/
 
 function IsDbError($obj) { // Übergabe Datenbankobjekt
-    if(PEAR::isError($obj)) :
-        $db =& MDB2::singleton();
+    if(MDB2::isError($obj)) :
+        $db = MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
         echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());

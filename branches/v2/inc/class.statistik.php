@@ -20,7 +20,7 @@ class db_stat {
 
     function getStat() {
 	   global $laufzeit, $outtime;
-       $db =& MDB2::singleton();
+       $db = MDB2::singleton();
 
         // Anzahl filmogr. & bibl. Datensätze
         $sql = 'SELECT COUNT(*) FROM i_main WHERE del = false;';
