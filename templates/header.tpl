@@ -14,6 +14,7 @@ $URL$
 <!--    <meta http-equiv='Pragma' content='no-cache' />
     <meta http-equiv='Cache-Control' content='post-check=0, pre-check=0, FALSE' /> -->
     <meta http-equiv='Id' content='$Id$' />
+	<link rel='stylesheet' type='text/css' href='base.css' />
     <link rel='stylesheet' type='text/css' href='style.css' />
     <link rel='shortcut icon' href='favicon.ico' />
 </head>

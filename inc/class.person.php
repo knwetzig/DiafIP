@@ -11,12 +11,6 @@ $URL$
 ToDo:
     - add und edit bearbeiten und mit Template abgleichen
 
-
-<codesnippet>
-            if($this->content['aliases']) :
-                $this->content['aliases'] = list2array($this->content['aliases']);
-            endif;
-</codesnippet>
 ***********************************************************/
 
 /**===========================================================
@@ -60,7 +54,7 @@ class PName extends Entity implements iPName {
         $this->content['bereich'] = 'N';
         $this->content['vname'] = '-';
         $this->content['nname'] = '';
-        if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
+        if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
@@ -69,7 +63,7 @@ class PName extends Entity implements iPName {
 
         $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
         IsDbError($data);
-        if($data) :
+        if ($data) :
             $this->content['vname'] = $data['vname'];
             $this->content['nname'] = $data['nname'];
             $this->alias = self::getPerson();
@@ -86,7 +80,7 @@ class PName extends Entity implements iPName {
              id     Zum Benutzer des Alias
     **********************************************************/
         $db = MDB2::singleton();
-        if($this->content['bereich'] === 'N') :
+        if ($this->content['bereich'] === 'N') :
             $p = $db->extended->getOne(self::GETPERSON, 'integer', $this->content['id'], 'integer');
             IsDbError($p);
             return $p;
@@ -100,7 +94,7 @@ class PName extends Entity implements iPName {
             true    Verarbeitung nach Formular
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME);
@@ -133,9 +127,9 @@ class PName extends Entity implements iPName {
                 haften Eingaben.
     **********************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        if(empty($status)) :
+        if (empty($status)) :
             // Daten einsammeln und für Dialog bereitstellen :-)
             $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
@@ -151,16 +145,16 @@ class PName extends Entity implements iPName {
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
             // Formular auswerten
             try {
-                if(isset($_POST['vname']))
+                if (isset($_POST['vname']))
                     if (empty($_POST['vname'])) $this->content['vname'] = '-';
                     else $this->content['vname'] = $_POST['vname'];
 
-                if(isset($_POST['nname'])) :
-                    if(!empty($_POST['nname'])) $this->content['nname'] = $_POST['nname'];
+                if (isset($_POST['nname'])) :
+                    if (!empty($_POST['nname'])) $this->content['nname'] = $_POST['nname'];
                     else throw new Exception(null, 107);
                 endif;
 
-                if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
+                if (isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
             }
 
             catch (Exception $e) {
@@ -179,7 +173,7 @@ class PName extends Entity implements iPName {
     Return: 4 = leerer Datensatz
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
 
         $db = MDB2::singleton();
@@ -197,7 +191,8 @@ class PName extends Entity implements iPName {
     Return:     array(id) oder null (Namen und Personen)
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+
         $db = MDB2::singleton();
         $max = $db->extended->getOne('SELECT COUNT(*) FROM p_namen WHERE del = false;','integer');
         IsDbError($max);
@@ -208,7 +203,7 @@ class PName extends Entity implements iPName {
         $erg = array();
         $s = "%".$s."%";
 
-        $data =&$db->extended->getAll(
+        $data =$db->extended->getAll(
             self::SEARCH, array('integer','text'), array($s,$s,$limit,$offset));
         IsDbError($data);
 
@@ -229,11 +224,11 @@ class PName extends Entity implements iPName {
     Aufgabe: Liefert den zusammngesetzten und verlinkten Namen zurück
     Return: string
     **********************************************************/
-        if(empty($this->content['id'])) return;
+        if (empty($this->content['id'])) return;
         $data = self::fiVname().$this->content['nname'];
         $b = $this->content['bereich'];
         $i = $this->content['id'];
-        if(!empty($this->alias)) :
+        if (!empty($this->alias)) :
             $i = $this->alias;
             $b = 'P';
         endif;
@@ -250,7 +245,7 @@ class PName extends Entity implements iPName {
     **********************************************************/
         function arrpack($arr) {
             $erg = array();
-            foreach($arr as $val) :
+            foreach ($arr as $val) :
                 if ($val['vname'] === '-') :
                     $erg[$val['id']] = $val['nname'];
                 else :
@@ -334,8 +329,8 @@ class Person extends PName implements iPerson {
         $data = $db->extended->getRow(self::GETDATA,null, $nr);
         IsDbError($data);
         // Ergebnis -> Objekt schreiben
-        if($data) :
-            foreach($data as $key => $val) :
+        if ($data) :
+            foreach ($data as $key => $val) :
                 $this->content[$key] = $val;
             endforeach;
 
@@ -379,7 +374,7 @@ class Person extends PName implements iPerson {
         IsDbError($data);
 
         $alist = array(d_feld::getString(0));       // kein Eintrag
-        foreach($data as $val) :
+        foreach ($data as $val) :
             if ($val['vname'] === '-') :
                 $alist[$val['id']] = $val['nname'];
             else :
@@ -395,9 +390,9 @@ class Person extends PName implements iPerson {
     Rückgabe: Liste der Namen.
     Return: array(string)
     **********************************************************/
-        if($this->content['aliases']) :
+        if ($this->content['aliases']) :
             $data = array();
-            foreach(list2array($this->content['aliases']) as $val) :
+            foreach (list2array($this->content['aliases']) as $val) :
                 $e = new PName(intval($val));
                 $data[] = $e->fiVname().$e->content['nname'];
             endforeach;
@@ -410,8 +405,8 @@ class Person extends PName implements iPerson {
     Aufgabe:    Fügt die ID eines PName-Objekts der Aliases-Liste hinzu
     Return:     void
     **********************************************************/
-        if(!is_int($nr)) return;
-        if(empty($this->content['aliases'])) :
+        if (!is_int($nr)) return;
+        if (empty($this->content['aliases'])) :
             $this->content['aliases'] = '{'.$nr.'}';
         else :
             $this->content['aliases'] =
@@ -426,16 +421,19 @@ class Person extends PName implements iPerson {
     **********************************************************/
         $db = MDB2::singleton();
         if (empty($this->content['id'])) return;
+
+        // Zusammenstellen der Castingliste für diese Person
         $data = $db->extended->getALL(
             self::GETCALI, null, $this->content['id'], 'integer');
         IsDbError($data);
 
         // Übersetzung für die Tätigkeit und Namen holen
         $f=array();
-        foreach($data as $wert) :
-            if(!Film::is_Del($wert['fid'])) :
+        foreach ($data as $wert) :
+            $film = new Film($wert['fid']);
+            if (!$film->isDel()) :
                 $g = array();
-                $g['ftitel'] = Film::getTitel($wert['fid']);
+                $g['ftitel'] = $film->getTitel();
                 $g['job'] = d_feld::getString($wert['tid']);
                 $f[] = $g;
             endif;
@@ -450,7 +448,7 @@ class Person extends PName implements iPerson {
             true    Verarbeitung nach Formular
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
         $types = list2array(self::TYPEENTITY.self::TYPENAME.self::TYPEPERSON);
@@ -483,11 +481,11 @@ class Person extends PName implements iPerson {
                 haften Eingaben.
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
-        if($status == false) :
+        if ($status == false) :
             // Liste mit Alias erstellen und smarty übergeben
-            if(self::IsInDB($this->content['id'], $this->content['bereich'])) :
+            if (self::IsInDB($this->content['id'], $this->content['bereich'])) :
                 $smarty->assign('alist', parent::getNameList());
             endif;
             $smarty->assign('ortlist', Ort::getOrtList());
@@ -520,76 +518,76 @@ class Person extends PName implements iPerson {
             // Reinitialisierung muss vom aufrufenden Programm erledigt werden
 
             try {
-                if(isset($_POST['vname'])) :
+                if (isset($_POST['vname'])) :
                     if (empty($_POST['vname'])) $this->content['vname'] = '-';
                     else $this->content['vname'] = $_POST['vname'];
                 endif;
 
-                if(isset($_POST['nname'])) :
-                    if(!empty($_POST['nname'])) : $this->content['nname'] = $_POST['nname'];
+                if (isset($_POST['nname'])) :
+                    if (!empty($_POST['nname'])) : $this->content['nname'] = $_POST['nname'];
                     else :  throw new ErrorException(null,107,E_ERROR); endif;
                 endif;
 
-                if(isset($_POST['addalias'])) :
-                    if(!empty($_POST['addalias']))
+                if (isset($_POST['addalias'])) :
+                    if (!empty($_POST['addalias']))
                         $this->addAlias(intval($_POST['addalias']));
                 endif;
 
-                if(isset($_POST['gtag'])) :
-                    if($_POST['gtag']) :
-                        if(isValid($_POST['gtag'],DATUM)) //prüft nur den String !Kalender
+                if (isset($_POST['gtag'])) :
+                    if ($_POST['gtag']) :
+                        if (isValid($_POST['gtag'],DATUM)) //prüft nur den String !Kalender
                             $this->content['gtag'] = $_POST['gtag'];
                         else throw new ErrorException(null,103,E_WARNING);
                     else : $this->content['gtag'] = '0001-01-01'; endif;
                 endif;
 
-                if(isset($_POST['gort'])) :
-                    if($_POST['gort'] == 0) $this->content['gort'] = null;
+                if (isset($_POST['gort'])) :
+                    if ($_POST['gort'] == 0) $this->content['gort'] = null;
                     else $this->content['gort'] = $_POST['gort'];
                 endif;
 
-                if(isset($_POST['ttag'])) :
-                    if($_POST['ttag']) :
-                        if(isValid($_POST['ttag'], DATUM))
+                if (isset($_POST['ttag'])) :
+                    if ($_POST['ttag']) :
+                        if (isValid($_POST['ttag'], DATUM))
                             $this->content['ttag'] = $_POST['ttag'];
                         else throw new ErrorException(null,103,E_WARNING);
                     else : $this->content['ttag'] = null; endif;
                 endif;
 
-                if(isset($_POST['tort'])) :
-                    if($_POST['tort'] == 0) $this->content['tort'] = null;
+                if (isset($_POST['tort'])) :
+                    if ($_POST['tort'] == 0) $this->content['tort'] = null;
                     else $this->content['tort'] = $_POST['tort'];
                 endif;
 
-                if(!empty($_POST['strasse'])) :
+                if (!empty($_POST['strasse'])) :
                     if (isValid($_POST['strasse'], NAMEN))
                         $this->content['strasse'] = $_POST['strasse'];
                     else throw new ErrorException(null,109,E_WARNING);
                 endif;
 
-                if(isset($_POST['wort'])) :
-                    if($_POST['wort'] == 0) $this->content['wort'] = null;
+                if (isset($_POST['wort'])) :
+                    if ($_POST['wort'] == 0) $this->content['wort'] = null;
                     else $this->content['wort'] = intval($_POST['wort']);
                 endif;
 
-                if(!empty($_POST['plz'])) :
-                    if(isValid($_POST['plz'], PLZ)) $this->content['plz'] = $_POST['plz'];
+                if (!empty($_POST['plz'])) :
+                    if (isValid($_POST['plz'], PLZ)) $this->content['plz'] = $_POST['plz'];
                     else throw new ErrorException(null,104,E_WARNING);
                 else : $this->content['plz'] = null; endif;
 
-                if(!empty($_POST['tel'])) :
-                    if(isValid($_POST['tel'], TELNR)) $this->content['tel'] = $_POST['tel'];
+                if (!empty($_POST['tel'])) :
+                    if (isValid($_POST['tel'], TELNR)) $this->content['tel'] = $_POST['tel'];
                     else throw new ErrorException(null,105,E_WARNING);
                 else : $this->content['tel'] = null; endif;
 
-                if(!empty($_POST['mail'])) :
-                    if(isValid($_POST['mail'], EMAIL))
+                if (!empty($_POST['mail'])) :
+                    if (isValid($_POST['mail'], EMAIL))
                         $this->content['mail'] = $_POST['mail'];
                     else throw new ErrorException(null,106,E_WARNING);
                 else : $this->content['mail'] = null; endif;
 
-                if(isset($_POST['descr'])) $this->content['descr'] = $_POST['descr'];
-                if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
+                if (isset($_POST['descr'])) $this->content['descr'] = $_POST['descr'];
+                if (isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
 
                 // doppelten Datensatz abfangen
                 $number = self::ifDouble();
@@ -597,7 +595,7 @@ class Person extends PName implements iPerson {
                     throw new ErrorException(null,128,E_ERROR);
 
                 $this->content['isvalid'] = false;
-                if(isset($_POST['isvalid'])) :
+                if (isset($_POST['isvalid'])) :
                     if ($_POST['isvalid']) $this->content['isvalid'] = true;
                 endif;
 
@@ -625,7 +623,7 @@ class Person extends PName implements iPerson {
     Return: 4 = leerer Datensatz
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
 
         $db = MDB2::singleton();
@@ -643,7 +641,7 @@ class Person extends PName implements iPerson {
     Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data = parent::view();
         $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);

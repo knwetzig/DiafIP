@@ -68,7 +68,7 @@ class LOrt implements iLOrt {
             'SELECT * FROM i_lagerort', array('integer', 'text'));
         IsDbError($list);
         $data = array();
-        foreach($list as $wert) $data[$wert['nr']] = $wert['lagerort'];
+        foreach ($list as $wert) $data[$wert['nr']] = $wert['lagerort'];
         natcasesort($data);
         // $data[0] = getString(xxx); <-- keine gute Idee, das hebelt die Verpflichtung
         //                                zur Eingabe eines Lagerorts aus..
@@ -125,7 +125,7 @@ class LOrt implements iLOrt {
 
     public function del() {
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
 
         if ($this->is_linked()) feedback(10006, 'error'); else {
             // löschen in Tabelle
@@ -182,11 +182,11 @@ class Ort {
         IsDbError($data);
         /* ACHTUNG: Die Kombination mit einem statischen Aufruf führt zum
         Überschreiben von Speicherinhalten!!! deswegen gibt es 2 Versionen */
-        foreach($this as $key => &$wert) $wert = $data[$key];
+        foreach ($this as $key => &$wert) $wert = $data[$key];
         unset($wert);
     }
 
-    function getOrt($nr) {  // die statische Version
+    public static function getOrt($nr) {  // die statische Version
         $db = MDB2::singleton();
         $sql = 'SELECT * FROM orte WHERE oid = ?;';
         $data = $db->extended->getRow($sql, null, array($nr));
@@ -202,7 +202,7 @@ class Ort {
     ****************************************************************/
         $db = MDB2::singleton();
 
-        if($status == false) $this->edit(false);
+        if ($status == false) $this->edit(false);
         else {
             $this->edit(true);
             $data = $db->extended->autoExecute('s_orte', array(
@@ -218,7 +218,7 @@ class Ort {
 
     function edit($status) {
         global $smarty;
-        if($status == false) {
+        if ($status == false) {
             $smarty->assign('llist', self::getLandList());
             $data = a_display(array(
                 // name, inhalt optional-> rechte, label, tooltip, valString
@@ -228,8 +228,8 @@ class Ort {
             $smarty->display('adm_ortedialog.tpl');
         } else {
             // Formular auswerten und in Obj speichern
-            if(isset($_POST['ort'])) :
-                if(isValid($_POST['ort'], NAMEN))
+            if (isset($_POST['ort'])) :
+                if (isValid($_POST['ort'], NAMEN))
                     $this->ort = $_POST['ort'];
                 else feedback(107, 'warng');
             endif;
@@ -264,21 +264,21 @@ class Ort {
                 array('integer', 'integer', 'integer'));
         IsDbError($data);
         // $data enthält das array mit den konfliktdatensätzen
-        if(!$data) {
+        if (!$data) {
             feedback("Lösche Ort: ".$this->ort, 'erfolg');
             $res = $db->extended->autoExecute('s_orte', null,
                         MDB2_AUTOQUERY_DELETE, 'id = '.$db->quote($this->oid, 'integer'));
         } else feedback(6, 'error');
     }
 
-    function getOrtList() {
+    public static function getOrtList() {
     // listet alle Orte in einem Array
         $db = MDB2::singleton();
         $sql = 'SELECT * FROM orte;';
         $data = $db->extended->getAll($sql);
         IsDbError($data);
         $orte=array('-- unbekannt --');
-        foreach($data as $val) {
+        foreach ($data as $val) {
         $st = $val['ort'].'&nbsp;-&nbsp;'.$val['land'];
             $orte[$val['oid']] = $st;
         }
@@ -291,7 +291,7 @@ class Ort {
         $data = $db->extended->getAll($sql);
         IsDbError($data);
         $laend = array();
-        foreach($data as $val) {
+        foreach ($data as $val) {
             $laend[$val['id']] = (empty($val['bland'])?$val['land']:$val['bland']."&nbsp;-&nbsp;".$val['land']);
         }
         return $laend;

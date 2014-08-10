@@ -24,6 +24,7 @@ interface iEntity {
     static function getBereich($nr); // Holt zur ID die Bereichskennung
     function setValid();        // Set/Unset Flag
     function del();             // Schaltet Löschflag in DB um
+    function isDel();           // Test auf Löschflag
     static function getTrash(); // schnüffelt im Papierkorb
     function display($vorlage);
 }
@@ -60,7 +61,7 @@ abstract class Entity implements iEntity {
     abstract function search($s);
 
     function __construct($nr = null) {
-        if(isset($nr) AND is_numeric($nr)) self::get(intval($nr));
+        if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
@@ -68,8 +69,8 @@ abstract class Entity implements iEntity {
         $db = MDB2::singleton();
         $data = $db->extended->getRow(self::GETDATA,list2array(self::TYPEENTITY),$nr,'integer');
         IsDbError($data);
-        if($data) :
-            foreach($data as $key => $val) $this->content[$key] = $val;
+        if ($data) :
+            foreach ($data as $key => $val) $this->content[$key] = $val;
         else :
             feedback(4,'error');
             exit(4);
@@ -83,12 +84,12 @@ abstract class Entity implements iEntity {
      **********************************************************/
         $db = MDB2::singleton();
         $bearbeiter = null;
-        if(!empty($this->content['editfrom'])) :
+        if (!empty($this->content['editfrom'])) :
             $bearbeiter = $db->extended->getCol(
                 'SELECT realname FROM s_auth WHERE uid = '.$this->content['editfrom'].';');
             IsDbError($bearbeiter);
         endif;
-        if($bearbeiter) return $bearbeiter[0];
+        if ($bearbeiter) return $bearbeiter[0];
     }
 
     static function IsInDB($nr, $bereich) {
@@ -98,13 +99,13 @@ abstract class Entity implements iEntity {
     **********************************************************/
         $db = MDB2::singleton();
 
-        if(is_numeric($nr) AND is_string($bereich) AND (strlen($bereich) == 1)) :
+        if (is_numeric($nr) AND is_string($bereich) AND (strlen($bereich) == 1)) :
             $data = $db->extended->getRow(
                 'SELECT COUNT(*) FROM entity WHERE id = ? and bereich = ?;',
                 null, array($nr,$bereich));
             IsDbError($data);
 
-            if($data['count']) :
+            if ($data['count']) :
                 return true;
             endif;
         endif;
@@ -113,10 +114,10 @@ abstract class Entity implements iEntity {
     static function getBereich($nr) {    // Holt zur ID die Bereichskennung
         $db = MDB2::singleton();
 
-        if($nr AND is_numeric($nr)) :
+        if ($nr AND is_numeric($nr)) :
             $data = $db->extended->getOne('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
             IsDbError($data);
-            if(!empty($data)) return $data;
+            if (!empty($data)) return $data;
         endif;
     }
 
@@ -135,7 +136,7 @@ abstract class Entity implements iEntity {
      * Aufgabe: Bearbeitungsflag setzen (Kippschalter)
      *  Return: none
      **********************************************************/
-        if($this->content['isValid']) $this->content['isValid'] = false;
+        if ($this->content['isValid']) $this->content['isValid'] = false;
             else $this->content['isValid'] = true;
     }
 
@@ -146,13 +147,18 @@ abstract class Entity implements iEntity {
              Papierkorb zu holen.
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+
         if (!$this->content['id']) return 4;   // Abbruch weil leerer Datensatz
 
         // Aufgabe: Löschflag setzen (Kipschalter)
-        if($this->content['del']) $this->content['del'] = false;
+        if ($this->content['del']) $this->content['del'] = false;
             else $this->content['del'] = true;
         $this->save();
+    }
+
+    public function isDel() {
+        if ($this->content['del']) return true;
     }
 
     public static function getTrash() {
@@ -161,7 +167,7 @@ abstract class Entity implements iEntity {
     Return:     array(Id, Bereich)
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
 
         $db = MDB2::singleton();
         $data = $db->extended->getAll(self::GETMUELL, array('integer','text'));

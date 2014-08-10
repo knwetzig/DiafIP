@@ -15,7 +15,7 @@ ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) feedback(108, 'error');
+if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = a_display(array(
@@ -36,7 +36,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
     // switch:aktion => add | edit | search | del | view
     switch($_REQUEST['aktion']) :
         case "add":
-            if(isset($_POST['form'])) :
+            if (isset($_POST['form'])) :
                 // neues Formular
                 $np = new Person;
                 $np->add(false);
@@ -66,11 +66,12 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             if (isset($_POST['sstring'])) :
                 $myauth->setAuthData('search', $_POST['sstring']);
 
-                $plist = PName::search($myauth->getAuthData('search'));
+                $p = new PName();
+                $plist = $p->search($myauth->getAuthData('search'));
                 if (!empty($plist) AND is_array($plist)) :
                     // Ausgabe
                     $bg = 1;
-                    foreach(($plist) as $val) :
+                    foreach (($plist) as $val) :
                         ++$bg; $smarty->assign('darkBG', $bg % 2);
                         switch($val['bereich']) :
                             case 'N' :
