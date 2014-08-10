@@ -93,7 +93,7 @@ $menue = array(
     'profile'   => $myauth->getAuthData('profil'),
     'phpself'   => $_SERVER['PHP_SELF']);
 
-if($myauth->getAuthData('uid') != 4) {
+if ($myauth->getAuthData('uid') != 4) {
     $menue['messg'] = d_feld::getString(4037);
     $menue['pref']  = d_feld::getString(4006);
 }

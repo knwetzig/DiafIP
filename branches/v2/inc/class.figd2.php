@@ -13,7 +13,7 @@ $URL$
 interface iFibikern {
     public static function getSTitelList();
     public static function getTitelList();
-    public static function getTitel($nr);
+    public function getTitel();
     public function addCast($p, $t);
     public function delCast($p, $t);
     public function search($s);
@@ -72,7 +72,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         $this->content['anmerk']    = null;
         $this->content['quellen']   = null;
         $this->content['thema']     = null;     // Schlagwortverzeichnis
-        if((isset($nr)) AND is_numeric($nr)) self::get(intval($nr));
+        if ((isset($nr)) AND is_numeric($nr)) self::get(intval($nr));
     }
 
     protected function get($nr) {
@@ -84,7 +84,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         $data = $db->extended->getRow(self::GETDATA,list2array(self::TYPEFIBI),$nr,'integer');
         IsDbError($data);
         if ($data) :
-        foreach($data as $key => $val) $this->content[$key] = $val;
+        foreach ($data as $key => $val) $this->content[$key] = $val;
         else:
             feedback(4, 'error');        // kein Datensatz vorhanden
             exit(4);
@@ -97,6 +97,14 @@ abstract class Fibikern extends Entity implements iFibikern {
             $this->stitel = $data['titel'];
             $this->sdescr = $data['descr'];
         endif;
+    }
+
+    public function getTitel() {
+    /****************************************************************
+    *  Aufgabe: Ausgabe des Titels
+    *   Return: String / Fehlercode
+    ****************************************************************/
+        return '<a href="index.php?'.$this->bereich.'='.$this->id.'">'.$this->titel.'</a>';
     }
 
     final protected function ifDouble() {
@@ -119,7 +127,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         $list = $db->extended->getCol(self::GETTAETIG, 'integer');
         IsDbError($list);
         $data = array();
-        foreach($list as $wert) $data[$wert] = d_feld::getString($wert);
+        foreach ($list as $wert) $data[$wert] = d_feld::getString($wert);
         asort($data);
         return $data;
     }
@@ -149,7 +157,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         IsDbError($list);
 
         $data = array(0 => null);
-        foreach($list as $wert) $data[$wert['id']] = $wert['titel'];
+        foreach ($list as $wert) $data[$wert['id']] = $wert['titel'];
         return $data;
     }
 
@@ -175,7 +183,7 @@ abstract class Fibikern extends Entity implements iFibikern {
     **********************************************************/
         $db = MDB2::singleton();
         // testen, das nix doppelt eingetragen wird!
-        if(self::existCast($p, $t)) return 8;
+        if (self::existCast($p, $t)) return 8;
 
         IsDbError($db->extended->autoExecute(
             'f_cast', array('fid' => $this->content['id'], 'pid' => $p, 'tid' => $t),
@@ -189,7 +197,7 @@ abstract class Fibikern extends Entity implements iFibikern {
      Return: Fehlercode
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
         IsDbError($db->extended->autoExecute(
@@ -213,7 +221,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         IsDbError($data);
 
         // Übersetzung für die Tätigkeit und Namen holen
-        foreach($data as &$wert) :
+        foreach ($data as &$wert) :
            $wert['job'] = d_feld::getString($wert['tid']);
            $p = new Person($wert['pid']);
            $wert['name'] = $p->getName();
@@ -264,7 +272,7 @@ abstract class Fibikern extends Entity implements iFibikern {
     Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data = parent::view();
         $data[] = new d_feld('titel',$this->content['titel'], VIEW, 500); // Originaltitel
@@ -336,21 +344,7 @@ final class Film extends Fibikern implements iFilm {
         IsDbError($data);
         if (empty($data)) feedback(4, 'error');        // kein Datensatz vorhanden
         // Ergebnis -> Objekt schreiben
-        foreach($data as $key => $wert) $this->$key = $wert;
-    }
-
-    public static function getTitel($nr) {
-    /****************************************************************
-    *  Aufgabe: Ausgabe des Titels
-    *   Return: String / Fehlercode
-    ****************************************************************/
-        $db = MDB2::singleton();
-        $erg = $db->extended->getOne(
-            'SELECT titel FROM f_main2
-             WHERE (id = ?) AND (del != TRUE);', null, intval($nr));
-        IsDbError($erg);
-        if(!empty($erg))
-            return '<a href="index.php?F='.$nr.'">'.$erg.'</a>';
+        foreach ($data as $key => $wert) $this->$key = $wert;
     }
 
     protected static function getListGattung() {
@@ -362,7 +356,7 @@ final class Film extends Fibikern implements iFilm {
         $list = $db->extended->getCol(self::SQL_getGenre, 'integer');
         $data = array();
         IsDbError($list);
-        foreach($list as $wert) :
+        foreach ($list as $wert) :
             $data[$wert] = d_feld::getString($wert);
         endforeach;
         asort($data);
@@ -379,7 +373,7 @@ final class Film extends Fibikern implements iFilm {
         IsDbError($list);
         $data = array();
         // TODO: ÃƒÅ“berdenken den Einsatz von getStringList !
-        foreach($list as $wert) $data[$wert] = d_feld::getString($wert);
+        foreach ($list as $wert) $data[$wert] = d_feld::getString($wert);
         return $data;
     }
 
@@ -392,7 +386,7 @@ final class Film extends Fibikern implements iFilm {
         $list = $db->extended->getAll(self::SQL_getBfLi);
         IsDbError($list);
         $data = array('');
-        foreach($list as $wert) $data[$wert['id']] = $wert['format'];
+        foreach ($list as $wert) $data[$wert['id']] = $wert['format'];
         return $data;
     }
 
@@ -425,8 +419,8 @@ final class Film extends Fibikern implements iFilm {
     ****************************************************************/
         $list = self::getListMediaSpez();
         $data = array();
-        foreach($list as $key => $wert) :
-            if(isbit($this->mediaspezi, $key)) $data[] = $wert;
+        foreach ($list as $key => $wert) :
+            if (isbit($this->mediaspezi, $key)) $data[] = $wert;
         endforeach;
         return $data;
     }
@@ -450,8 +444,8 @@ final class Film extends Fibikern implements iFilm {
     ****************************************************************/
         $list = self::getListProdTech();
         $data = array();
-        foreach($list as $key => $wert) :
-            if(isbit($this->prodtechnik, $key)) $data[] = $wert;
+        foreach ($list as $key => $wert) :
+            if (isbit($this->prodtechnik, $key)) $data[] = $wert;
         endforeach;
         return $data;
     }
@@ -484,7 +478,7 @@ final class Film extends Fibikern implements iFilm {
     *   Return:  Fehlercode
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
         if ($status == false) :
@@ -525,7 +519,7 @@ final class Film extends Fibikern implements iFilm {
                 'integer');     // sfolge
 
             $this->edit(true);
-            foreach($this as $key => $wert) $data[$key] = $wert;
+            foreach ($this as $key => $wert) $data[$key] = $wert;
             unset($data['stitel'], $data['sdescr']);
             $erg = $db->extended->autoExecute('f_film', $data,
                         MDB2_AUTOQUERY_INSERT, null, $types);
@@ -542,8 +536,8 @@ final class Film extends Fibikern implements iFilm {
     *   Return: none
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if($status == false) :        // Formular anzeigen
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if ($status == false) :        // Formular anzeigen
             $data = array(
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('serTitel',  parent::getSTitelList()),
@@ -595,104 +589,104 @@ final class Film extends Fibikern implements iFilm {
                     throw new Exception(null, 100);
                 else if ($_POST['titel']) $this->titel = $_POST['titel'];
 
-                if(isset($_POST['atitel'])) :
+                if (isset($_POST['atitel'])) :
                     if ($_POST['atitel']) $this->atitel = $_POST['atitel'];
                     else $this->atitel = null;
                 endif;
 
-                if(isset($_POST['sid']))
+                if (isset($_POST['sid']))
                     $this->sid = intval($_POST['sid']); else $this->sid = null;
                 if ($this->sid AND isset($_POST['sfolge']))
                     $this->sfolge = intval($_POST['sfolge']);
                 else $this->sfolge = null;
 
-                if(isset($_POST['utitel'])) :
+                if (isset($_POST['utitel'])) :
                     if ($_POST['utitel']) $this->utitel = $_POST['utitel'];
                     else $this->utitel = null;
                 endif;
 
-                if(isset($_POST['inhalt'])) :
+                if (isset($_POST['inhalt'])) :
                     if ($_POST['inhalt']) $this->inhalt = $_POST['inhalt'];
                     else $this->inhalt = null;
                 endif;
 
-                if(isset($_POST['quellen'])) :
+                if (isset($_POST['quellen'])) :
                     if ($_POST['quellen']) $this->quellen = $_POST['quellen'];
                     else $this->quellen = null;
                 endif;
 
-                if(isset($_POST['anmerk'])) :
+                if (isset($_POST['anmerk'])) :
                     if ($_POST['anmerk']) $this->anmerk = $_POST['anmerk'];
                     else $this->anmerk = null;
                 endif;
 
-                if(isset($_POST['prod_jahr'])) :
+                if (isset($_POST['prod_jahr'])) :
                     if ($_POST['prod_jahr']) {
-                        if(isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
+                        if (isvalid($_POST['prod_jahr'], '[\d]{1,4}'))
                             $this->prod_jahr = intval($_POST['prod_jahr']);
                         else feedback(103, 'warng');
                     } else $this->prod_jahr = null;
                 endif;
 
-                if(isset($_POST['thema'])) :
+                if (isset($_POST['thema'])) :
                     if ($_POST['thema']) $this->thema = $_POST['thema'];
                     else $this->thema = null;
                 endif;
 
-                if(isset($_POST['gattung'])) :
+                if (isset($_POST['gattung'])) :
                     if ($_POST['gattung']) {
-                        if(isvalid($_POST['gattung'], ANZAHL))
+                        if (isvalid($_POST['gattung'], ANZAHL))
                             $this->gattung = intval($_POST['gattung']);
                         else throw new Exception(null, 4);
                     } else $this->gattung = null;
                 endif;
 
-                if(isset($_POST['prodtech']))
+                if (isset($_POST['prodtech']))
                 $this->prodtechnik = array2wert(0, $_POST['prodtech']);
                 else $this->prodtechnik = null;
 
-                if(!empty($_POST['laenge']))
+                if (!empty($_POST['laenge']))
                     if ( isValid($_POST['laenge'], DAUER)) $this->laenge = $_POST['laenge']; else feedback(4, warng);
                 else $this->laenge = null;
 
-                if(isset($_POST['fsk'])) :
+                if (isset($_POST['fsk'])) :
                     if (!empty($_POST['fsk'])) {
-                        if(isvalid($_POST['fsk'], ANZAHL))
+                        if (isvalid($_POST['fsk'], ANZAHL))
                             $this->fsk = intval($_POST['fsk']);
                         else throw new Exception(null, 4);
                     } else $this->fsk = null;
                 endif;
 
-                if(isset($_POST['praedikat'])) :
+                if (isset($_POST['praedikat'])) :
                     if ($_POST['praedikat']) {
-                        if(isvalid($_POST['praedikat'], ANZAHL))
+                        if (isvalid($_POST['praedikat'], ANZAHL))
                             $this->praedikat = intval($_POST['praedikat']);
                         else throw new Exception(null, 4);
                     } else $this->praedikat = null;
                 endif;
 
-                if(isset($_POST['urauff'])) :
+                if (isset($_POST['urauff'])) :
                     if ($_POST['urauff']) {
-                        if(isvalid($_POST['urauff'], DATUM))
+                        if (isvalid($_POST['urauff'], DATUM))
                             $this->urauffuehr = $_POST['urauff'];
                         else feedback(103, 'warng');
                     } else $this->urauffuehr = null;
                 endif;
 
-                if(isset($_POST['bildformat']))
+                if (isset($_POST['bildformat']))
                     if ($_POST['bildformat']) $this->bildformat = intval($_POST['bildformat']);
 
-                if(isset($_POST['mediaspezi']))
+                if (isset($_POST['mediaspezi']))
                     $this->mediaspezi = array2wert(0, $_POST['mediaspezi']);
                 else $this->mediaspezi = null;
 
-                if(isset($_POST['notiz'])) :
+                if (isset($_POST['notiz'])) :
                     if ($_POST['notiz']) $this->notiz = $_POST['notiz'];
                         else $this->notiz = null;
                 endif;
 
                 $this->isvalid = false;
-                if(isset($_POST['isvalid'])) :
+                if (isset($_POST['isvalid'])) :
                     if ($_POST['isvalid']) $this->isvalid = true;
                 endif;
 
@@ -723,8 +717,8 @@ final class Film extends Fibikern implements iFilm {
     *    Return: Fehlercode
     ****************************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
-        if(!$this->id) return 4;         // Abbruch: leerer Datensatz
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!$this->id) return 4;         // Abbruch: leerer Datensatz
 
         $types = array(
         // ACHTUNG: Reihenfolge beachten!
@@ -754,7 +748,7 @@ final class Film extends Fibikern implements iFilm {
             'integer'       // sfolge
         );
 
-        foreach($this as $key => $wert) $data[$key] = $wert;
+        foreach ($this as $key => $wert) $data[$key] = $wert;
         unset($data['stitel'], $data['sdescr'], $data['id']);
 
         $db = MDB2::singleton();
@@ -783,7 +777,7 @@ final class Film extends Fibikern implements iFilm {
     *    Return: none
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data = parent::view();
             // name, inhalt, opt -> rechte, label,tooltip
@@ -823,21 +817,6 @@ class Biblio extends Fibikern implements iBiblio {
         // ....
     }
 
-    public static function getTitel($nr) {
-    /****************************************************************
-    *  Aufgabe: Ausgabe des Titels
-    *   Return: String / Fehlercode
-    ****************************************************************/
-        $db = MDB2::singleton();
-        $erg = $db->extended->getOne(
-            'SELECT titel FROM f_main2
-             WHERE (id = ?) AND (del != TRUE);', null, intval($nr));
-        IsDbError($erg);
-        if(!empty($erg))
-            return '<a href="index.php?B='.$nr.'">'.$erg.'</a>';
-    }
-
-
     public function add($status = null) {
     /****************************************************************
         Aufgabe: Legt neuen (leeren) Datensatz an (INSERT)
@@ -845,7 +824,7 @@ class Biblio extends Fibikern implements iBiblio {
         Return: Fehlercode
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 
     public function edit($status = null) {
@@ -855,7 +834,7 @@ class Biblio extends Fibikern implements iBiblio {
         Return: Fehlercode
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 
     public function save() {
@@ -864,7 +843,7 @@ class Biblio extends Fibikern implements iBiblio {
         Return: Fehlercode
     ****************************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
     }
 
     public function view() {
@@ -874,7 +853,7 @@ class Biblio extends Fibikern implements iBiblio {
         Return: Fehlercode
     ****************************************************************/
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
     }
 } // endclass Biblio
 

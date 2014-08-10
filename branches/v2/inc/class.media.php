@@ -65,7 +65,7 @@ class bild implements image {
         }
 
         global $myauth, $smarty;
-        if(!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
         $fehler = array();

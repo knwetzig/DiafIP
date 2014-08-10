@@ -8,7 +8,7 @@ $Date$
 $URL$
 **************************************************************/
 
-if(!$myauth->checkAuth()) feedback(108, 'error');
+if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = array( new d_feld('bereich', d_feld::getString(4012)),
@@ -23,7 +23,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
     switch($_REQUEST['aktion']) :
         case 'extra':
         case 'add':
-            if(isset($_POST['form'])) :
+            if (isset($_POST['form'])) :
                 // neues Formular
                 $n = new PName;
                 $n->add(false);

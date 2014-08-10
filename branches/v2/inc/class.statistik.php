@@ -52,7 +52,7 @@ class db_stat {
         $this->statistic[d_feld::getString(580)] = sprintf('%1.6f', $laufzeit);
 
         // Processtime Laufzeit - Zeit die Ausgaberoutinen verschlungen haben
-        if (!empty($outtime)) :
+        if(!empty($outtime)) :
             $ptime = $laufzeit - $outtime;
             $this->statistic[d_feld::getString(9)] = sprintf('%1.6f', $ptime);
         endif;

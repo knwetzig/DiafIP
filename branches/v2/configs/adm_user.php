@@ -12,12 +12,12 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
+if (!$myauth->getAuth()) {
     feedback(108, 'error');
     exit();
 }
 
-if(!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
+if (!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
                 (isBit($myauth->getAuthData('rechte'), SU )))) {
     feedback(2, 'error');
     exit(2);
@@ -61,7 +61,7 @@ $smarty->assign('dialog',
     array('bereich' => array( 1 => d_feld::getString(4033))));
 $smarty->display('main_bereich.tpl');
 
-if(isset($_POST['aktion'])) switch ($_POST['aktion']) :
+if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
     case "selekt" :
         // Formularauswertung nach Nutzerauswahl
         $myauth->setAuthData('selUser', $_POST['user']);
@@ -97,7 +97,7 @@ if(isset($_POST['aktion'])) switch ($_POST['aktion']) :
         // Alle LSB löschen
         for ($i = 0; $i < 15; $i++) clearBit($ore, $i);
 
-        if(!isset($_POST['rechte'])) :
+        if (!isset($_POST['rechte'])) :
             warng(10004);
             $_POST['rechte'] = array();
         endif;
@@ -114,17 +114,17 @@ if(isset($_POST['aktion'])) switch ($_POST['aktion']) :
         $types = array('text','text','integer','text','date','integer');
         $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
             'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
-        if(!IsDbError($data)) feedback("Die Daten wurden erfolgreich aktualisiert", 'hinw');
+        if (!IsDbError($data)) feedback("Die Daten wurden erfolgreich aktualisiert", 'hinw');
         break;
 
     case "addUser" :
-        if($_POST['username'] != "" AND $_POST['pwd'] != "")
+        if ($_POST['username'] != "" AND $_POST['pwd'] != "")
             $erg = $myauth->addUser($_POST['username'], $_POST['pwd']);
-        if(!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
+        if (!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
 endswitch;
 
 // Ausgabe: Selekt-Dialog
-if(isset($_POST['aktion']) AND $_POST['aktion'] !== 'selekt') :
+if (isset($_POST['aktion']) AND $_POST['aktion'] !== 'selekt') :
     viewSelektDialog();
     viewAddDialog();
 endif;
