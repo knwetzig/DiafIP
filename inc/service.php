@@ -21,9 +21,9 @@ echo <<<FORM
     <table>
         <tr>
             <td style="vertical-align:middle; padding-left:20px;">
-                <input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if(this.value=='gast'){this.value='';}" />
+                <input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if (this.value=='gast'){this.value='';}" />
                 <br />
-                <input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if(this.value=='gast'){this.value='';}" /><br />
+                <input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if (this.value=='gast'){this.value='';}" /><br />
                 <input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' />
             </td>
             <td>
@@ -36,9 +36,11 @@ echo <<<FORM
 FORM;
 }
 
+/** **** Datenbank Tools *************************************/
+
 function IsDbError($obj) { // Übergabe Datenbankobjekt
-    if(PEAR::isError($obj)) :
-        $db =& MDB2::singleton();
+    if (MDB2::isError($obj)) :
+        $db = MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
         echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
             print_r($obj->getUserInfo());
@@ -46,14 +48,14 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
         echo "</fieldset>\n";
         exit();
     endif;
-    return false;
+    return;
 }
 
-/** **** Bitfeldfunktionen / Checkboxen ************************************/
+/** **** Bitfeldfunktionen / Checkboxen **********************/
 function setBit(&$bitFeld, $n) {
 	// Ueberprueft, ob der Wert zwischen 0-31 liegt
 	// $n ist die Position (0 beginnend)
-	if(($n < 0) or ($n > 31)) return false;
+	if (($n < 0) or ($n > 31)) return false;
 
 	// Bit Shifting - Hier wird nun der Binaerwert fuer
 	// die aktuelle Position gesetzt.
@@ -83,7 +85,7 @@ function bit2array($wert) {
 }
 
 function array2wert($wert, $arr) {
-    foreach($arr as $k) setBit($wert,$k);
+    foreach ($arr as $k) setBit($wert,$k);
     return $wert;
 }
 
@@ -93,7 +95,7 @@ function getStringList($sl) {
     if (!is_array($sl)) return 1;
     // Die Liste spricht immer die eingestellte Sprache
     $nl = array();
-    foreach($sl as $value) {
+    foreach ($sl as $value) {
        $nl[] = d_feld::getString($value);
     }
     return $nl;
@@ -105,12 +107,24 @@ function isValid($val, $muster) {
     return preg_match($muster, $val);
 }
 
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
+function dez2hex($wert) {
+    return sprintf('%x', $wert);
+}
+
+function hex2dez($wert) {
+    return intval($wert, 16);
+}
+
 function list2array($list) {
-    // parst die DB-Liste in ein PHP-Array
+//  parst die DB-Liste in ein PHP-Array  {12,34,56} --> array(12,34,56)
     if (!is_string($list)) return 1;
-    $list = substr($list,1,-1);
-    $list = str_getcsv($list);
-    return $list;
+    return preg_split("/[,{}]/", $list, null, PREG_SPLIT_NO_EMPTY);
 }
 
 function array2list($arr) {
@@ -119,29 +133,47 @@ function array2list($arr) {
 _v(count($arr));
 _v($arr,'array');
     $list = '{';
-    foreach($arr as $val) $list .= $val.',';
+    foreach ($arr as $val) $list .= $val.',';
     $list[strlen($list)-1] = '}';
     return $list; **/
 }
 
 function _v($text, $titel = null) {
-    if($text) {
+    if ($text) {
         echo "<fieldset class='visor'>";
-        if($titel) echo "<legend>&nbsp;".$titel."&nbsp;</legend>";
+        if ($titel) echo "<legend>&nbsp;".$titel."&nbsp;</legend>";
         print_r($text);
         echo "</fieldset>\n";
     }
 }
 
+function _vp($text, $titel = null) {
+// wie _v aber in einem seperaten Popup-Fenster
+    if ($text) :
+        $inh = <<<'VIS'
+<html><head><style>body {font-family:monospace;white-space: pre;color:#004000;background-color: #eeffee;padding: 5px;}h3 {border:1px dotted #004000; padding:5px}</style></head><body><h3>
+VIS;
+$text = str_replace( "\n", '<br />', print_r($text, true));
+        echo "<script type=\"text/javascript\">
+                mywindow = window.open(\"\", \"visor\", \"width=800px, height=600px, scrollbars=yes, resizable=yes\");
+                mywindow.document.write(\"$inh\");
+                mywindow.document.write(\"$titel\");
+                mywindow.document.write(\"</h3>\");
+                mywindow.document.writeln(\"$text\");
+                mywindow.document.write(\"</body></html>\");
+        </script>";
+    endif;
+}
+
 function feedback($msg, $form = null) {
-    if(is_numeric($msg))
+    if (is_numeric($msg))
         echo "<div class=$form>".d_feld::getString((int)$msg)."</div>";
     else echo "<div class=$form>".$msg.'</div>';
 }
 
 /** **** TEXTBEARBEITUNG ****************************************************/
 function normtext($var) {
-    if(!is_array($var)) :
+    if (!is_array($var)) :
         // max drei White-Spaces erlaubt
         $var = preg_replace('/(\s{3})\s+/', '\1', $var);
         // wandelt Zeichen in Umschreibung ('>' --> '&gt;' usw. )

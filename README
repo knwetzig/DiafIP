@@ -1,32 +1,40 @@
-$Id: $
+$Id$
 
 Hinweise:
-    Vorausgesetzt ist, das eine lauffähige HTTP/PHP5 Umgebung installiert ist.
-    Installieren Sie, soweit nicht bereits geschehen die PEAR-Bibliotheken:
-        Auth,
-        MDB2 incl. der postgres-Treiber
-        php5-pgsql
 
-    Vor Implementierung ist die Datenbankstruktur aufzubauen. Dazu existiert die
-    Datei "struktur.sql". Im Anschluss müssen sie die Daten aus "struktur_daten.sql" einpflegen.
+    Vorausgesetzt ist, das eine lauffähige HTTP/PHP5 Umgebung installiert ist. In diese
+    Umgebung ist das PHP-Modul 'php5-pgsql' zu integrieren. In den meisten Distrubutionen
+    ist nur die 'mysql' Unterstützung einkompiliert.
+
+    Installieren Sie nun, soweit nicht bereits geschehen die PEAR-Bibliotheken:
+        Auth,
+        MDB2 incl. des postgres-Treiber (Bestandteil des MDB2-Pakets)
+
+    Vor Implementierung ist die Datenbankstruktur aufzubauen. Dazu existiert das Verzeichnis
+    'database' mit seiner Grundstruktur 'all.sql' und nummerierten Versionsergänzungen.
+    Starten sie den Dump mit den Rechten des Datenbankbesitzers.
 
     Anschließend ist der DSN außerhalb des Document-Root zu deklarieren.
         Bsp.:      DSN = 'pgsql://dbuser:password@tcp(localhost)/diafip';
-    und der Pfad in der configs/config.local.php zu ändern.
 
-    Anpassungen:
-        PHP.INI an Produktionsumgebung
-        "smarty" Konfiguration in configs/config.local.php
-        mc.conf  Vorgabe für Smarty
+    Im Verzeichnis 'configs' findet sich eine Vorlage für die zu erstellende Datei
+    'configs/config.local.php'. Passen Sie die Einstellungen an Ihre Bedürfnisse an.
 
-Fehlertabelle / Errortable
-    0   kein Fehler
-    1   allgemeiner Fehler
-    2   fehlende Rechte
-    4   fehlende Parameter
-    8   interner Fehler (Datenkonsistenz)
-   16
-   32
-   64
-  128   Datensatz bereits vorhanden
-  256
+
+Richtlinien:
+
+    Es gibt keine Verlinkung zu fremden Inhalten. Fremder Inhalt ist OpenSource und local
+    abgelegt.
+
+        Name                    Zweck                               Lizenz
+        _________________________________________________________________________________
+    Fremde Software included:
+        overLib                 JavaScript Popup-Bibliothek         GPL
+
+    Externe Software: (nicht Bestandteil dieser Software)
+        PHP5                                                        PHP
+        Pear::Auth              Bibliothek Authentification         PHP
+        Pear::MDB2              Database Abstractionslayer          BSD-Style
+        PEAR::MDB2-Driver_pgsql MDB2 Driver                         BSD
+
+    Detaillierte Angaben unter: www.opensource.org/licenses/

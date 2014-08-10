@@ -10,28 +10,28 @@ $URL$
 
 ***** (c) DIAF e.V. ************************************************/
 
-if(!$myauth->getAuth()) {
+if (!$myauth->getAuth()) {
     feedback(108, 'error');
     exit();
 }
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
     feedback(2, 'error');
     exit(2);
 }
 
 function getStrList() {
-    $db =& MDB2::singleton();
+    $db = MDB2::singleton();
 	$sql = 'SELECT id AS nr, de FROM s_strings ORDER BY de ASC;';
 	$data = $db->extended->getAll($sql, array('integer','text'));
 	IsDbError($data);
     $list = array();
-    foreach($data as $val) $list[$val['nr']] = $val['de'];
+    foreach ($data as $val) $list[$val['nr']] = $val['de'];
     return $list;
 }
 
 function getStrings($nr) {
-    $db =& MDB2::singleton();
+    $db = MDB2::singleton();
     $data = $db->extended->getRow(
         'SELECT id AS nr, de, en, fr FROM s_strings WHERE id = ?;', null, $nr, 'integer');
     IsDbError($data);
@@ -60,16 +60,16 @@ function viewEdit($satz) {
 $smarty->assign('dialog', array('bereich' =>
                             array( 1 => d_feld::getString(4036))));
 $smarty->display('main_bereich.tpl');
-$db =& MDB2::singleton();
+$db = MDB2::singleton();
 // Auswertung edit
-if(isset($_POST['aktion']) AND $_POST['aktion'] === 'edit') :
+if (isset($_POST['aktion']) AND $_POST['aktion'] === 'edit') :
     $data = array('en' => $_POST['en'], 'fr' => $_POST['fr']);
     IsDbError($db->extended->autoExecute('s_strings', $data,
                 MDB2_AUTOQUERY_UPDATE, 'id = '.$db->quote($_POST['nr'], 'integer')));
 endif;
 
 // Anzeige Menüelement (selekt oder editfeld)
-if(empty($_POST['aktion']) OR
+if (empty($_POST['aktion']) OR
     (!empty($_POST['aktion']) AND $_POST['aktion'] !== 'selekt'))
     viewSelekt(); else viewEdit(getStrings((int)$_POST['string']));
 ?>

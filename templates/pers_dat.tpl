@@ -23,12 +23,8 @@ $URL$
     <tr>
         <td colspan="2">
             <div style="white-space:normal" class="fett">
-            {if !empty($dialog['vname'][1])}{$dialog['vname'][1]}&nbsp;{/if}
-            {if !empty($dialog['name'][1])} {$dialog['name'][1]}{/if}
-            {if !empty($dialog['aliases'][1])}
-                <span style="font-weight:normal">&nbsp;
-                ({foreach from=$dialog['aliases'][1] item=alias}{$alias}{/foreach})</span>
-            {/if}
+            {if !empty($dialog['pname'][1])} {$dialog['pname'][1]}{/if}
+            {if !empty($dialog['aliases'][1])}<span style="font-weight:normal">({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}{else},&nbsp;{/if}{/foreach})</span>{/if}
             </div>
         </td>
 
@@ -57,6 +53,7 @@ $URL$
                         value="del" /><img src="images/del.png" /></button>
                 {/if}
                 <input type="hidden" name="form" value="true" />
+                <input type="hidden" name="sektion" value="{$dialog['bereich'][1]}" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
             </form>
         </td>
@@ -118,14 +115,14 @@ $URL$
 
 
 {* --Biografiezeile-- *}
-    {if !empty($dialog['biogr'][1])}<tr>
-            <td class="re" style="vertical-align:top">{$dialog['biogr'][2]}:</td>
-            <td colspan="2" style="white-space:normal">{$dialog['biogr'][1]|nl2br}</td>
+    {if !empty($dialog['descr'][1])}<tr>
+            <td class="re" style="vertical-align:top">{$dialog['descr'][2]}:</td>
+            <td colspan="2" style="white-space:normal">{$dialog['descr'][1]|nl2br}</td>
     </tr>{/if}
 
 {* --Verweis auf Filmografie-- *}
     {if !empty($dialog['castLi'][1])}
-        {foreach from=$dialog['castLi'][1] item=cast}<tr>
+        {foreach $dialog['castLi'][1] as $cast}<tr>
             <td><!-- Label --></td>
             <td>{$cast['ftitel']}</td>
             <td>{$cast['job']}</td>
@@ -136,5 +133,10 @@ $URL$
     {if !empty($dialog['notiz'][1])}<tr>
             <td class="re" style="vertical-align:top">{$dialog['notiz'][2]}:</td>
             <td colspan="2" style="white-space:normal">{$dialog['notiz'][1]|nl2br}</td>
+    </tr>{/if}
+
+{* --isvalid-- Eintrag *}
+    {if !empty($dialog['isVal'][1])}<tr>
+        <td colspan="3" class="re"><img src="images/ok.png" />&nbsp;{$dialog['isVal'][2]}</td>
     </tr>{/if}
 </table>

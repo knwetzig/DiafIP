@@ -14,13 +14,15 @@ class db_stat {
         $statistic  = array();
 
     function __construct() {
-        $this->getStat();
+        global $myauth;
+        if($myauth->getAuthData('uid') != 4) $this->getStat();
     }
 
     function getStat() {
 	   global $laufzeit, $outtime;
-       $db =& MDB2::singleton();
+       $db = MDB2::singleton();
 
+/*
         // Anzahl filmogr. & bibl. Datensätze
         $sql = 'SELECT COUNT(*) FROM i_main WHERE del = false;';
         $data = $db->extended->getOne($sql,'integer');
@@ -33,19 +35,26 @@ class db_stat {
         $this->statistic[d_feld::getString(4001)] = $data;
 
         // Anzahl Personendaten
-        $sql = 'SELECT COUNT(*) FROM p_person WHERE del = false;';
+        $sql = 'SELECT COUNT(*) FROM p_person2 WHERE del = false;';
         $data = $db->extended->getOne($sql,'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4003)] = $data;
+*/
+
+        // Anzahl Personendaten
+        $sql = 'SELECT COUNT(*) FROM entity WHERE del = false;';
+        $data = $db->extended->getOne($sql,'integer');
+        IsDbError($data);
+        $this->statistic[d_feld::getString(4039)] = $data;
 
         // Runtime
         $laufzeit += gettimeofday(true);
-        $this->statistic[d_feld::getString(580)] = sprintf('%f', $laufzeit);
+        $this->statistic[d_feld::getString(580)] = sprintf('%1.6f', $laufzeit);
 
         // Processtime Laufzeit - Zeit die Ausgaberoutinen verschlungen haben
-        if (!empty($outtime)) :
+        if(!empty($outtime)) :
             $ptime = $laufzeit - $outtime;
-            $this->statistic[d_feld::getString(9)] = sprintf('%f', $ptime);
+            $this->statistic[d_feld::getString(9)] = sprintf('%1.6f', $ptime);
         endif;
     }
 

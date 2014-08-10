@@ -41,19 +41,19 @@ Repräsentiert ein Ein-/Ausgabeelement
 
     static function getString($nr) {
         global $lang;
-        if(empty($nr) OR !is_numeric($nr)) return null;
+        if (empty($nr) OR !is_numeric($nr)) return null;
 
-        $db =& MDB2::singleton();
+        $db = MDB2::singleton();
         $data = $db->extended->getRow(
             'SELECT de, en, fr FROM s_strings WHERE id = ?;', null, $nr);
-        if(!empty($data[$lang])) $st = $data[$lang]; else $st = $data['de'];
+        if (!empty($data[$lang])) $st = $data[$lang]; else $st = $data['de'];
         return $st;
     }
 
     protected function isValid() {
         // Püfung auf korrekte syntax - keine semantikprüfung!
-        if(isset($valStr)) {
-            if(preg_match('/'.$this->valStr.'/', $this->inhalt))
+        if (isset($valStr)) {
+            if (preg_match('/'.$this->valStr.'/', $this->inhalt))
                 return true; else return false;
         }
         return 4;   // kein Validierungsstring vorhanden
@@ -63,7 +63,7 @@ Repräsentiert ein Ein-/Ausgabeelement
         global $myauth;
         /* Test auf Berechtigung, stellt sicher, das auch nur das ausgegeben
         wird, wozu der Nutzer eine Berechtigung hat */
-        if(is_int($this->rights) AND !isBit($myauth->getAuthData('rechte'),
+        if (is_int($this->rights) AND !isBit($myauth->getAuthData('rechte'),
             $this->rights)) return false;
         // feldname, inhalt, label, tooltip
         $daten = array(
@@ -84,7 +84,7 @@ function a_display($arr) {
     foreach ($arr as $val) {
         if (is_array($val->display())) {
             $a = $val->display();
-            if($a) $data[$a[0]] = $a;
+            if ($a) $data[$a[0]] = $a;
         }
     }
     return $data;

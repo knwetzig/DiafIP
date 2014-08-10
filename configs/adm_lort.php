@@ -14,12 +14,12 @@ Eventhandler für Verwaltung von Lagerorten
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
+if (!$myauth->getAuth()) {
     feedback(108, 'error');             // Fremdaufruf!
     exit();
 }
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
     feedback(2, 'error');
     exit(2);
 }

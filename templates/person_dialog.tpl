@@ -1,8 +1,10 @@
 {**************************************************************
 
-call:   pers_class.php
-class:  Person
-proc:   editPerson/
+    Template für den Eingabedialog-Namen
+
+call:   class.person.php
+class:  PName/Person
+proc:   edit
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
 $Rev$
@@ -10,30 +12,41 @@ $Author$
 $Date$
 $URL$
 
-***** (c) DIAF e.V. *******************************************}
+**************************************************************}
 
 <form action='{$dlg['phpself']}' method='post'>
   <fieldset>
-    <legend>{$dialog['bereich'][2]}</legend>
+    <legend>{$dialog['kopf'][2]}&nbsp;#{$dialog['id'][1]}</legend>
       <table><colgroup><col><col><col><col></colgroup>
+
 <!-- Vorname/Name -->
         <tr>
 {if isset($dialog['vname'])}
-          <td>{$dialog['vname'][2]}</td>
-          <td><input type='text' name="{$dialog['vname'][0]}" value="{$dialog['vname'][1]}" /></td>
+            <td>{$dialog['vname'][2]}</td>
+            <td><input
+                type='text'
+                name="{$dialog['vname'][0]}"
+                value="{$dialog['vname'][1]}"
+                onfocus="if(this.value=='{$dialog['vname'][1]}'){literal}{this.value='';}{/literal}"
+            /></td>
 {/if}
-{if isset($dialog['name'])}
-          <td>{$dialog['name'][2]}</td>
-          <td><input type='text' name="{$dialog['name'][0]}" value="{$dialog['name'][1]}" /></td>
+{if isset($dialog['nname'])}
+          <td>{$dialog['nname'][2]}</td>
+          <td><input type='text' name="{$dialog['nname'][0]}" value="{$dialog['nname'][1]}" /></td>
 {/if}
         </tr>
 
-<!-- Alias -->
-{if isset($dialog['aliases'])}
-        <tr>
+<!-- Aliasnamen anzeigen -->
+{if !empty($dialog['aliases'][1])}
           <td>{$dialog['aliases'][2]}</td>
-          <td colspan=3>
-            {html_options name=$dialog['aliases'][0] options=$alist selected=$dialog['aliases'][1]}
+          <td>({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}{else},&nbsp;{/if}{/foreach})</td>
+{/if}
+
+{if isset($alist)}
+        <tr>
+          <td>{$dialog['addalias'][2]}</td>
+          <td>
+            {html_options name={$dialog['addalias'][0]} options=$alist}
           </td>
         </tr>
 {/if}
@@ -59,10 +72,7 @@ $URL$
 
 <!-- Tod.-tag/-Ort -->
 {if isset($dialog['ttag'])}
-        <tr
-           onmouseover="return overlib({literal}'{/literal}{$dialog['tort'][3]} {literal}'{/literal},DELAY,500,FGCOLOR,{literal}'{/literal}#FFEfEf{literal}'{/literal},BGCOLOR,{literal}'{/literal}#C00010{literal}'{/literal},TEXTCOLOR,{literal}'{/literal}#C00010{literal}'{/literal});"
-           onmouseout="return nd();"
-        >
+        <tr>
           <td>{$dialog['ttag'][2]}</td>
           <td><input
             type='text'
@@ -135,17 +145,18 @@ $URL$
           </td>
         </tr>
 {/if}
+
 <!-- Biografie -->
-{if isset($dialog['biogr'])}
+{if isset($dialog['descr'])}
         <tr>
-          <td class="top">{$dialog['biogr'][2]}</td>
+          <td class="top">{$dialog['descr'][2]}</td>
           <td colspan=3>
             <textarea
-              name="{$dialog['biogr'][0]}"
+              name="{$dialog['descr'][0]}"
               cols='60'
               rows='15'
               wrap='soft'
-            >{$dialog['biogr'][1]}</textarea>
+            >{$dialog['descr'][1]}</textarea>
           </td>
         </tr>
 {/if}
@@ -165,16 +176,30 @@ $URL$
         </tr>
 {/if}
 
+{* --- isvalid --- *}
+    {if isset($dialog['isvalid'])}<tr>
+        <td>&nbsp;</td>
+        <td>
+            <input
+                type="checkbox"
+                name="isvalid"
+                {if $dialog['isvalid'][1]}checked="checked"{/if}
+                value='true' />
+            {$dialog['isvalid'][2]}
+        </td>
+    </tr>{/if}
+
         <tr>
           <td></td>
           <td><input type='submit' name='submit' /></td>
         </tr>
       </table>
     </fieldset>
+
     <input
       type='hidden'
       name='sektion'
-      value='person'
+      value='{$sektion}'
     />
     <input
       type='hidden'
@@ -182,3 +207,5 @@ $URL$
       value='{$aktion}'
     />
 </form>
+
+
