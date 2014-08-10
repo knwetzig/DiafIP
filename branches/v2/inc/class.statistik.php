@@ -22,6 +22,7 @@ class db_stat {
 	   global $laufzeit, $outtime;
        $db = MDB2::singleton();
 
+/*
         // Anzahl filmogr. & bibl. Datensätze
         $sql = 'SELECT COUNT(*) FROM i_main WHERE del = false;';
         $data = $db->extended->getOne($sql,'integer');
@@ -38,6 +39,13 @@ class db_stat {
         $data = $db->extended->getOne($sql,'integer');
         IsDbError($data);
         $this->statistic[d_feld::getString(4003)] = $data;
+*/
+
+        // Anzahl Personendaten
+        $sql = 'SELECT COUNT(*) FROM entity WHERE del = false;';
+        $data = $db->extended->getOne($sql,'integer');
+        IsDbError($data);
+        $this->statistic[d_feld::getString(4039)] = $data;
 
         // Runtime
         $laufzeit += gettimeofday(true);

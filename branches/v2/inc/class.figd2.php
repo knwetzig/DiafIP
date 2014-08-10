@@ -241,14 +241,15 @@ abstract class Fibikern extends Entity implements iFibikern {
      Return: Array der gefunden ID's | Fehlercode
     **********************************************************/
         global $myauth;
-        if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
-            $s = "%".$s."%";
-            $db = MDB2::singleton();
+        $s = "%".$s."%";
+        $db = MDB2::singleton();
 
-            // Suche in titel, atitel, utitel
-            $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s.$s));
-            IsDbError($data);
+        // Suche in titel, atitel, utitel
+        $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s.$s));
+        IsDbError($data);
+        if ($data) :
             return $data;
         else :
             return 1;
@@ -266,18 +267,18 @@ abstract class Fibikern extends Entity implements iFibikern {
         if(!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data = parent::view();
-        $data[] = new d_feld('titel',$this->content['titel'], VIEW, 500), // Originaltitel
-        $data[] = new d_feld('atitel',$this->content['atitel'], VIEW, 503), // Arbeitstitel
-        $data[] = new d_feld('utitel',$this->content['utitel'], VIEW, 501), // Untertitel
-        $data[] = new d_feld('stitel',$this->stitel, VIEW, 504),            // Serientitel
-        $data[] = new d_feld('sfolge',$this->content['sfolge'],VIEW),       // Serienfolge
-        $data[] = new d_feld('sdescr',$this->sdescr),                   // Beschreibung Serie
-        $data[] = new d_feld('prod_jahr',$this->content['prod_jahr'],VIEW,576),
-        $data[] = new d_feld('anmerk',changetext($this->content['anmerk']),VIEW,572),
-        $data[] = new d_feld('quellen',$this->content['quellen'],VIEW, 578),
-        $data[] = new d_feld('thema',$this->content['thema'],VIEW,577), // Schlagwortliste
-//        new d_feld('isVal',     $this->isvalid,             VIEW, 10009),
-//        new d_feld('cast',      $this->getCastList(),       VIEW),
+        $data[] = new d_feld('titel',$this->content['titel'], VIEW, 500); // Originaltitel
+        $data[] = new d_feld('atitel',$this->content['atitel'], VIEW, 503); // Arbeitstitel
+        $data[] = new d_feld('utitel',$this->content['utitel'], VIEW, 501); // Untertitel
+        $data[] = new d_feld('stitel',$this->stitel, VIEW, 504);            // Serientitel
+        $data[] = new d_feld('sfolge',$this->content['sfolge'],VIEW);       // Serienfolge
+        $data[] = new d_feld('sdescr',$this->sdescr);                   // Beschreibung Serie
+        $data[] = new d_feld('prod_jahr',$this->content['prod_jahr'],VIEW,576);
+        $data[] = new d_feld('anmerk',changetext($this->content['anmerk']),VIEW,572);
+        $data[] = new d_feld('quellen',$this->content['quellen'],VIEW, 578);
+        $data[] = new d_feld('thema',$this->content['thema'],VIEW,577); // Schlagwortliste
+//        new d_feld('isVal',     $this->isvalid,             VIEW, 10009);
+//        new d_feld('cast',      $this->getCastList(),       VIEW);
         return $data;
     }
 }       // ende Main KLASSE

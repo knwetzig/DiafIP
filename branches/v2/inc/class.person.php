@@ -588,7 +588,7 @@ class Person extends PName implements iPerson {
                     else throw new ErrorException(null,106,E_WARNING);
                 else : $this->content['mail'] = null; endif;
 
-                if(isset($_POST['biogr'])) $this->content['descr'] = $_POST['biogr'];
+                if(isset($_POST['descr'])) $this->content['descr'] = $_POST['descr'];
                 if(isset($_POST['notiz'])) $this->content['notiz'] = $_POST['notiz'];
 
                 // doppelten Datensatz abfangen
