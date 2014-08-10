@@ -9,12 +9,12 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->checkAuth()) {
+if (!$myauth->checkAuth()) {
     feedback(108, 'error');
     exit();
 }
 
-if($myauth->getAuthData('rechte') < 2) {
+if ($myauth->getAuthData('rechte') < 2) {
     feedback(2, 'error');
     exit();
 }
@@ -31,13 +31,13 @@ if (!isset($_POST['aktion'])) {
 switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
 
     case "neu":
-       if(!isset($_POST['submit'])) {
+       if (!isset($_POST['submit'])) {
             // Formular anzeigen
 
 ?>
             <form method='post'>
                 <fieldset><legend> Beitrag erstellen </legend>
-                    <input style='width:500px' type='text' name='titel' value='Titel eingeben' onfocus="if(this.value=='Titel eingeben'){this.value='';}" /><br />
+                    <input style='width:500px' type='text' name='titel' value='Titel eingeben' onfocus="if (this.value=='Titel eingeben'){this.value='';}" /><br />
                     <textarea name='text' style='width:500px;height:300px'></textarea><br />
                     <input type='hidden' name='sektion' value='news' />
                     <input type='hidden' name='aktion' value='neu' />
@@ -127,11 +127,11 @@ $sql = "SELECT
 $data = $db->extended->getAll($sql, array('integer','text','text','date','text'));
 IsDbError($data);
 
-foreach($data as $wert) :
+foreach ($data as $wert) :
     echo "<hr /><form method='post'><span style='float:right' class='note'>\n"
         .$wert['chdatum']."&nbsp;|&nbsp;".$wert['realname']."&nbsp;\n";
     /* Nutzer berechtigt zu editieren? */
-    if($myauth->getAuthdata('uid') === $wert['autor'] OR
+    if ($myauth->getAuthdata('uid') === $wert['autor'] OR
             isbit($myauth->getAuthData('rechte'), SU)) {
         echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n";
         echo "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";

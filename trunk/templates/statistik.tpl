@@ -10,10 +10,13 @@ $URL$
 ***** (c) DIAF e.V. *******************************************}
 
 <div id='status' class='note'>
+{if !empty($stat)}
     <b>{$dlg['stat']}</b>
     <table>
-{foreach from=$stat item=wert key=schluessel}
-    <tr><td>{$schluessel}:</td><td class='re'>{$wert}</td></tr>
-{/foreach}  </table><br />
+        {foreach $stat as $wert}
+        <tr><td>{$wert@key}:</td><td class='re'>{$wert}</td></tr>
+        {/foreach}
+    </table><br />
+{/if}
     <img src='images/openbsdpower.gif' alt='powered by OpenBSD' width='100px' />
 </div>

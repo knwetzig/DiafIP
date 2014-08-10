@@ -13,11 +13,11 @@ $URL$
     <form action='index.php' method='get'>
         <button class='noBG'><img src='images/diaf.png' alt='DIAF' /></button>
         <br /><br />
-        <button name='sektion' value='person'>{$dlg['pers']}</button>
-        <button name='sektion' value='film'>{$dlg['fgraf']}</button>
-        <button name='sektion' value='i_planar'>{$dlg['i2d']}</button>
-        <button name='sektion' value='i_3dobj'>{$dlg['i3d']}</button>
-        <button name='sektion' value='i_fkop'>{$dlg['fkop']}</button>
+        <button name='sektion' value='P'>{$dlg['P']}</button>
+        <button name='sektion' value='F'>{$dlg['F']}</button>
+        <button name='sektion' value='Y'>{$dlg['Y']}</button>
+        <button name='sektion' value='Z'>{$dlg['Z']}</button>
+        <button name='sektion' value='K'>{$dlg['K']}</button>
 {if !empty($dlg['messg'])}<button name='sektion' value='news'>{$dlg['messg']}</button>{/if}
 {if !empty($dlg['pref'])}<button name='sektion' value='admin'>{$dlg['pref']}</button>{/if}
 

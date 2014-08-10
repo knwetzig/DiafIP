@@ -9,7 +9,7 @@ $URL$
 
 ***** (c) DIAF e.V. *********************************************************/
 
-if(!$myauth->checkAuth()) feedback(108, 'error');
+if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = a_display(array(
@@ -73,7 +73,7 @@ if (isset($_POST['aktion'])?$_POST['aktion']:'') :
         case "del" :
             $i2d = new Planar($_POST['id']);
             $erg = $i2d->del();
-            if(empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'error');
+            if (empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'error');
         break;
 
         case 'view' :

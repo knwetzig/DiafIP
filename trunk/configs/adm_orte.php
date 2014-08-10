@@ -18,12 +18,12 @@ ToDo:
     Das gleiche für das Dialog-Template in der Klassendefinition
 ***** (c) DIAF e.V. *******************************************/
 
-if(!$myauth->getAuth()) {
+if (!$myauth->getAuth()) {
     feedback(108, 'error');
     exit();
 }
 
-if(!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
     feedback(2, 'error');
     exit(2);
 }
@@ -41,7 +41,7 @@ if (isset($_POST['oid'])) $seloid = $_POST['oid'];
 $smarty->assign('seloid', $seloid);
 $smarty->display("adm_orteselekt.tpl");
 
-if(isset($_POST['submit'])) {
+if (isset($_POST['submit'])) {
     switch ($_POST['submit']) :
     case "selekt" :
         // Formularauswertung von Nutzerauswahl (impliziert bearbeiten)
@@ -61,7 +61,7 @@ if(isset($_POST['submit'])) {
         $loc->set();
         break;
     case "delOrt" :
-        if(!isBit($myauth->getAuthData('rechte'), DELE)) {
+        if (!isBit($myauth->getAuthData('rechte'), DELE)) {
             feedback(2, 'error');
             exit();
         }
@@ -70,7 +70,7 @@ if(isset($_POST['submit'])) {
     endswitch;
 }
 
-if(!isset($_POST['submit']) OR (isset($_POST['submit']) AND
+if (!isset($_POST['submit']) OR (isset($_POST['submit']) AND
                                     $_POST['submit'] !== "selekt")) :
     // Anzeige Formular Neuanlage
     $smarty->assign('aktion', 'addOrt');

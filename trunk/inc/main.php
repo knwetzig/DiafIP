@@ -2,41 +2,60 @@
 /***************************************************************
 
     Das Ladeprogramm für die Hauptseite
-    Hier wird nur die "sektion" Fraktion ausgewertet
 
 $Rev$
 $Author$
 $Date$
 $URL$
 
-Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' AND NOT 'action'!!!
-***** (c) DIAF e.V. *******************************************/
+Anm.: Schreibe 'sektion' und nicht 'section' und 'aktion' und nicht 'action'.
+Der Browser wird es dir danken, indem er nicht mehr durcheinander kommt.
+**************************************************************/
 
-    echo "<div id='main'>";
-    if(!empty($_REQUEST['id'])) :
-        /* Da eine 'id angegeben wurde' wird hier zwangsweise die 'sektion'
-           ermittelt und gegebenfalls überschrieben!  */
-        $bereich = array(
-            'person'    => 'p_person',
-            'film'      => 'f_film',
-            'i_planar'  => 'i_planar',
-            'i_3dobj'   => 'i_3dobj',
-            'i_fkop'    => 'i_fkop');
+echo "<div id='main'>";
 
-        foreach($bereich as $key => $wert) :
-            $data = $db->extended->getRow(
-                'SELECT COUNT(*) FROM '.$wert.' WHERE id = ?;',
-                'integer', $_REQUEST['id'], 'integer');
-            IsDbError($data);
-            if($data['count']) :
-                $_REQUEST['sektion'] = $key;
-                break;
-            endif;
-        endforeach;
-    endif;                              // Abschluß der Testreihe
+if (!empty($_REQUEST)) :
+    /* Da hier offensichtlich was steht wird versucht die 'sektion'
+        zuzuweisen und evt. eine id zu ermitteln
+        zulässige Parameter:  $_REQUEST['sektion'] = 'F' | $_REQUEST['F'] = 123
+        Beides würde and den Eventhandler filmogr. Daten übergeben werden */
 
-    if(isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']]))
-        include $datei[$_REQUEST['sektion']];
-    else include 'default.php';
-    echo "</div>";
+// SONDERFALL: sektion='P' & aktion='extra' -> PName->add()
+    if (!empty($_POST['sektion']) and !empty($_POST['aktion']) and $_POST['sektion'] == 'P'
+        and $_POST['aktion'] == 'extra') $_REQUEST['sektion'] = 'N';
+
+// Variante: $_REQUEST['F'] = 123 ohne weitere Parameter
+    $nr = intval(current($_GET));
+    if (Entity::IsInDB($nr,key($_GET))) :
+        $_REQUEST['id'] = $nr;
+        $_REQUEST['aktion'] = 'view';
+        $_REQUEST['sektion'] = key($_REQUEST);
+    endif;
+
+// Variante: Es wurde im Suchfeld eine Nr. eingegeben
+    if (!empty($_POST['sstring']) AND is_numeric($_POST['sstring'])) :
+        $nr = intval($_POST['sstring']);
+        $bereich = Entity::getBereich($nr);
+        if ($bereich) :
+            unset ($_POST, $_REQUEST['sstring']);
+            $_REQUEST['sektion'] = $bereich;
+            $_REQUEST['aktion'] = 'view';
+            $_REQUEST['id'] = $nr;
+        endif;
+    endif;
+endif;
+
+// Variante: $_REQUEST['sektion'] = 'F' und Auswertung vorige
+if (isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']])) :
+    if (!empty($_REQUEST['aktion'])) $smarty->assign('aktion', $_REQUEST['aktion']);
+    $smarty->assign('sektion', $_REQUEST['sektion']);
+    include $datei[$_REQUEST['sektion']];
+else :
+    // mehrsprachige Vorgabeseite
+    $data = $db->extended->getOne(
+        'SELECT '.$myauth->getAuthData('lang').' FROM s_strings WHERE id = 13;');
+    IsDbError($data);
+    echo $data;
+endif;
+echo "</div>";
 ?>
