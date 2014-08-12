@@ -1,6 +1,4 @@
-/* $Id: 75 $ */
-
-
+@import "base.css";
 @media screen {
     #menue {
         position:fixed;
@@ -97,7 +95,6 @@ input[type='submit'],[type='button'] {
 
 
 button.noBG {
-    background-image:url(../../../images/bg.png);
     border:none;
 }
 
