@@ -90,7 +90,7 @@ $menue = array(
     'realname'  => $myauth->getAuthData('realname'),
     'userid'    => $myauth->getAuthData('uid'),
     'lang'      => $myauth->getAuthData('lang'),
-    'profile'   => $myauth->getAuthData('profil'),
+    'profil'    => $myauth->getAuthData('profil'),
     'phpself'   => $_SERVER['PHP_SELF']);
 
 if ($myauth->getAuthData('uid') != 4) {
@@ -98,7 +98,7 @@ if ($myauth->getAuthData('uid') != 4) {
     $menue['pref']  = d_feld::getString(4006);
 }
 $smarty->assign('dlg', $menue);
-$smarty->display('menue.tpl');
+$smarty->display('header.tpl');
 
 include 'main.php';
 

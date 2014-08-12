@@ -18,5 +18,5 @@ $URL$
         {/foreach}
     </table><br />
 {/if}
-    <img src='images/openbsdpower.gif' alt='powered by OpenBSD' width='100px' />
+    <img src='images/openbsdpower.gif' alt='powered by OpenBSD' width='120px' />
 </div>

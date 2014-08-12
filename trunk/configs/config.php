@@ -78,5 +78,5 @@ $smarty->config_dir     = $smartyConf['config_dir'];
 $smarty->cache_dir      = $smartyConf['cache_dir'];
 $smarty->force_compile  = $smartyConf['force_compile'];
 $smarty->debugging      = $smartyConf['debugging'];
-$smarty->display('header.tpl'); // Schreibt den Header und damit html
+// $smarty->display('header.tpl'); // Schreibt den Header und damit html
 ?>

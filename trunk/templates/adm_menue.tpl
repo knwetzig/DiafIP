@@ -10,8 +10,7 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div class='bereich'>{$dlg['pref']}</div>
-<div class='bereich_fuss'></div>
+<div id='bereich'>{$dlg['pref']}</div>
 
 <table><tr>
     <td class="top">    {*links*}
@@ -39,3 +38,6 @@ $URL$
         </form>
     </td>
 </tr></table>
+
+<div id='bereich'>&nbsp;</div>
+<a href='https://code.google.com/p/diafip/' target='_new'><img src='https://ssl.gstatic.com/codesite/ph/images/phosting.ico'>&nbsp;Projektseite</a><br /><br />

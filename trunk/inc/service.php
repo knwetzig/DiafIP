@@ -15,24 +15,20 @@ function loginFunction($username = null, $status = null, &$auth = null) {
 //    den Authorisations-Zustand und das Auth-Objekt
 
 echo <<<FORM
-    <form action={$_SERVER['PHP_SELF']} method='post' id="login">
-    <fieldset style='text-align:center;' >
-    <legend>Login</legend>
-    <table>
-        <tr>
-            <td style="vertical-align:middle; padding-left:20px;">
-                <input type='text' name='username' value='gast' style='width:120px; text-align:center' onfocus="if (this.value=='gast'){this.value='';}" />
-                <br />
-                <input  type='password' name='password' value='gast' style='width:120px; text-align:center'  onfocus="if (this.value=='gast'){this.value='';}" /><br />
-                <input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' />
-            </td>
-            <td>
-                <img src="images/password.png" alt="Password" style="padding-left:20px" />
-            </td>
-        </tr>
-    </table>
-    </fieldset>
-    </form>
+    <form action={$_SERVER['PHP_SELF']} method='post'
+        style='position:absolute; top:150px; left:150px; padding:20px; text-align:center;
+        border:1px solid #0080ff; border-radius: 1em; z-index:1000;'>
+    <table><tr><td style="vertical-align:middle; padding-left:20px;">
+    <input type='text' name='username' value='gast'
+        style='width:120px; text-align:center; margin-bottom:5px;'
+        onfocus="if (this.value=='gast'){this.value='';}" /><br />
+    <input  type='password' name='password' value='gast'
+        style='width:120px; text-align:center'
+        onfocus="if (this.value=='gast'){this.value='';}" /><br />
+    <input style='margin-top:10px; width:120px' type='submit' name='submit' value='einloggen' />
+    </td><td>
+        <img src="images/password.png" alt="Password" style="padding-left:20px" />
+    </td></tr></table></form>
 FORM;
 }
 
