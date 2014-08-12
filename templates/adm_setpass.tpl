@@ -13,7 +13,7 @@ ToDo:   None
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div class='bereich'>{$dialog['bereich'][2]}</div>
+<div id='bereich'>{$dialog['bereich'][2]}</div>
 
 <form action='{$dlg['phpself']}' method='post'>
     <fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>

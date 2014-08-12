@@ -198,9 +198,4 @@ abstract class Entity implements iEntity {
         $smarty->display($vorlage);
     }
 }
-?>
 
-<!--
-$zeit = microtime(true);
-$zeit=microtime(true)-$zeit; feedback('Dauer: '.sprintf('%1.6f',$zeit), 'warng');
--->

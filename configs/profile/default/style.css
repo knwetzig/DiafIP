@@ -1,13 +1,10 @@
-/***************************************************************
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-***** (c) DIAF e.V. *******************************************/
+/* $Id: 75 $ */
 
 
 @media screen {
     #menue {
+        position:fixed;
+        top:10px;
         float:left;
         width:12%;
         height:400px;
@@ -23,50 +20,22 @@
     #main {
         float:right;
         width:86%;
-        margin-right:10px;
+        margin:0px 10px;
     }
 
-    #bereichssuche {
-        float:left;
-    }
-
-    #bereichssymbole {
-        float:right;
-    }
-
-    #login {
-        background-image:url(images/bg.png);
-        position:absolute;
-        top:200px;
-        left:200px;
-        text-align:center;
-        z-index:1000;
-    }
-
-    .bereich {
-        /* Überschrift und Suchfeld -> Bereich */
-        margin-bottom:10px;
-        padding:10px;
+    #bereich {        /* Überschrift und Suchfeld -> Bereich */
+        top:0px;
+        color:#0080ff;
         font-size:1.4em;
         font-weight:bold;
-        color:#0080ff;
+        margin:10px;
+        padding-left:1em;
+        border-bottom: 1px solid #0080ff;
     }
 
-    .darkBG {
-        background-image:url(images/bg_dark.png);
-    }
-
-    button.small {
-        background-image:url(images/bg.png);
-        border:none;
-        width:20px;
-    }
-
-    button.small_dk {
-        background-image:url(images/bg_dark.png);
-        border:none;
-        width:20px;
-    }
+    #bearbzeile {padding-bottom:0.2em; padding-top:0.5em; overflow:auto;}
+    #suchfeld {float:left;}
+    #bearbbtn {float:right;}
 }
 
 @media print {
@@ -80,17 +49,12 @@
     }
 
 
-
     #main {
         clear:none;
         width:100%;
     }
 
-    #bereichssuche {
-        display:none;
-    }
-
-    #bereichssymbole {
+    #bearbzeile {
         display:none;
     }
 
@@ -105,86 +69,17 @@
 }
 
 /***** Normalisierung *****/
-a:link	{
-    text-decoration:none;
-    color:darkblue
-}
-
-a:visited {
-    text-decoration:none;
-    color:darkblue
-}
-
-a:hover	{
-    text-decoration:underline;
-    color:blue
-}
-
-a:active {
-    text-decoration:none
-}
-
-body {
-    background:#FAFAF7 url(images/bg.png);
-    font-family: sans-serif;
-}
-
-img {
-    border:none;
-    vertical-align:middle;
-}
-
 ul.noBullet {
     list-style-type: none;
     margin-left: -20px;
 }
 
-table {
-    border:none;
-}
-
-td {
-    vertical-align:top;
-    /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
-    /* border:1px dotted gray; /* zu testzwecken */
-}
-
-fieldset {
-    border-radius: 0.5em;
-    border:solid 1px #0080ff;
-    padding:10px;
-}
-
-legend {
-    color: #0080ff;
-    padding-left:10px;
-    padding-right:10px;
-}
-
-input {
-    margin:2px;
-    vertical-align:middle
-}
-
-textarea.big {
-    width:440px;
-    height:300px;
-}
-
-textarea.medium {
-    width:350px;
-    height:220px;
-}
-
-textarea.small {
-    width:350px;
-    height:150px;
-}
+textarea.big {width:440px;height:300px;}
+textarea.medium {width:350px;height:220px;}
+textarea.small {width:350px;height:150px;}
 
 input[type='text'],[type='password'] {
     width:250px;
-	padding:3px;
-	border:1px #EEE solid;
 }
 
 input[type='text'].halb {
@@ -198,28 +93,16 @@ input[type='text'].lang {
 input[type='submit'],[type='button'] {
     width:125px;
     margin:2px;
-	padding:3px;
-	border:1px #EEE solid;
 }
 
-select {
-    width:250px; margin:2px
-}
-
-button {
-    cursor: pointer;
-    width:120px;
-    margin:2px;
-}
 
 button.noBG {
-    background-image:url(images/bg.png);
+    background-image:url(../../../images/bg.png);
     border:none;
 }
 
 /* für Länderflaggen im Menübereich */
 button.flag {
-    background-image:url(images/bg.png);
     border:none;
     width:34px;
     height:22px;
@@ -229,7 +112,6 @@ button.flag {
 div#overDiv {
     position:absolute;
     visibility:hidden;
-    z-index:1000;
 }
 
 .top {
@@ -275,20 +157,8 @@ div#overDiv {
     padding-top:10px;
 }
 
-.darkBG {
-    background-image:url(images/bg_dark.png);
-}
 
 /***** Darstellungsfenster *****/
-
-.bereich_fuss {
-    /* Trenner zwischen Bereich und Inhalt */
-    clear: both;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #0080ff;
-}
-
 .error {
     /* Fehlermeldungen für Nutzer */
     margin: 5px;
@@ -337,18 +207,3 @@ div#overDiv {
     background-color: #eeffee;
     border: 1px solid #008000;
 }
-
-
-.visor {
-/* Internes Arbeitsmittel für Breakpoints und Testausgaben !no Touch please! */
-    position: relative;
-    margin: 20px;
-    font-family: monospace;
-    white-space: pre;
-    color: #004000;
-    background-color: #eeffee;
-    border:1px dotted #008000;
-    padding: 5px;
-    z-index: 99
-}
-

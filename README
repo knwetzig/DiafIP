@@ -1,6 +1,7 @@
 $Id$
 
-Hinweise:
+HINWEISE:
+==========================================================================================
 
     Vorausgesetzt ist, das eine lauffähige HTTP/PHP5 Umgebung installiert ist. In diese
     Umgebung ist das PHP-Modul 'php5-pgsql' zu integrieren. In den meisten Distrubutionen
@@ -20,21 +21,34 @@ Hinweise:
     Im Verzeichnis 'configs' findet sich eine Vorlage für die zu erstellende Datei
     'configs/config.local.php'. Passen Sie die Einstellungen an Ihre Bedürfnisse an.
 
+    Die Datenstruktur ist Bestandteil des Pakets und findet sich im Verzeichnis 'database'.
+    Die Dumps sind nach Reihenfolge nummeriert.
 
-Richtlinien:
 
-    Es gibt keine Verlinkung zu fremden Inhalten. Fremder Inhalt ist OpenSource und local
-    abgelegt.
+RICHTLINIEN:
+=========================================================================================
+
+    Es gibt keine Verlinkung zu fremden Inhalten (Serverautonomie). Fremder Inhalt ist
+    OpenSource und local abgelegt. Die einzelnen Elemente stehen in nachfolg. Tabelle:
 
         Name                    Zweck                               Lizenz
         _________________________________________________________________________________
     Fremde Software included:
         overLib                 JavaScript Popup-Bibliothek         GPL
-
     Externe Software: (nicht Bestandteil dieser Software)
         PHP5                                                        PHP
         Pear::Auth              Bibliothek Authentification         PHP
         Pear::MDB2              Database Abstractionslayer          BSD-Style
         PEAR::MDB2-Driver_pgsql MDB2 Driver                         BSD
-
     Detaillierte Angaben unter: www.opensource.org/licenses/
+
+    Es gibt verschiedene Nutzerprofile. Die einzelnen Profile stehen im Verzeichnis
+    'configs/profile/'. Sie steuern das Erscheinungsbild der Applikation, nicht die
+    Funktionalität. Diese wird durch die Templates für alle angemeldeten Nutzer bereit
+    gestellt.
+
+TODO:
+    Class Film - Revision aller Elemente
+    Class Fibikern - Feinkorrekturen/Test und Korrektur View()
+FIXES:
+    Typenübergabe aus DB funktioniert nicht
