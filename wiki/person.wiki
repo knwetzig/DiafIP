@@ -4,7 +4,7 @@ Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die kö
 ====Bedienelemente====
 Auf der rechten Seite findet man im Kopfbereich je einen Button für die Neuanlage von Namen und daneben einen für Personen. Sollten sie Bedienelemente nicht sehen können, so fehlen ihnen eventuell die erforderlichen Rechte zur Ausführung der Aktion.
 ====Personen====
-1.) [Namen Alias-/Künstlernamen]
+1.) WikiSyntax#Namen
 Beim bearbeiten einer Person, werden im Dialog die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
 In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
 Dieser Komplex ist nicht bei einer Neuanlage verfügbar (vlt. später noch mal prüfen)
@@ -15,7 +15,7 @@ werden jetzt vom System verworfen und können nicht erstellt werden. Ein doppelt
  * Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h. nur Zifferneingabe
  * Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173....
 
-====[Namen]====
+====[WikiSyntax#Namen]====
 Eine Neuanlage erfolgt über den Bereich Personen und den dort vorhandenen Button im Kopfbereich.
 Es können beliebig viele identische Namen angelegt werden. Diese unterscheiden sich lediglich durch ihre Id (siehe auch Personen)
 Die Bedienelemente zum Bearbeiten/Löschen sind nur in der Detailansicht vorhanden. Diese erreicht man durch direkte Eingabe der jeweiligen Id oder des Namens in der Suchfunktion (Bereich Personen).
