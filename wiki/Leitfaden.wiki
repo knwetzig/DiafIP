@@ -17,17 +17,17 @@ Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die kö
 
 
 ====Personen====
-#.) Alias-/Künstlernamen
+ #.) Alias-/Künstlernamen
 Beim bearbeiten einer Person, werden im Dialog die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
 In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
 Dieser Komplex ist nicht bei einer Neuanlage verfügbar (vlt. später noch mal prüfen)
-#.) Doppelte Datensätze
+ #.) Doppelte Datensätze
 werden jetzt vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum -> ((A-Geburt = B-Geburt) UND (A-VName = B-VName) UND (A-NName = B-NName))
 
-* Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h.
+ * Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h.
 nur Zifferneingabe
 
-* Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173....
+ * Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173....
 Anmerkungen zum Arbeiten mit der Applikation
 
 ====Namen====
