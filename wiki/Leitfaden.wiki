@@ -1,8 +1,7 @@
-<wiki:toc max_depth="1" />
 =Leitfaden zur Benutzung der Applikation DIAFIP=
 ----
 Wir freuen uns sie heute begrüßen zu können.....
-==Inhaltsverezichnis==
+==Inhaltsverzeichnis==
  * Orte
  * [person Personen]
  * Filmografische Daten
