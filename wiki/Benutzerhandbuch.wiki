@@ -1,6 +1,0 @@
-Hinweise zur Bedienung:
-
-- Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h.
-nur Zifferneingabe
-
-- Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173.... 

@@ -1,0 +1,36 @@
+=Leitfaden zur Benutzung der Applikation DIAFIP=
+----
+Wir freuen uns sie heute begrüßen zu können.....
+
+
+
+
+==Allgemeine Hinweise==
+Das Suchfeld im Kopfbereich kennt zwei Modis der Suche:
+Variante 1: Eingabe eines Suchmusters (also ein Teil des Namens) wobei nicht zwischen Groß- und Kleinschreibung unterschieden wird. Diese Suche ist Bereichssensitiv und liefert nur Objekte die nicht gelöscht wurden.
+Variante 2: Eingabe der Id im Suchfeld. Ermittelt bereichsübergreifend das gewünschte Objekt und zeigt es im jeweiligen Kontext an. Es werden auch gelöschte Objekte angezeigt, die durch nochmaliges Betätigen des Löschbuttons wieder aus dem Papierkorb herausgeholt werden (undelete).
+
+==Bereich Personen==
+----
+Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die körperliche Person und zum anderen gibt es Namen, unter denen die körperliche Person bekannt ist.
+====Bedienelemente====
+
+
+====Personen====
+#.) Alias-/Künstlernamen
+Beim bearbeiten einer Person, werden im Dialog die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
+In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
+Dieser Komplex ist nicht bei einer Neuanlage verfügbar (vlt. später noch mal prüfen)
+#.) Doppelte Datensätze
+werden jetzt vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum -> ((A-Geburt = B-Geburt) UND (A-VName = B-VName) UND (A-NName = B-NName))
+
+* Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h.
+nur Zifferneingabe
+
+* Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173....
+Anmerkungen zum Arbeiten mit der Applikation
+
+====Namen====
+Eine Neuanlage erfolgt über den Bereich Personen und den dort vorhandenen Button im Kopfbereich.
+Es können beliebig viele identische Namen angelegt werden. Diese unterscheiden sich lediglich durch ihre Id (siehe auch Personen)
+Die Bedienelemente zum Bearbeiten/Löschen sind nur in der Detailansicht vorhanden. Diese erreicht man durch direkte Eingabe der jeweiligen Id oder des Namens in der Suchfunktion (Bereich Personen).
