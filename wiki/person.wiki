@@ -4,12 +4,14 @@ Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die kö
 ===Bedienung===
 Auf der rechten Seite findet man im Kopfbereich je einen Button für die Neuanlage von Namen und daneben einen für Personen. Sollten sie Bedienelemente nicht sehen können, so fehlen ihnen eventuell die erforderlichen Rechte zur Ausführung der Aktion.
 Es empfielt sich, bevor sie einen neuen Datensatz anlegen, zu prüfen ob die erforderlichen Daten bereits angelegt sind. Das betrifft in erster Linie die Orte und die zu vergebenden Aliase.
+In den Datumsfeldern kann nur ein valides Datum eingetragen werden. Sollte ihnen z.B. nur das Jahr, aber nicht der genaue Tag bekannt sein, so lassen sie das Feld frei und tragen die Information im Biografiefeld ein.
 ===Personen===
 Sie können Felder für die sie keine Informationen haben freilassen und später ergänzen, Pflichtfeld ist lediglich der Name.
 Die Beschreibung der einzelnen Eingabefelder erfolgt in der Reihenfolge wie man sie beim durchschalten mit der Tabulatortaste erreicht.
-Erläuterung Datumsfelder....
-1.) Vornamen
+#.) Vornamen
+In dieses Feld enthält alle Vornamen zur Person (so wie sie in einer Geburtsurkunde stehen würden). Zusätzlich werden hier alle Titel notiert (akademische/Adelstitel etc.). Sollte es erforderlich sein einen Rufnamen zu etablieren, so ist dieser unter Namen anzulegen und der Person zuzuweisen. Bsp.: {{{'Dr. Klaus Eduard von'}}}
 2.) Name
+Hier steht ausschließlich der Familienname (wichtig für Sortierung).
 3.) Alias
  Sie können Aliase erst vergeben wenn die Person bereits angelegt wurde. Im Dialog werden die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
  In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
