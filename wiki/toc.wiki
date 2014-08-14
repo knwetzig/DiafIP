@@ -1,4 +1,4 @@
- * Orte
+ * [location Orte]
  * [person Personen]
  * Filmografische Daten
  * Bibliografische Daten
@@ -6,5 +6,5 @@
   * Flachware
   * körperliche Objekte
   * Medien (Filmkopien/Datenträger)
- * Messageboard (Pinwand)
- * Einstellungen
+ * [pinwand Messageboard]
+ * [preferences Einstellungen]

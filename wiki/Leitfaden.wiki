@@ -3,7 +3,7 @@
 ----
 Wir freuen uns sie heute begrüßen zu können.....
 ==Inhaltsverzeichnis==
- * Orte
+ * [location Orte]
  * [person Personen]
  * Filmografische Daten
  * Bibliografische Daten
@@ -11,8 +11,8 @@ Wir freuen uns sie heute begrüßen zu können.....
   * Flachware
   * körperliche Objekte
   * Medien (Filmkopien/Datenträger)
- * Messageboard (Pinwand)
- * Einstellungen
+ * [pinwand Messageboard]
+ * [preferences Einstellungen]
 ==Allgemeine Hinweise==
 Das Suchfeld im Kopfbereich kennt zwei Modis der Suche:
  * Eingabe eines Suchmusters (also ein Teil des Namens) wobei nicht zwischen Groß- und Kleinschreibung unterschieden wird. Diese Suche ist bereichssensitiv und liefert nur Objekte die nicht gelöscht wurden.
