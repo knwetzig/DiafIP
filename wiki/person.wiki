@@ -1,21 +1,44 @@
 ==Bereich Personen==
 ----
 Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die körperliche Person und zum anderen gibt es Namen, unter denen die körperliche Person bekannt ist.
-====Bedienelemente====
+===Bedienung===
 Auf der rechten Seite findet man im Kopfbereich je einen Button für die Neuanlage von Namen und daneben einen für Personen. Sollten sie Bedienelemente nicht sehen können, so fehlen ihnen eventuell die erforderlichen Rechte zur Ausführung der Aktion.
-====Personen====
-1.) WikiSyntax#Namen
-Beim bearbeiten einer Person, werden im Dialog die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
-In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
-Dieser Komplex ist nicht bei einer Neuanlage verfügbar (vlt. später noch mal prüfen)
+Es empfielt sich, bevor sie einen neuen Datensatz anlegen, zu prüfen ob die erforderlichen Daten bereits angelegt sind. Das betrifft in erster Linie die Orte und die zu vergebenden Aliase.
+===Personen===
+Sie können Felder für die sie keine Informationen haben freilassen und später ergänzen, Pflichtfeld ist lediglich der Name.
+Die Beschreibung der einzelnen Eingabefelder erfolgt in der Reihenfolge wie man sie beim durchschalten mit der Tabulatortaste erreicht.
+Erläuterung Datumsfelder....
+1.) Vornamen
+2.) Name
+3.) Alias
+ Sie können Aliase erst vergeben wenn die Person bereits angelegt wurde. Im Dialog werden die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich ein Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen.
+ In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
+4.) geb. (Geburtsdatum)
+ Die Vorgabe ist 01.01.0001. Solange diese nicht geändert wird, erkennt die Anwendung das in diesem Feld keine Änderung gemacht wurde und ignoriert dieses Feld.
+5.) Geburtsort
+6.) gest. (Todestag)
+7.) Todesort
+8.) Anschrift
+ In diesem Feld werden die Straße mit Hausnummer oder das Postfach vermerkt. Auch Adresszusätze aller Art finden hier ihren Platz.
+9.) unbeschriftet (PLZ)
+ Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h. nur Zifferneingabe mit soweit erforderlicher vorlaufender Null.
+10.) Ort
+ ..zur Anschrift - einfach auswählen
+11.) eMail
+ ... hier eine valide emailadresse eintragen
+12.) tel (Telefonnummer)
+ Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351 1234567
+ Bitte verwenden sie keine Leerzeichen in der Rufnummer sondern nur als Trennzeichen für die Vorwahlen.
+13.) Biografie
+ Dieses Feld enthält alle Informationen zur Person die veröffentlicht werden sollen (Also nicht zwangsweise nur biografische Daten).
+14.) Notiz
+ Hier können Bearbeitungsnotizen hinterlegt werden. Dieses Feld ist nur für Bearbeiter sichtbar.
+15.) Validierungsvermerk
+ Dieser kann nur durch einen authorisierten Mitarbeiter gesetzt werden.
+Doppelte Datensätze werden vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum
+ {{{((A-Geburt = B-Geburt) UND (A-VName = B-VName) UND (A-NName = B-NName))}}}
 
-2.) Doppelte Datensätze
-werden jetzt vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum -> ((A-Geburt = B-Geburt) UND (A-VName = B-VName) UND (A-NName = B-NName))
-
- * Die Eingabe von Postleitzahlen muss ohne Länderkennung erfolgen, d.h. nur Zifferneingabe
- * Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351.... oder +49 173....
-
-====[WikiSyntax#Namen]====
+===Namen (Aliase)===
 Eine Neuanlage erfolgt über den Bereich Personen und den dort vorhandenen Button im Kopfbereich.
 Es können beliebig viele identische Namen angelegt werden. Diese unterscheiden sich lediglich durch ihre Id (siehe auch Personen)
 Die Bedienelemente zum Bearbeiten/Löschen sind nur in der Detailansicht vorhanden. Diese erreicht man durch direkte Eingabe der jeweiligen Id oder des Namens in der Suchfunktion (Bereich Personen).
