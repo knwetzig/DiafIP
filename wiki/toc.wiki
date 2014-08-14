@@ -1,0 +1,10 @@
+ * Orte
+ * [person Personen]
+ * Filmografische Daten
+ * Bibliografische Daten
+ * Objekte
+  * Flachware
+  * körperliche Objekte
+  * Medien (Filmkopien/Datenträger)
+ * Messageboard (Pinwand)
+ * Einstellungen

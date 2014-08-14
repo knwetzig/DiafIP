@@ -1,3 +1,4 @@
+#sidebar toc
 =Leitfaden zur Benutzung der Applikation DIAFIP=
 ----
 Wir freuen uns sie heute begrüßen zu können.....
