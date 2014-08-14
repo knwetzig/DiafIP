@@ -1,4 +1,4 @@
-#summary
+#sidebar toc
 ==Bereich Personen==
 ----
 Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die körperliche Person und zum anderen gibt es Namen, unter denen die körperliche Person bekannt ist.
