@@ -19,4 +19,4 @@ Das Suchfeld im Kopfbereich kennt zwei Modis der Suche:
 Für viele Bedienelemente gibt es so genannte Tooltips. Das sind kleine Hinweisfenster mit einem erklärendem Text. Dieser erscheint, wenn sie länger als eine Sekunde mit dem Mauszeiger über einem solchen Element verweilen.
 ===Hinweise zur Bearbeitung/Neuanlage===
 Datensätze können nach Anlage nicht mehr gelöscht werden. Kontrollieren sie bitte ob entprechende Datensätze vielleicht schon vorhanden sind und nur bearbeitet werden müssen.
-Sie können zu den einzelnen Felder im Dialog navigieren indem sie die Tabulatortaste benutzen (vorwärts) oder Umschalt+Tabulator (rückwärts). Durch drücken der Taste 'Enter' (nicht in mehrzeiligen Textfeldern) wird der Datensatz an den Server gesendet. Gleiches erreichen sie dürch betätigen des Buttons am Ende des Dialogs.
+Sie können zu den einzelnen Felder im Dialog navigieren indem sie die Tabulatortaste benutzen (vorwärts) oder Umschalt+Tabulator (rückwärts). Durch drücken der Taste 'Enter' (nicht in mehrzeiligen Textfeldern) wird der Datensatz an den Server gesendet. Gleiches erreichen sie durch betätigen des Buttons am Ende des Dialogs.
