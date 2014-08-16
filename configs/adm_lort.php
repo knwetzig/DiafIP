@@ -1,6 +1,8 @@
 <?php
 /**************************************************************
-Eventhandler für Verwaltung von Lagerorten
+    PHP Version >= 5.4
+
+    Eventhandler für Verwaltung von Lagerorten
 
     section:    admin
     site:       lort
@@ -12,7 +14,9 @@ Eventhandler für Verwaltung von Lagerorten
 
 ---------->>> BAUSTELLE <<<-------------------!!!
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 if (!$myauth->getAuth()) {
     feedback(108, 'error');             // Fremdaufruf!
@@ -24,8 +28,7 @@ if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
     exit(2);
 }
 
-$smarty->assign('dialog', array('bereich' =>
-                            array( 1 => d_feld::getString(472))));
+$smarty->assign('dialog', ['bereich' => [ 1 => $str->getStr(472)]]);
 $smarty->display('main_bereich.tpl');
 feedback('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.',
     'warng');
@@ -59,11 +62,10 @@ switch ($_POST['aktion']) :
         $smarty->display("adm_selekt.tpl");
 
         // Editfeld zur Neueingabe
-        $dialog = array(
+        $dialog = [
                 0 => array('lort', null, 'neuen&nbsp;Lagerort&nbsp;erstellen'),
                 2 => array('lagerort', null, 'Lagerort'),
-                6 => array('aktion', 'addLOrt')
-            );
+                6 => array('aktion', 'addLOrt')];
         $smarty->assign('dialog', $dialog);
         $smarty->display('adm_dialog.tpl');
 endswitch;

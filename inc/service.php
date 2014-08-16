@@ -73,7 +73,7 @@ function isBit($bitFeld, $n) {
 }
 
 function bit2array($wert) {
-    $a = array();
+    $a = [];
     for ($i = 0; $i < 32; $i++) :
         if (isBit($wert, $i)) $a[] = $i;
     endfor;
@@ -86,16 +86,6 @@ function array2wert($wert, $arr) {
 }
 
 /** **** ALLGEMEINE FUNKTIONEN *********************************************/
-
-function getStringList($sl) {
-    if (!is_array($sl)) return 1;
-    // Die Liste spricht immer die eingestellte Sprache
-    $nl = array();
-    foreach ($sl as $value) {
-       $nl[] = d_feld::getString($value);
-    }
-    return $nl;
-}
 
 function isValid($val, $muster) {
     // Prüfung auf korrekte syntax - keine semantikprüfung!
@@ -163,7 +153,7 @@ $text = str_replace( "\n", '<br />', print_r($text, true));
 
 function feedback($msg, $form = null) {
     if (is_numeric($msg))
-        echo "<div class=$form>".d_feld::getString((int)$msg)."</div>";
+        echo "<div class=$form>".$str->getStr((int)$msg)."</div>";
     else echo "<div class=$form>".$msg.'</div>';
 }
 

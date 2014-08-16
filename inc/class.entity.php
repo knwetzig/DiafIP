@@ -1,17 +1,20 @@
 <?php
 /************* BASIS-KLASSE ***********************************
+    PHP Version >= 5.4
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-ToDo:
-    - Bildauswertung
-        [codefragment]
-            $this->content['bilder'] = list2array($this->content['bilder']);
-            // Achtung Elemente liegen als Text vor! (nicht integer)
-        [/codefragment]
+    ToDo:
+        - Bildauswertung
+            [codefragment]
+                $this->content['bilder'] = list2array($this->content['bilder']);
+                // Achtung Elemente liegen als Text vor! (nicht integer)
+            [/codefragment]
+
+    Author: Knut Wetzig <knwetzig@gmail.com>
 
 **************************************************************/
 
@@ -23,6 +26,7 @@ interface iEntity {
     static function IsInDB($nr, $bereich); // Test ob id/bereich in der DB existiert
     static function getBereich($nr); // Holt zur ID die Bereichskennung
     function setValid();        // Set/Unset Flag
+    function isValid();         // Validierungstest
     function del();             // Schaltet Löschflag in DB um
     function isDel();           // Test auf Löschflag
     static function getTrash(); // schnüffelt im Papierkorb
@@ -41,7 +45,7 @@ abstract class Entity implements iEntity {
         GETMUELL = 'SELECT id, bereich FROM entity WHERE del = true;';
 
     protected
-        $content = array(
+        $content = [
             'id'         => null,
             'bereich'    => '',      // Enthält die Kennung zu welchem Bereich die
                                      // Entität gehört....
@@ -53,7 +57,7 @@ abstract class Entity implements iEntity {
             'del'        => false,   // Löschflag
             'editfrom'   => null,    // uid des Bearbeiters
             'editdate'   => null     // timestamp width Timezone
-        );
+        ];
 
     abstract function add($status = null);
     abstract function edit($status = null);
@@ -140,6 +144,10 @@ abstract class Entity implements iEntity {
             else $this->content['isValid'] = true;
     }
 
+    public function isValid() {
+        if ($this->content['isValid']) return true; else return false;
+    }
+
     public function del() {
     /**********************************************************
     Aufgabe: Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB
@@ -158,7 +166,7 @@ abstract class Entity implements iEntity {
     }
 
     public function isDel() {
-        if ($this->content['del']) return true;
+        if ($this->content['del']) return true; else return false;
     }
 
     public static function getTrash() {

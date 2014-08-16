@@ -1,31 +1,34 @@
 <?php /****************************************************
+    PHP Version >= 5.4
 
     Eventhandler für Aktionen der Personenverwaltung
 
-$Rev: 50 $
-$Author: knwetzig $
-$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
-$URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
+    $Rev: 50 $
+    $Author: knwetzig $
+    $Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+    $URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
 
-ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
-        wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
+    ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
+            wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
 
-        Löschanfrage via Datenfeld eintragen (Papierkorb). löschen als Cron-Job
-        nach 4 Wochen
+            Löschanfrage via Datenfeld eintragen (Papierkorb). löschen als Cron-Job
+            nach 4 Wochen
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
-$data = a_display(array(
+$data = a_display([
         // name,inhalt,rechte, optional-> $label,$tooltip,valString
-        new d_feld('bereich', d_feld::getString(4012)),
-        new d_feld('sstring', d_feld::getString(4011)),
+        new d_feld('bereich', $str->getStr(4012)),
+        new d_feld('sstring', $str->getStr(4011)),
         new d_feld('sektion', 'P'),
         new d_feld('add', true, EDIT, null, 10001),         // Person::add
         new d_feld('extra', '<img src="images/addName.png" alt="addname" />', EDIT, null, 10011)   // PName::add
-    ));
+    ]);
 $smarty->assign('dialog', $data);
 $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');

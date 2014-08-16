@@ -1,14 +1,18 @@
 <?php
 /**************************************************************
+    PHP version: >= 5.4
 
     DIAFIP - HAUPTPROGRAMM
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
+
 $laufzeit = -gettimeofday(true);
 require_once	'configs/config.php';
 
@@ -53,7 +57,7 @@ if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
         endif;
 endswitch;
 
-switch($myauth->getAuthData('lang')) :         // locale der DB einstellen
+switch ($myauth->getAuthData('lang')) :         // locale der DB einstellen
     case 'de' :
         $db->query("SET datestyle TO German");
         break;
@@ -77,16 +81,18 @@ require_once 'class.media.php';
 require_once 'class.item.php';
 require_once 'class.statistik.php';
 
+$str = new String($myauth->getAuthData('lang'));
+
 // --- Laden Menübereich ---
 $menue = array(
-    'F'         => d_feld::getString(4008),
-    'Y'         => d_feld::getString(4028),
-    'P'         => d_feld::getString(4003),
-    'stat'      => d_feld::getString(4009),
-    'Z'         => d_feld::getString(4032),
-    'K'         => d_feld::getString(4038),
-//    'login'     => d_feld::getString(4004),
-    'logout'    => d_feld::getString(4005),
+    'F'         => $str->getStr(4008),
+    'Y'         => $str->getStr(4028),
+    'P'         => $str->getStr(4003),
+    'stat'      => $str->getStr(4009),
+    'Z'         => $str->getStr(4032),
+    'K'         => $str->getStr(4038),
+//    'login'     => $str->getStr(4004),
+    'logout'    => $str->getStr(4005),
     'realname'  => $myauth->getAuthData('realname'),
     'userid'    => $myauth->getAuthData('uid'),
     'lang'      => $myauth->getAuthData('lang'),
@@ -94,8 +100,8 @@ $menue = array(
     'phpself'   => $_SERVER['PHP_SELF']);
 
 if ($myauth->getAuthData('uid') != 4) {
-    $menue['messg'] = d_feld::getString(4037);
-    $menue['pref']  = d_feld::getString(4006);
+    $menue['messg'] = $str->getStr(4037);
+    $menue['pref']  = $str->getStr(4006);
 }
 $smarty->assign('dlg', $menue);
 $smarty->display('header.tpl');

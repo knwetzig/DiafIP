@@ -1,14 +1,16 @@
 <?php
 /***************************************************************
-Klassenbibliotheken für die Werwaltung von Orten (Personen/
-Lagermöglichkeiten)
+    Klassenbibliotheken für die Werwaltung von Orten (Personen/
+    Lagermöglichkeiten)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 /** =================================================================
                             Lagerorte

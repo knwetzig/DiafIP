@@ -11,8 +11,9 @@
         position:fixed;
         top:10px;
         float:left;
+        overflow:auto;
         width:12%;
-        height:400px;
+        height:500px;
         font-size:0.9em;
         text-align:center;
     }
@@ -27,20 +28,6 @@
         width:86%;
         margin:0px 10px;
     }
-
-    #bereich {        /* Überschrift und Suchfeld -> Bereich */
-        top:0px;
-        color:#0080ff;
-        font-size:1.4em;
-        font-weight:bold;
-        margin:10px;
-        padding-left:1em;
-        border-bottom: 1px solid #0080ff;
-    }
-
-    #bearbzeile {padding-bottom:0.2em; padding-top:0.5em; overflow:auto;}
-    #suchfeld {float:left;}
-    #bearbbtn {float:right;}
 
     .darkBG {
         background-image:url(../../../images/bg_dark.png);
@@ -69,14 +56,9 @@
         display:none;
     }
 
-
     #main {
         clear:none;
         width:100%;
-    }
-
-    #bearbzeile {
-        display:none;
     }
 
     button.small {
@@ -90,46 +72,23 @@
 }
 
 /***** Normalisierung *****/
-a:link	{
-    text-decoration:none;
-    color:darkblue
-}
-
-a:visited {
-    text-decoration:none;
-    color:darkblue
-}
-
-a:hover	{
-    text-decoration:underline;
-    color:blue
-}
-
-a:active {
-    text-decoration:none
-}
+a:link	{text-decoration:none; color:darkblue}
+a:visited {text-decoration:none; color:darkblue}
+a:hover	{text-decoration:underline; color:blue}
+a:active {text-decoration:none}
 
 body {
     background:#FAFAF7 url(../../../images/bg.png);
     font-family: sans-serif;
 }
 
-img {
-    border:none;
-    vertical-align:middle;
-}
+img {border:none; vertical-align:middle;}
 
-ul.noBullet {
-    list-style-type: none;
-    margin-left: -20px;
-}
+ul.noBullet {list-style-type: none; margin-left: -20px;}
 
-table {
-    border:none;
-}
+table {border:none; }
 
-td {
-    vertical-align:top;
+td { vertical-align:top;
     /* padding und white-space:nowrap;  <-- wirkt sich auf Tooltipps aus */
     /* border:1px dotted gray; /* zu testzwecken */
 }
@@ -146,46 +105,18 @@ legend {
     padding-right:10px;
 }
 
-input {
-    margin:2px;
-    vertical-align:middle
-}
+input {margin:2px; vertical-align:middle}
 
-textarea.big {
-    width:440px;
-    height:300px;
-}
+textarea.big {width:440px;height:300px;}
+textarea.medium {width:350px;height:220px;}
+textarea.small {width:350px;height:150px;}
 
-textarea.medium {
-    width:350px;
-    height:220px;
-}
+input[type='text'],[type='password'] {width:250px;}
+input[type='text'].halb {width:125px;}
+input[type='text'].lang {width:500px;}
+input[type='submit'],[type='button'] {width:125px;margin:2px;}
 
-textarea.small {
-    width:350px;
-    height:150px;
-}
-
-input[type='text'],[type='password'] {
-    width:250px;
-}
-
-input[type='text'].halb {
-    width:125px;
-}
-
-input[type='text'].lang {
-    width:500px;
-}
-
-input[type='submit'],[type='button'] {
-    width:125px;
-    margin:2px;
-}
-
-select {
-    width:250px; margin:2px
-}
+select { width:250px; margin:2px}
 
 button {
     cursor: pointer;
@@ -206,11 +137,26 @@ button.flag {
     height:22px;
 }
 
-/***** Eigene Klassen *****/
-div#overDiv {
-    position:absolute;
-    visibility:hidden;
+/***************************** Eigene Klassen **************************/
+#bereich {        /* Überschrift und Suchfeld -> Bereich */
+    top:0px;
+    color:#0080ff;
+    font-size:1.4em;
+    font-weight:bold;
+    margin:10px;
+    padding-left:1em;
+    border-bottom: 1px solid #0080ff;
 }
+
+#bearbzeile {padding-bottom:0.2em; padding-top:0.5em; overflow:auto;}
+#bearbbtn {float:right;}
+
+#left {float:left;}
+#einzug {padding-left:3em}
+#portrait_gross {width:100px; height:135px; float: right; margin:1em; margin-right:2em;}
+#portrait_klein {width:40px; height:50px; float:right;}
+
+div#overDiv {position:absolute; visibility:hidden;}
 
 .top {
     vertical-align:top;
