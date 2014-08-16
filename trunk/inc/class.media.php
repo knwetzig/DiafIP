@@ -50,21 +50,22 @@ class bild implements image {
     ****************************************************************/
         function testValidUpload($code) {
             if ($code == UPLOAD_ERR_OK) return;
+            global $str;
 
             switch ($code) :
                 case UPLOAD_ERR_INI_SIZE:
-                case UPLOAD_ERR_FORM_SIZE: $msg = d_feld::getString(450); break;
-                case UPLOAD_ERR_PARTIAL: $msg = d_feld::getString(451); break;
-                case UPLOAD_ERR_NO_FILE: $msg = d_feld::getString(452); break;
-                case UPLOAD_ERR_NO_TMP_DIR: $msg = d_feld::getString(453); break;
-                case UPLOAD_ERR_CANT_WRITE: $msg = d_feld::getString(454); break;
-                case UPLOAD_ERR_EXTENSION: $msg = d_feld::getString(455); break;
-                default: $msg = d_feld::getString(456);
+                case UPLOAD_ERR_FORM_SIZE: $msg = $str->getStr(450); break;
+                case UPLOAD_ERR_PARTIAL: $msg = $str->getStr(451); break;
+                case UPLOAD_ERR_NO_FILE: $msg = $str->getStr(452); break;
+                case UPLOAD_ERR_NO_TMP_DIR: $msg = $str->getStr(453); break;
+                case UPLOAD_ERR_CANT_WRITE: $msg = $str->getStr(454); break;
+                case UPLOAD_ERR_EXTENSION: $msg = $str->getStr(455); break;
+                default: $msg = $str->getStr(456);
             endswitch;
             throw new Exception($msg);
         }
 
-        global $myauth, $smarty;
+        global $myauth, $smarty, $str;
         if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
         $db = MDB2::singleton();
@@ -82,7 +83,7 @@ class bild implements image {
 
         try {
             if (!array_key_exists('bild', $_FILES))
-                throw new Exception(d_feld::getString(457));
+                throw new Exception($str->getStr(457));
 
             $image = $_FILES['bild'];
 
@@ -90,9 +91,9 @@ class bild implements image {
             testValidUpload($image['error']);
 
             if (!is_uploaded_file($image['tmp_name']))
-                throw new Exception(d_feld::getString(458));
+                throw new Exception($str->getStr(458));
             $info = getImageSize($image['tmp_name']);
-            if (!$info) throw new Exception(d_feld::getString(459));
+            if (!$info) throw new Exception($str->getStr(459));
         }
 
         catch (Exception $ex) {

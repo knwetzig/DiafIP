@@ -1,16 +1,20 @@
 <?php
 /*****************************************************************************
-Eventhandler für Userverwaltung
+    PHP Version >= 5.4
 
-sektion:    admin
-site:       user
+    Eventhandler für Userverwaltung
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    sektion:    admin
+    site:       user
 
-***** (c) DIAF e.V. *******************************************/
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
+
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 if (!$myauth->getAuth()) {
     feedback(108, 'error');
@@ -29,7 +33,7 @@ function getUserList(){
     $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
     $data = $db->extended->getAll($sql);
     IsDbError($data);
-    $ul = array();
+    $ul = [];
     foreach ($data as $wert) :
         $ul[$wert['uid']] = $wert['realname'];
     endforeach;
@@ -38,11 +42,11 @@ function getUserList(){
 
 function viewAddDialog() {              // Ausgabe: Neuen Nutzer anlegen
     global $smarty;
-    $data = array();
-    $data[0] = array('user', $_SERVER['PHP_SELF'], d_feld::getString(4034));
-    $data[2] = array('username', null, d_feld::getString(4035));
-    $data[3] = array('pwd', null, d_feld::getString(4017));
-    $data[6] = array('aktion', 'addUser');
+    $data = [];
+    $data[0] = ['user', $_SERVER['PHP_SELF'], $str->getStr(4034)];
+    $data[2] = ['username', null, $str->getStr(4035)];
+    $data[3] = ['pwd', null, $str->getStr(4017)];
+    $data[6] = ['aktion', 'addUser'];
     $smarty->assign('dialog', $data);
     $smarty->display('adm_dialog.tpl');
 }
@@ -57,8 +61,7 @@ function viewSelektDialog() {
     $smarty->display('adm_selekt.tpl');
 }
 
-$smarty->assign('dialog',
-    array('bereich' => array( 1 => d_feld::getString(4033))));
+$smarty->assign('dialog', ['bereich' => [1 => $str->getStr(4033)]]);
 $smarty->display('main_bereich.tpl');
 
 if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
@@ -68,10 +71,10 @@ if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
         $sql = 'SELECT * FROM s_auth WHERE uid = ?;';
         $userSel = $db->extended->getRow($sql, null, $myauth->getAuthData('selUser'));
         IsDbError($userSel);
-        $smarty->assign('dialog', array(
+        $smarty->assign('dialog', [
             'username'  => $userSel['username'],
             'realname'  => $userSel['realname'],
-            'rightboxes' => array(
+            'rightboxes' => [
                 'Allgemein lesen',
                 'Interne Daten lesen',
                 'Allgemein bearbeiten',
@@ -83,10 +86,10 @@ if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
                 '7',
                 ...
                 '15',   reserviert für ADMIN */
-            ),
+            ],
             'rightSel'  => bit2array($userSel['rechte']),
             'notiz'     => $userSel['notiz'],
-        ));
+        ]);
         $smarty->display('adm_useredit.tpl');
         break;
 
@@ -99,19 +102,18 @@ if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
 
         if (!isset($_POST['rechte'])) :
             warng(10004);
-            $_POST['rechte'] = array();
+            $_POST['rechte'] = [];
         endif;
 
-        $data = array(
+        $data = [
             'username'  => $_POST['username'],
             'realname'  => $_POST['realname'],
             'rechte'    => array2wert($ore, $_POST['rechte']),
             'notiz'     => $_POST['notiz'],
             'editdate'  => date('c', $_SERVER['REQUEST_TIME']),
-            'editfrom'  => $myauth->getAuthData('uid')
-        );
+            'editfrom'  => $myauth->getAuthData('uid')];
 
-        $types = array('text','text','integer','text','date','integer');
+        $types = ['text','text','integer','text','date','integer'];
         $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
             'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
         if (!IsDbError($data)) feedback("Die Daten wurden erfolgreich aktualisiert", 'hinw');

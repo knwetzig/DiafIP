@@ -1,17 +1,18 @@
 <?php
-/**************************************************************
+/************* Personen-Klasse V2 *****************************
+    PHP Version >= 5.4
 
-    Personen-Klasse V2
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    ToDo:
+        - add und edit bearbeiten und mit Template abgleichen
 
-ToDo:
-    - add und edit bearbeiten und mit Template abgleichen
+    Author: Knut Wetzig <knwetzig@gmail.com>
 
-***********************************************************/
+**************************************************************/
 
 /**===========================================================
                                 NAMEN
@@ -61,7 +62,7 @@ class PName extends Entity implements iPName {
     // Diese Funktion initialisiert das Objekt
         $db = MDB2::singleton();
 
-        $data = $db->extended->getRow(self::GETDATA, null, $nr, 'integer');
+        $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPENAME), $nr, 'integer');
         IsDbError($data);
         if ($data) :
             $this->content['vname'] = $data['vname'];
@@ -131,13 +132,13 @@ class PName extends Entity implements iPName {
 
         if (empty($status)) :
             // Daten einsammeln und für Dialog bereitstellen :-)
-            $data = array(
+            $data = [
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('kopf', null, VIEW, 4013),
                 new d_feld('id',    $this->content['id']),
                 new d_feld('vname', $this->content['vname'], EDIT, 516),
                 new d_feld('nname', $this->content['nname'], EDIT, 517),
-                new d_feld('notiz', $this->content['notiz'], EDIT, 514));
+                new d_feld('notiz', $this->content['notiz'], EDIT, 514)];
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));
@@ -200,11 +201,11 @@ class PName extends Entity implements iPName {
         $offset = null;
 
        // Suche nach Teilstring
-        $erg = array();
+        $erg = [];
         $s = "%".$s."%";
 
-        $data =$db->extended->getAll(
-            self::SEARCH, array('integer','text'), array($s,$s,$limit,$offset));
+        $data = $db->extended->getAll(
+            self::SEARCH, ['integer','text'], [$s,$s,$limit,$offset]);
         IsDbError($data);
 
         if ($data) return $data; else return 102;
@@ -243,8 +244,9 @@ class PName extends Entity implements iPName {
                 Datenbankabfrage optimiert und dieses recht
                 komplizierte Konstrukt auflöst ;-)
     **********************************************************/
+        global $str;
         function arrpack($arr) {
-            $erg = array();
+            $erg = [];
             foreach ($arr as $val) :
                 if ($val['vname'] === '-') :
                     $erg[$val['id']] = $val['nname'];
@@ -257,14 +259,14 @@ class PName extends Entity implements iPName {
 
         $db = MDB2::singleton();
         $data = $db->extended->getAll(
-            self::GETALIAS, array('integer','text','text'));
+            self::GETALIAS, ['integer','text','text']);
         IsDbError($data);
         $data = arrpack($data);
         $all = $db->extended->getAll(
-            self::GETALLNAMES, array('integer','text','text'));
+            self::GETALLNAMES, ['integer','text','text']);
         IsDbError($all);
         $all = arrpack($all);
-        $erg[0] = d_feld::getString(0);        // kein Eintrag
+        $erg[0] = $str->getStr(0);        // kein Eintrag
         $erg += array_diff($all,$data);
         return $erg;
     }
@@ -326,7 +328,7 @@ class Person extends PName implements iPerson {
     **********************************************************/
         $db = MDB2::singleton();
 
-        $data = $db->extended->getRow(self::GETDATA,null, $nr);
+        $data = $db->extended->getRow(self::GETDATA,list2array(self::TYPEPERSON), $nr);
         IsDbError($data);
         // Ergebnis -> Objekt schreiben
         if ($data) :
@@ -355,10 +357,10 @@ class Person extends PName implements iPerson {
     *  Return:
     **********************************************************/
         $db = MDB2::singleton();
-        $data = $db->extended->getOne(self::IFDOUBLE, null, array(
+        $data = $db->extended->getOne(self::IFDOUBLE, ['boolean'], [
             $this->content['gtag'],
             $this->content['vname'],
-            $this->content['nname']));
+            $this->content['nname']]);
         IsDbError($data);
         return $data;
     }
@@ -370,10 +372,10 @@ class Person extends PName implements iPerson {
     **********************************************************/
         $db = MDB2::singleton();
         $data = $db->extended->getAll(
-            self::GETPERLI, array('integer','text','text'));
+            self::GETPERLI, ['integer','text','text']);
         IsDbError($data);
 
-        $alist = array(d_feld::getString(0));       // kein Eintrag
+        $alist = [$str->getStr(0)];       // kein Eintrag
         foreach ($data as $val) :
             if ($val['vname'] === '-') :
                 $alist[$val['id']] = $val['nname'];
@@ -391,7 +393,7 @@ class Person extends PName implements iPerson {
     Return: array(string)
     **********************************************************/
         if ($this->content['aliases']) :
-            $data = array();
+            $data = [];
             foreach (list2array($this->content['aliases']) as $val) :
                 $e = new PName(intval($val));
                 $data[] = $e->fiVname().$e->content['nname'];
@@ -419,22 +421,23 @@ class Person extends PName implements iPerson {
     *  Aufgabe: gibt die Besetzungsliste für diesen Eintrag aus
     *   Return: array(vname, name, tid, pid, job)
     **********************************************************/
+        global $str;
         $db = MDB2::singleton();
         if (empty($this->content['id'])) return;
 
         // Zusammenstellen der Castingliste für diese Person
         $data = $db->extended->getALL(
-            self::GETCALI, null, $this->content['id'], 'integer');
+            self::GETCALI, ['integer', 'integer', 'integer'], $this->content['id'], 'integer');
         IsDbError($data);
 
         // Übersetzung für die Tätigkeit und Namen holen
-        $f=array();
+        $f=[];
         foreach ($data as $wert) :
             $film = new Film($wert['fid']);
             if (!$film->isDel()) :
-                $g = array();
+                $g = [];
                 $g['ftitel'] = $film->getTitel();
-                $g['job'] = d_feld::getString($wert['tid']);
+                $g['job'] = $str->str($wert['tid']);
                 $f[] = $g;
             endif;
         endforeach;
@@ -491,7 +494,7 @@ class Person extends PName implements iPerson {
             $smarty->assign('ortlist', Ort::getOrtList());
 
             // Daten einsammeln und für Dialog bereitstellen :-)
-            $data = array(
+            $data = [
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('kopf', null, VIEW, 4013),
                 new d_feld('id',    $this->content['id']),
@@ -510,7 +513,7 @@ class Person extends PName implements iPerson {
                 new d_feld('plz',  $this->content['plz'],IEDIT),
                 new d_feld('tel',  $this->content['tel'],IEDIT,511,10002),
                 new d_feld('mail', $this->content['mail'],IEDIT,512),
-                new d_feld('descr',$this->content['descr'],EDIT,513));
+                new d_feld('descr',$this->content['descr'],EDIT,513)];
             $smarty->assign('dialog', a_display($data));
             $smarty->display('person_dialog.tpl');
             $myauth->setAuthData('obj', serialize($this));

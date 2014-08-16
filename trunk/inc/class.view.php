@@ -1,27 +1,64 @@
 <?php
 /**************************************************************
+    PHP version: >= 5.4
+
     Stellt Klassen und Funktionen für die
     Ein-/Ausgabefunktionalität bereit.
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
 
+**************************************************************/
 
-/** =================================================================
+/** ===========================================================
+                                STRINGS
+=========================================================== **/
+interface iString {
+    function getStr($nr);
+}
+
+class String implements iString {
+    protected $strtable = [];
+
+    function __construct($lang) {
+        global $db;
+
+        $str = $db->extended->getAll('SELECT * FROM s_strings;');
+        IsDbError($str);
+
+        foreach ($str as $s) :
+            $this->strtable[$s['id']] = ($s[$lang]) ? $s[$lang] : $s['de'];
+        endforeach;
+        unset($str);
+    }
+
+    function getStr($nr) {
+        if (empty($nr) OR !is_numeric($nr)) return;
+        return $this->strtable[$nr];
+    }
+
+    function getStrList($sl) {
+        if (!is_array($sl)) return 1;
+        $nl = [];
+        foreach ($sl as $value) $nl[] = $this->strtable[$value];
+        return $nl;
+    }
+}
+
+/** ===========================================================
                                 VIEW
-================================================================= **/
-class d_feld {
-/**********************************************************
+=========================================================== **/
+/**************************************************************
 Repräsentiert ein Ein-/Ausgabeelement
 
-  getString(int)  STATIC  Holt String aus Tabelle s_strings
   isValid()               Validierung + Variable setzen
   display()       DYNA    Gibt ein Array für Anzeige aus
-**********************************************************/
+**************************************************************/
+class d_feld {
     protected
         $name       = null, // Feldname aus Objekt
         $inhalt     = null, // Wert des Objektes
@@ -31,23 +68,14 @@ Repräsentiert ein Ein-/Ausgabeelement
         $rights     = null; // erforderliche Rechte (pos des Bits, 0 beginnend)
 
     function __construct($name, $wert, $rechte = null, $label = null, $tipp = null, $valStr = null) {
+        global $str;
+
         $this->name     = $name;
         $this->inhalt   = $wert;
         if (!empty($rechte) AND is_int($rechte)) $this->rights = $rechte;
         $this->valStr   = $valStr;
-        if (!empty($label) AND is_int($label)) $this->label = self::getString($label);
-        if (!empty($tipp) AND is_int($tipp)) $this->tooltip = self::getString($tipp);
-    }
-
-    static function getString($nr) {
-        global $lang;
-        if (empty($nr) OR !is_numeric($nr)) return null;
-
-        $db = MDB2::singleton();
-        $data = $db->extended->getRow(
-            'SELECT de, en, fr FROM s_strings WHERE id = ?;', null, $nr);
-        if (!empty($data[$lang])) $st = $data[$lang]; else $st = $data['de'];
-        return $st;
+        if (!empty($label) AND is_int($label)) $this->label = $str->getStr($label);
+        if (!empty($tipp) AND is_int($tipp)) $this->tooltip = $str->getStr($tipp);
     }
 
     protected function isValid() {
@@ -80,7 +108,7 @@ Repräsentiert ein Ein-/Ausgabeelement
                                arrayverarbeitung
 ================================================================= **/
 function a_display($arr) {
-    $data = array();
+    $data = [];
     foreach ($arr as $val) {
         if (is_array($val->display())) {
             $a = $val->display();
@@ -89,4 +117,3 @@ function a_display($arr) {
     }
     return $data;
 }
-?>

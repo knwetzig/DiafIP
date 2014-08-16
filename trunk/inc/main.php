@@ -51,11 +51,15 @@ if (isset($_REQUEST['sektion']) AND isset($datei[$_REQUEST['sektion']])) :
     $smarty->assign('sektion', $_REQUEST['sektion']);
     include $datei[$_REQUEST['sektion']];
 else :
-    // mehrsprachige Vorgabeseite
-    $data = $db->extended->getOne(
-        'SELECT '.$myauth->getAuthData('lang').' FROM s_strings WHERE id = 13;');
-    IsDbError($data);
-    echo $data;
+    if ($myauth->getAuthData('uid') == 4) :
+        // mehrsprachige Vorgabeseite
+        $data = $db->extended->getOne(
+            'SELECT '.$myauth->getAuthData('lang').' FROM s_strings WHERE id = 13;');
+        IsDbError($data);
+        echo $data;
+    else :
+        include $datei['news'];
+    endif;
 endif;
 echo "</div>";
 ?>

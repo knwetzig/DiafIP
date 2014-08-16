@@ -1,18 +1,22 @@
 <?php /********************************************************
+    PHP Version >= 5.4
 
     Eventhandler für Aktionen der Namensverwaltung
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
+
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
 **************************************************************/
 
 if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
-$data = array( new d_feld('bereich', d_feld::getString(4012)),
-               new d_feld('sektion', 'N'));
+$data = [new d_feld('bereich', $str->getStr(4012)),
+         new d_feld('sektion', 'N')];
 $smarty->assign('dialog', a_display($data));
 $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');

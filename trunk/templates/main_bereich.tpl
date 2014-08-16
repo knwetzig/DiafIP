@@ -13,7 +13,7 @@ $URL$
 
     <div id='bearbzeile'>
         {if isset($dialog['sstring'])}
-        <div id='suchfeld'>
+        <div id='left'>
             <form action='{$dlg['phpself']}' method='post'>
                 <input
                 type='text'

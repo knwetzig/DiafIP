@@ -1,12 +1,15 @@
 <?php
 /**************************************************************
+    PHP Version >= 5.4
 
     Klassenbibliothek für Filmogr.-/Bibliografische Daten
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
+
+    Author: Knut Wetzig <knwetzig@gmail.com>
 
 **************************************************************/
 
@@ -126,8 +129,8 @@ abstract class Fibikern extends Entity implements iFibikern {
         $db = MDB2::singleton();
         $list = $db->extended->getCol(self::GETTAETIG, 'integer');
         IsDbError($list);
-        $data = array();
-        foreach ($list as $wert) $data[$wert] = d_feld::getString($wert);
+        $data = [];
+        foreach ($list as $wert) $data[$wert] = $str->getStr($wert);
         asort($data);
         return $data;
     }
@@ -138,7 +141,7 @@ abstract class Fibikern extends Entity implements iFibikern {
      Return: array | Fehlercode
     **********************************************************/
         $db = MDB2::singleton();
-        $ergebnis = array();
+        $ergebnis = [];
         $erg =& $db->query(self::GETSTILI);
         IsDbError($erg);
         while ($row =$erg->fetchRow()) :
@@ -156,7 +159,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         $list = $db->extended->getAll(self::GETTILI);
         IsDbError($list);
 
-        $data = array(0 => null);
+        $data = [0 => null];
         foreach ($list as $wert) $data[$wert['id']] = $wert['titel'];
         return $data;
     }
@@ -169,8 +172,8 @@ abstract class Fibikern extends Entity implements iFibikern {
     **********************************************************/
         $db = MDB2::singleton();
         $data = $db->extended->getOne(
-            self::EXCAST, integer, array($this->content['id'], $p, $t),
-            array('integer', 'integer', 'integer'));
+            self::EXCAST, integer, [$this->content['id'], $p, $t],
+            ['integer', 'integer', 'integer']);
         IsDbError($data);
         return $data;
     }
@@ -186,8 +189,8 @@ abstract class Fibikern extends Entity implements iFibikern {
         if (self::existCast($p, $t)) return 8;
 
         IsDbError($db->extended->autoExecute(
-            'f_cast', array('fid' => $this->content['id'], 'pid' => $p, 'tid' => $t),
-            MDB2_AUTOQUERY_INSERT, null, array('integer', 'integer', 'integer')));
+            'f_cast', ['fid' => $this->content['id'], 'pid' => $p, 'tid' => $t],
+            MDB2_AUTOQUERY_INSERT, null, ['integer', 'integer', 'integer']));
     }
 
     final public function delCast($p, $t) {
@@ -222,7 +225,7 @@ abstract class Fibikern extends Entity implements iFibikern {
 
         // Übersetzung für die Tätigkeit und Namen holen
         foreach ($data as &$wert) :
-           $wert['job'] = d_feld::getString($wert['tid']);
+           $wert['job'] = $str->getStr($wert['tid']);
            $p = new Person($wert['pid']);
            $wert['name'] = $p->getName();
         endforeach;
@@ -255,7 +258,7 @@ abstract class Fibikern extends Entity implements iFibikern {
         $db = MDB2::singleton();
 
         // Suche in titel, atitel, utitel
-        $data = $db->extended->getCol(self::SQL_search1, null, array($s,$s,$s.$s));
+        $data = $db->extended->getCol(self::SEARCH, ['integer'], [$s,$s,$s.$s]);
         IsDbError($data);
         if ($data) :
             return $data;
@@ -328,7 +331,7 @@ final class Film extends Fibikern implements iFilm {
     *   Aufruf:
     *   Return: void
     ****************************************************************/
-        $types      = array(
+        $types      = [
             'integer',  // gattung
             'integer',  // prodtechnik
             'time',     // laenge   (Sonderformat)
@@ -337,7 +340,7 @@ final class Film extends Fibikern implements iFilm {
             'integer',  // bildformat
             'integer',  // mediaspezi
             'date'      // urauffuehr
-        );
+        ];
 
         $db = MDB2::singleton();
         $data = $db->extended->getRow(self::SQL_get, $types, $nr, 'integer');
@@ -354,10 +357,10 @@ final class Film extends Fibikern implements iFilm {
     ****************************************************************/
         $db = MDB2::singleton();
         $list = $db->extended->getCol(self::SQL_getGenre, 'integer');
-        $data = array();
+        $data = [];
         IsDbError($list);
         foreach ($list as $wert) :
-            $data[$wert] = d_feld::getString($wert);
+            $data[$wert] = $str->getStr($wert);
         endforeach;
         asort($data);
         return $data;
@@ -371,9 +374,9 @@ final class Film extends Fibikern implements iFilm {
         $db = MDB2::singleton();
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
-        $data = array();
+        $data = [];
         // TODO: ÃƒÅ“berdenken den Einsatz von getStringList !
-        foreach ($list as $wert) $data[$wert] = d_feld::getString($wert);
+        foreach ($list as $wert) $data[$wert] = $str->getStr($wert);
         return $data;
     }
 
@@ -385,7 +388,7 @@ final class Film extends Fibikern implements iFilm {
         $db = MDB2::singleton();
         $list = $db->extended->getAll(self::SQL_getBfLi);
         IsDbError($list);
-        $data = array('');
+        $data = [];
         foreach ($list as $wert) $data[$wert['id']] = $wert['format'];
         return $data;
     }
@@ -418,7 +421,7 @@ final class Film extends Fibikern implements iFilm {
     *   Return: array (string)
     ****************************************************************/
         $list = self::getListMediaSpez();
-        $data = array();
+        $data = [];
         foreach ($list as $key => $wert) :
             if (isbit($this->mediaspezi, $key)) $data[] = $wert;
         endforeach;
@@ -443,7 +446,7 @@ final class Film extends Fibikern implements iFilm {
     *   Return: array (string)
     ****************************************************************/
         $list = self::getListProdTech();
-        $data = array();
+        $data = [];
         foreach ($list as $key => $wert) :
             if (isbit($this->prodtechnik, $key)) $data[] = $wert;
         endforeach;
@@ -465,7 +468,7 @@ final class Film extends Fibikern implements iFilm {
             WHERE
               f_cast.pid = p_person.id AND p_person.wort = s_orte.id AND
               s_orte.land = s_land.id AND f_cast.fid = ? AND f_cast.tid = ?;',
-            null, array($this->id, 1480), array('integer', 'integer')
+            null, [$this->id, 1480], ['integer', 'integer']
         );
         IsDbError($ProdLand);
         return $ProdLand;
@@ -490,7 +493,7 @@ final class Film extends Fibikern implements iFilm {
             $this->edit(false);
         else :
             // Objekt wurde vom Eventhandler initiiert
-            $types = array(
+            $types = [
                 // ACHTUNG! Reihenfolge beachten !!!
                 'integer',      // gattung
                 'integer',      // prodtechnik
@@ -516,7 +519,7 @@ final class Film extends Fibikern implements iFilm {
                 'text',         // atitel
                 'text',         // utitel
                 'integer',      // sid
-                'integer');     // sfolge
+                'integer'];     // sfolge
 
             $this->edit(true);
             foreach ($this as $key => $wert) $data[$key] = $wert;
@@ -538,7 +541,7 @@ final class Film extends Fibikern implements iFilm {
         global $myauth, $smarty;
         if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if ($status == false) :        // Formular anzeigen
-            $data = array(
+            $data = [
                 // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('serTitel',  parent::getSTitelList()),
                 new d_feld('gattLi',    self::getListGattung()),
@@ -572,7 +575,7 @@ final class Film extends Fibikern implements iFilm {
                 new d_feld('mediaspezi',bit2array($this->mediaspezi),  EDIT, 583),
                 new d_feld('urauff',    $this->urauffuehr,  EDIT, 584),
                 new d_feld('isvalid',   $this->isvalid,     IEDIT, 10009),
-            );
+            ];
             // CastListe nur beim bearbeiten und nicht bei Neuanlage zeigen.
             if ($this->titel) $data[] = new d_feld('cast', $this->getCastList(), EDIT);
 
@@ -720,7 +723,7 @@ final class Film extends Fibikern implements iFilm {
         if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
         if (!$this->id) return 4;         // Abbruch: leerer Datensatz
 
-        $types = array(
+        $types = [
         // ACHTUNG: Reihenfolge beachten!
             'integer',      // gattung
             'integer',      // prodtechnik
@@ -746,7 +749,7 @@ final class Film extends Fibikern implements iFilm {
             'text',         // utitel
             'integer',      // sid
             'integer'       // sfolge
-        );
+        ];
 
         foreach ($this as $key => $wert) $data[$key] = $wert;
         unset($data['stitel'], $data['sdescr'], $data['id']);
@@ -782,11 +785,11 @@ final class Film extends Fibikern implements iFilm {
         $data = parent::view();
             // name, inhalt, opt -> rechte, label,tooltip
         $data[] = new d_feld('prod_land', self::getProdLand(),VIEW,698);
-        $data[] = new d_feld('gattung', d_feld::getString($this->gattung),VIEW,579);
+        $data[] = new d_feld('gattung', $str->getStr($this->gattung),VIEW,579);
         $data[] = new d_feld('prodtech',  self::getThisProdTech(),VIEW,571);
         $data[] = new d_feld('laenge',    $this->laenge,VIEW,580);
         $data[] = new d_feld('fsk',       $this->fsk,VIEW,581);
-        $data[] = new d_feld('praedikat', d_feld::getString($this->praedikat),VIEW, 582);
+        $data[] = new d_feld('praedikat', $str->getStr($this->praedikat),VIEW, 582);
         $data[] = new d_feld('bildformat', self::getBildformat(),VIEW,608);
         $data[] = new d_feld('mediaspezi', self::getThisMediaSpez(),VIEW,583);
         $data[] = new d_feld('urrauff',   $this->urauffuehr,VIEW,584);

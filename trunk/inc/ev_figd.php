@@ -1,13 +1,17 @@
 <?php
 /***************************************************************
+    PHP Version >= 5.4
+
     Eventhandler für Aktionen der Filmverwaltung
 
-$Rev$
-$Author$
-$Date$
-$URL$
+    $Rev$
+    $Author$
+    $Date$
+    $URL$
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 if (!$myauth->checkAuth()) :
     feedback(108, 'error');
@@ -15,13 +19,12 @@ if (!$myauth->checkAuth()) :
 endif;
 
 // Kopfbereich
-$data = a_display(array(
+$data = a_display([
     // name,inhalt,rechte, optional-> $label,$tooltip,valString
-    new d_feld('bereich', d_feld::getString(4008)),
-    new d_feld('sstring', d_feld::getString(4011)),
+    new d_feld('bereich', $str->getStr(4008)),
+    new d_feld('sstring', $str->getStr(4011)),
     new d_feld('sektion', 'film'),
-    new d_feld('add', true, EDIT, null, 4024)
-));
+    new d_feld('add', true, EDIT, null, 4024)]);
 $smarty->assign('dialog', $data);
 $smarty->assign('darkBG', 0);
 $smarty->display('main_bereich.tpl');

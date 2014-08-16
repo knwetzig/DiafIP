@@ -7,7 +7,9 @@ $Author::                           $
 $Date::                             $
 $URL$
 
-***** (c) DIAF e.V. *******************************************/
+    Author: Knut Wetzig <knwetzig@gmail.com>
+
+**************************************************************/
 
 if (!$myauth->checkAuth()) {
     feedback(108, 'error');
@@ -19,7 +21,7 @@ if ($myauth->getAuthData('rechte') < 2) {
     exit();
 }
 
-echo '<div class="bereich">Nachrichten</div>';
+echo '<div id="bereich">Nachrichten';
 if (!isset($_POST['aktion'])) {
     // einfügen -> ist Benutzer berechtigt neue Artike zu erstellen
     echo "<form method='post'>
@@ -27,6 +29,7 @@ if (!isset($_POST['aktion'])) {
             <input type='hidden' name='sektion' value='news' />
         </form>";
 }
+echo '</div>';
 
 switch(isset($_POST['aktion'])?$_POST['aktion']:'') :
 
@@ -128,7 +131,7 @@ $data = $db->extended->getAll($sql, array('integer','text','text','date','text')
 IsDbError($data);
 
 foreach ($data as $wert) :
-    echo "<hr /><form method='post'><span style='float:right' class='note'>\n"
+    echo "<form id='news' method='post'><span style='float:right' class='note'>\n"
         .$wert['chdatum']."&nbsp;|&nbsp;".$wert['realname']."&nbsp;\n";
     /* Nutzer berechtigt zu editieren? */
     if ($myauth->getAuthdata('uid') === $wert['autor'] OR

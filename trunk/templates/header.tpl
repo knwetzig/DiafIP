@@ -12,7 +12,7 @@
 </head>
 <body>
 <div id='overDiv'></div>
-<script language="JavaScript" src="js/overlib/overlib.js"></script>
+<script language="JavaScript" src="js/overlib/overlib.js"></script>{*
 <script language="javascript" src="js/overlib/overlib_anchor.js"></script>
 <script language="javascript" src="js/overlib/overlib_crossframe.js"></script>
 <script language="javascript" src="js/overlib/overlib_cssstyle.js"></script>
@@ -20,7 +20,7 @@
 <script language="javascript" src="js/overlib/overlib_followscroll.js"></script>
 <script language="javascript" src="js/overlib/overlib_hideform.js"></script>
 <script language="javascript" src="js/overlib/overlib_shadow.js"></script>
-<script language="javascript" src="js/overlib/overlib_centerpopup.js"></script>
+<script language="javascript" src="js/overlib/overlib_centerpopup.js"></script> *}
 <script type="text/javascript">
     var ol_width = '350px';
 </script>

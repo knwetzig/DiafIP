@@ -16,7 +16,7 @@ $URL$
         {foreach $stat as $wert}
         <tr><td>{$wert@key}:</td><td class='re'>{$wert}</td></tr>
         {/foreach}
-    </table><br />
+    </table>
 {/if}
-    <img src='images/openbsdpower.gif' alt='powered by OpenBSD' width='120px' />
+    <a href='http://openbsd.org' target='_new'><img src='images/puflogh200X50.gif' alt='OpenBSD' width='150px' /></a>
 </div>
