@@ -20,7 +20,7 @@ Der Bereich 8-12 ist für sie möglicherweise aus datenschutzrechtlichen Gründe
  # *Ort*  ..zur Anschrift - einfach auswählen
  # *eMail* ... hier eine valide Mailadresse eintragen
  # *tel* (Telefonnummer) - Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351 1234567.  Bitte verwenden sie keine Leerzeichen in der Rufnummer sondern nur als Trennzeichen für die Vorwahlen.
- # *Biografie* - Dieses Feld enthält alle Informationen zur Person die veröffentlicht werden sollen (Also nicht zwangsweise nur biografische Daten).
+ # *Biografie* - Dieses Feld enthält alle Informationen zur Person die veröffentlicht werden sollen (Also nicht zwangsweise nur biografische Daten). Jahresangaben zu Studien- bzw. Arbeitstätigkeiten immer wie folgt angeben: {{{1958-99}}}, sollte das Jahrhundert wechseln, ist auf die verkürzte Schreibweise zu verzichten: {{{1998-2007}}}
  # *Notiz* Hier können Bearbeitungsnotizen hinterlegt werden. Dieses Feld ist nur für Bearbeiter sichtbar.
  # *Validierungsvermerk* Dieser kann nur durch einen authorisierten Mitarbeiter gesetzt werden.
 Doppelte Datensätze werden vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum.
