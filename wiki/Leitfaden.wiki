@@ -1,3 +1,4 @@
+#labels Phase-Support
 #sidebar toc
 =Leitfaden zur Benutzung der Applikation DIAFIP=
 ----
@@ -23,6 +24,7 @@ Datensätze können nach Anlage nicht mehr gelöscht werden. Kontrollieren sie b
 Sie können zu den einzelnen Felder im Dialog navigieren indem sie die Tabulatortaste benutzen (vorwärts) oder Umschalt+Tabulator (rückwärts). Durch drücken der Taste 'Enter' (nicht in mehrzeiligen Textfeldern) wird der Datensatz an den Server gesendet. Gleiches erreichen sie durch betätigen des Buttons am Ende des Dialogs.
 
 Alle mehrzeiligen Texteingabefelder verfügen über die Fähigkeit BBCode darstellen zu können. BBCode (von engl. Bulletin Board Code) ist eine an HTML angelehnte, jedoch vereinfachte Auszeichnungssprache. Implementiert sind folgende Elemente:
+
 ||*Element*||*Auszeichnung in BBCode*||
 ||einfache Schriftformatierung||[b]*fett*[/b]||
 ||||[i]_kursiv_[/i]||
@@ -31,5 +33,7 @@ Alle mehrzeiligen Texteingabefelder verfügen über die Fähigkeit BBCode darste
 ||Verweise||[url]http://example.com[/url]||
 ||||[url=http://example.com]Verweistext[/url]||
 ||Bilder||[img=http://example.com/bild.png][/img]||
+
 Die Elemente können verschachtelt werden, wobei die Reihenfolge der schließenden Tags einzuhalten ist.
+
 Beispiel: {{{[i]_Das ist ein kursiver Text, mit einem_ [b]*_fetten Bestandteil_*[/b]_.[/i]}}}
