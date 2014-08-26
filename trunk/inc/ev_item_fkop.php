@@ -1,56 +1,60 @@
 <?php
-/*****************************************************************************
-    Eventhandler für Aktionen der Filmkopien (Film + Medien)
-
-$Rev$
-$Author$
-$Date$
-$URL$
-
-***** (c) DIAF e.V. *********************************************************/
+/**
+ * Eventhandler für Aktionen der Filmkopien (Film + Medien)
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ * $URL$
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @requirement PHP Version >= 5.4
+ */
 
 if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
-$data = a_display(array(
-        // name,inhalt,rechte, optional-> $label,$tooltip,valString
-        new d_feld('bereich', d_feld::getString(4038)),
-        new d_feld('sstring', d_feld::getString(4011)),
-        new d_feld('sektion', 'i_fkop'),
-        new d_feld('add', true, EDIT, null)
-    ));
-$smarty->assign('dialog', $data);
-$smarty->assign('darkBG', 0);
-$smarty->display('main_bereich.tpl');
+$data = a_display([
+                      // name,inhalt,rechte, optional-> $label,$tooltip,valString
+                      new d_feld('bereich', $str->getStr(4038)),
+                      new d_feld('sstring', $str->getStr(4011)),
+                      new d_feld('sektion', 'i_fkop'),
+                      new d_feld('add', true, EDIT, null)
+                  ]);
+$marty->assign('dialog', $data);
+$marty->assign('darkBG', 0);
+$marty->display('main_bereich.tpl');
 
 // --- Verteiler ---
-if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
-    $smarty->assign('aktion', $_REQUEST['aktion']);
+if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
+    $marty->assign('aktion', $_REQUEST['aktion']);
 
-    switch(isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
+    switch (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
         case "add":
             if (isset($_POST['form'])) :
-                $ifk = new FilmKopie;        // Formular anfordern
+                $ifk = new FilmKopie; // Formular anfordern
                 $ifk->add(false);
             else :
                 $ifk = unserialize($myauth->getAuthData('obj'));
-                $ifk->add(true);       // Auswertezweig
+                $ifk->add(true); // Auswertezweig
                 $ifk->view();
             endif;
-        break;
+            break;
 
         case "edit" :
             if (isset($_POST['form'])) :
                 $ifk = new FilmKopie($_POST['id']);
                 $ifk->edit(false); // Formular anfordern
-            else :                 // Auswertezweig
+            else : // Auswertezweig
                 $ifk = unserialize($myauth->getAuthData('obj'));
                 $ifk->edit(true);
                 $erg = $ifk->set();
-                if ($erg) feedback($erg,'error');
+                if ($erg) feedback($erg, 'error');
                 $ifk->view();
             endif;
-        break;	// Ende edit
+            break; // Ende edit
 
         case "search" :
             if (isset($_POST['sstring'])) :
@@ -61,7 +65,8 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
                     // Ausgabe
                     $bg = 1;
                     foreach (($list) as $nr) :
-                        ++$bg; $smarty->assign('darkBG', $bg % 2);
+                        ++$bg;
+                        $marty->assign('darkBG', $bg % 2);
                         $item = new FilmKopie($nr);
                         $item->sview();
                     endforeach;
@@ -69,25 +74,23 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
                     feedback(102, 'hinw'); // kein Erg.
                 endif;
             endif;
-        break;
+            break;
 
         case "del" :
             $ifk = new FilmKopie($_POST['id']);
             $erg = $ifk->del();
             if (empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'error');
-        break;
+            break;
 
         case 'view' :
             $ifk = new FilmKopie((int)$_REQUEST['id']);
             $ifk->view();
-        break;
+            break;
 
         case 'addImage' :
             /** --- BAUSTELLE --- **/
             $img = new Bild();
             $img->add();
-        break;
 
     endswitch;
 endif;
-?>

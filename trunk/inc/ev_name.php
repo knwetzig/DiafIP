@@ -1,30 +1,31 @@
-<?php /********************************************************
-    PHP Version >= 5.4
-
-    Eventhandler für Aktionen der Namensverwaltung
-
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+<?php
+/**
+ * Eventhandler für Aktionen der Namensverwaltung
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ * $URL$
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @requirement PHP Version >= 5.4
+ **************************************************************/
 
 if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = [new d_feld('bereich', $str->getStr(4012)),
          new d_feld('sektion', 'N')];
-$smarty->assign('dialog', a_display($data));
-$smarty->assign('darkBG', 0);
-$smarty->display('main_bereich.tpl');
+$marty->assign('dialog', a_display($data));
+$marty->assign('darkBG', 0);
+$marty->display('main_bereich.tpl');
 
-if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
+if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
 
     // switch:aktion => add | edit | search | del | view
-    switch($_REQUEST['aktion']) :
+    switch ($_REQUEST['aktion']) :
         case 'extra':
         case 'add':
             if (isset($_POST['form'])) :
@@ -61,8 +62,7 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
         case "view" :
             $n = new PName($_REQUEST['id']);
             $n->display('pers_dat.tpl');
-            break;  // Endview
+            break; // Endview
     endswitch;
 endif;
-    // aus iwelchen Gründen wurde keine 'aktion' ausgelöst?
-?>
+// aus iwelchen Gründen wurde keine 'aktion' ausgelöst?

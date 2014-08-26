@@ -1,36 +1,34 @@
 <?php
-/*****************************************************************************
-    PHP Version >= 5.4
-
-    Eventhandler für Userverwaltung
-
-    sektion:    admin
-    site:       user
-
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+/**
+ * Eventhandler für Userverwaltung
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ * $URL$
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @requirement PHP Version >= 5.4
+ */
 
 if (!$myauth->getAuth()) {
     feedback(108, 'error');
     exit();
 }
 
-if (!(isBit($myauth->getAuthData('rechte'), ADMIN ) OR
-                (isBit($myauth->getAuthData('rechte'), SU )))) {
+if (!(isBit($myauth->getAuthData('rechte'), ADMIN) OR
+    (isBit($myauth->getAuthData('rechte'), SU)))
+) {
     feedback(2, 'error');
     exit(2);
 }
 
-function getUserList(){
+function getUserList() {
 // Nutzerauswahlliste erstellen
-    $db = MDB2::singleton();
-    $sql = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
+    $db   = MDB2::singleton();
+    $sql  = 'SELECT uid, realname FROM s_auth ORDER BY realname ASC;';
     $data = $db->extended->getAll($sql);
     IsDbError($data);
     $ul = [];
@@ -40,57 +38,56 @@ function getUserList(){
     return $ul;
 }
 
-function viewAddDialog() {              // Ausgabe: Neuen Nutzer anlegen
-    global $smarty;
-    $data = [];
+function viewAddDialog() { // Ausgabe: Neuen Nutzer anlegen
+    global $marty, $str;
+    $data    = [];
     $data[0] = ['user', $_SERVER['PHP_SELF'], $str->getStr(4034)];
     $data[2] = ['username', null, $str->getStr(4035)];
     $data[3] = ['pwd', null, $str->getStr(4017)];
     $data[6] = ['aktion', 'addUser'];
-    $smarty->assign('dialog', $data);
-    $smarty->display('adm_dialog.tpl');
+    $marty->assign('dialog', $data);
+    $marty->display('adm_dialog.tpl');
 }
 
 function viewSelektDialog() {
-    global $smarty, $myauth;
-    $smarty->assign('list', getUserList());
-    if (isset($_POST['user']) ? $seluid = $_POST['user'] : $seluid = $myauth->getAuthData('selUser'));
+    global $marty, $myauth;
+    $marty->assign('list', getUserList());
+    if (isset($_POST['user']) ? $seluid = $_POST['user'] : $seluid = $myauth->getAuthData('selUser')) ;
 
     $data = new d_feld('user', $seluid, null, 4016);
-    $smarty->assign("dialog", $data->display());
-    $smarty->display('adm_selekt.tpl');
+    $marty->assign("dialog", $data->display());
+    $marty->display('adm_selekt.tpl');
 }
 
-$smarty->assign('dialog', ['bereich' => [1 => $str->getStr(4033)]]);
-$smarty->display('main_bereich.tpl');
+$marty->assign('dialog', ['bereich' => [1 => $str->getStr(4033)]]);
+$marty->display('main_bereich.tpl');
 
 if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
     case "selekt" :
         // Formularauswertung nach Nutzerauswahl
         $myauth->setAuthData('selUser', $_POST['user']);
-        $sql = 'SELECT * FROM s_auth WHERE uid = ?;';
+        $sql     = 'SELECT * FROM s_auth WHERE uid = ?;';
         $userSel = $db->extended->getRow($sql, null, $myauth->getAuthData('selUser'));
         IsDbError($userSel);
-        $smarty->assign('dialog', [
-            'username'  => $userSel['username'],
-            'realname'  => $userSel['realname'],
-            'rightboxes' => [
-                'Allgemein lesen',
-                'Interne Daten lesen',
-                'Allgemein bearbeiten',
-                'Interne Daten bearbeiten',
-                'Listen/Presets bearbeiten',
-                'Daten l&ouml;schen',
-                'Depotverwaltung'
-                /*
-                '7',
-                ...
-                '15',   reserviert für ADMIN */
+        $marty->assign('dialog', [
+            'username'   => $userSel['username'],
+            'realname'   => $userSel['realname'],
+            'rightboxes' => ['Allgemein lesen',
+                             'Interne Daten lesen',
+                             'Allgemein bearbeiten',
+                             'Interne Daten bearbeiten',
+                             'Listen/Presets bearbeiten',
+                             'Daten l&ouml;schen',
+                             'Depotverwaltung'
+                             /*
+                             '7',
+                             ...
+                             '15',   reserviert für ADMIN */
             ],
-            'rightSel'  => bit2array($userSel['rechte']),
-            'notiz'     => $userSel['notiz'],
+            'rightSel'   => bit2array($userSel['rechte']),
+            'notiz'      => $userSel['notiz'],
         ]);
-        $smarty->display('adm_useredit.tpl');
+        $marty->display('adm_useredit.tpl');
         break;
 
     case "edUser" :
@@ -106,23 +103,24 @@ if (isset($_POST['aktion'])) switch ($_POST['aktion']) :
         endif;
 
         $data = [
-            'username'  => $_POST['username'],
-            'realname'  => $_POST['realname'],
-            'rechte'    => array2wert($ore, $_POST['rechte']),
-            'notiz'     => $_POST['notiz'],
-            'editdate'  => date('c', $_SERVER['REQUEST_TIME']),
-            'editfrom'  => $myauth->getAuthData('uid')];
+            'username' => $_POST['username'],
+            'realname' => $_POST['realname'],
+            'rechte'   => array2wert($ore, $_POST['rechte']),
+            'notiz'    => $_POST['notiz'],
+            'editdate' => date('c', $_SERVER['REQUEST_TIME']),
+            'editfrom' => $myauth->getAuthData('uid')];
 
-        $types = ['text','text','integer','text','date','integer'];
-        $data = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
-            'uid = '.$db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
+        $types = ['text', 'text', 'integer', 'text', 'date', 'integer'];
+        $data  = $db->extended->autoExecute('s_auth', $data, MDB2_AUTOQUERY_UPDATE,
+                                            'uid = ' . $db->quote($myauth->getAuthData('selUser'), 'integer'), $types);
         if (!IsDbError($data)) feedback("Die Daten wurden erfolgreich aktualisiert", 'hinw');
         break;
 
     case "addUser" :
         if ($_POST['username'] != "" AND $_POST['pwd'] != "")
             $erg = $myauth->addUser($_POST['username'], $_POST['pwd']);
-        if (!IsDbError($erg)) erfolg('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.');
+        if (!IsDbError($erg)) fee('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre
+        Bed&uuml;rfnisse an.');
 endswitch;
 
 // Ausgabe: Selekt-Dialog
@@ -130,5 +128,3 @@ if (isset($_POST['aktion']) AND $_POST['aktion'] !== 'selekt') :
     viewSelektDialog();
     viewAddDialog();
 endif;
-
-?>

@@ -1,17 +1,19 @@
 <?php
-/***************************************************************
-    PHP Version >= 5.4
-
-    Eventhandler für Aktionen der Filmverwaltung
-
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+/**
+ *
+ * Eventhandler für Aktionen der Filmverwaltung
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ * $URL$
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @requirement PHP Version >= 5.4
+ *
+ */
 
 if (!$myauth->checkAuth()) :
     feedback(108, 'error');
@@ -20,43 +22,43 @@ endif;
 
 // Kopfbereich
 $data = a_display([
-    // name,inhalt,rechte, optional-> $label,$tooltip,valString
-    new d_feld('bereich', $str->getStr(4008)),
-    new d_feld('sstring', $str->getStr(4011)),
-    new d_feld('sektion', 'film'),
-    new d_feld('add', true, EDIT, null, 4024)]);
-$smarty->assign('dialog', $data);
-$smarty->assign('darkBG', 0);
-$smarty->display('main_bereich.tpl');
+                      // name,inhalt,rechte, optional-> $label,$tooltip,valString
+                      new d_feld('bereich', $str->getStr(4008)),
+                      new d_feld('sstring', $str->getStr(4011)),
+                      new d_feld('sektion', 'film'),
+                      new d_feld('add', true, EDIT, null, 4024)]);
+$marty->assign('dialog', $data);
+$marty->assign('darkBG', 0);
+$marty->display('main_bereich.tpl');
 
-if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
-    $smarty->assign('aktion', $_REQUEST['aktion']);
+if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
+    $marty->assign('aktion', $_REQUEST['aktion']);
 
 // switch:action => add | edit | search | del | view
-    switch(isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'view') :
+    switch (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : 'view') :
         case "add":
             if (isset($_POST['form'])) {
-                $film = new Film;        // Formular anfordern
+                $film = new Film; // Formular anfordern
                 $film->add(false);
             } else {
                 $film = unserialize($myauth->getAuthData('obj'));
-                $film->add(true);       // Auswertezweig
+                $film->add(true); // Auswertezweig
                 $film->view();
             }
-        break; // Ende add
+            break; // Ende add
 
         case "edit" :
             if (isset($_POST['form'])) {
                 $film = new Film($_POST['id']);
                 $film->edit(false); // Formular anfordern
-            } else {                // Auswertezweig
+            } else { // Auswertezweig
                 $film = unserialize($myauth->getAuthData('obj'));
                 $film->edit(true);
                 $erg = $film->set();
                 if ($erg) feedback($erg, 'error');
                 $film->view();
             }
-        break;	// Ende edit
+            break; // Ende edit
 
         case "search" :
             if (isset($_POST['sstring'])) :
@@ -68,7 +70,8 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
                     // Ausgabe
                     $bg = 1;
                     foreach (($tlist) as $nr) :
-                        ++$bg; $smarty->assign('darkBG', $bg % 2);
+                        ++$bg;
+                        $marty->assign('darkBG', $bg % 2);
                         $film = new Film($nr);
                         $film->sview();
                     endforeach;
@@ -76,40 +79,38 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') :
                     feedback(102, 'hinw'); // kein Erg.
                 endif;
             endif;
-        break;
+            break;
 
         case "del" :
             $film = new Film($_POST['id']);
-            $erg = $film->del();
+            $erg  = $film->del();
             if (empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'warng');
-        break;
+            break;
 
         case 'view' :
             $film = new Film((int)$_REQUEST['id']);
-            $film->display();
-        break;
+            $film->display('blabla_film.tpl');
+            break;
 
         case 'addCast' :
             $film = new Film($_POST['id']);
             $film->addCast($_POST['pid'], $_POST['tid']);
-            $smarty->assign('aktion','edit');
+            $marty->assign('aktion', 'edit');
             $film->edit(false);
-        break;
+            break;
 
         case 'delCast' :
             $film = new Film($_POST['id']);
             $film->delCast($_POST['pid'], $_POST['tid']);
-            $smarty->assign('aktion','edit');
+            $marty->assign('aktion', 'edit');
             $film->edit(false);
-        break;
+            break;
 
         case 'addImage' :
             /** --- BAUSTELLE --- **/
             // aufruf von figd_dialog.tpl
             $img = new Bild();
             $img->add();
-        break;
 
     endswitch;
 endif;
-?>

@@ -1,37 +1,32 @@
 <?php
-/**************************************************************
-    PHP Version >= 5.4
-
-    Eventhandler für Verwaltung von Lagerorten
-
-    section:    admin
-    site:       lort
-
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-
----------->>> BAUSTELLE <<<-------------------!!!
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+/**
+ * Eventhandler für Verwaltung von Lagerorten
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ * $URL$
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @requirement PHP Version >= 5.4
+ *
+ * ToDo: BAUSTELLE - Vorsicht hier steht nix gerade!
+ **************************************************************/
 
 if (!$myauth->getAuth()) {
-    feedback(108, 'error');             // Fremdaufruf!
+    feedback(108, 'error'); // Fremdaufruf!
     exit();
 }
 
-if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+if (!isBit($myauth->getAuthData('rechte'), SEDIT)) {
     feedback(2, 'error');
     exit(2);
 }
 
-$smarty->assign('dialog', ['bereich' => [ 1 => $str->getStr(472)]]);
-$smarty->display('main_bereich.tpl');
-feedback('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.',
-    'warng');
+$marty->assign('dialog', ['bereich' => [1 => $str->getStr(472)]]);
+$marty->display('main_bereich.tpl');
+feedback('Dieser Bereich ist in der Konstruktionsphase und nicht verfügbar.', 'warng');
 exit;
 
 switch ($_POST['aktion']) :
@@ -41,7 +36,7 @@ switch ($_POST['aktion']) :
         break;
 
     case "edLOrt" :
-        $lo->edit(TRUE);
+        $lo->edit(true);
         break;
 
     case "addLOrt" :
@@ -56,17 +51,15 @@ switch ($_POST['aktion']) :
 
     default :
         // Ausgabe: Liste zum auswählen
-        $smarty->assign('list', LOrt::getLOrtList());
+        $marty->assign('list', LOrt::getLOrtList());
         $data = new d_feld('lort', null, ARCHIV, 472);
-        $smarty->assign("dialog", $data->display());
-        $smarty->display("adm_selekt.tpl");
+        $marty->assign("dialog", $data->display());
+        $marty->display("adm_selekt.tpl");
 
         // Editfeld zur Neueingabe
-        $dialog = [
-                0 => array('lort', null, 'neuen&nbsp;Lagerort&nbsp;erstellen'),
-                2 => array('lagerort', null, 'Lagerort'),
-                6 => array('aktion', 'addLOrt')];
-        $smarty->assign('dialog', $dialog);
-        $smarty->display('adm_dialog.tpl');
+        $dialog = [0 => ['lort', null, 'neuen&nbsp;Lagerort&nbsp;erstellen'],
+                   2 => ['lagerort', null, 'Lagerort'],
+                   6 => ['aktion', 'addLOrt']];
+        $marty->assign('dialog', $dialog);
+        $marty->display('adm_dialog.tpl');
 endswitch;
-?>

@@ -1,19 +1,20 @@
 <?php
-/********************************************************************
-    PHP Version >= 5.4
-
+/**
     Bearbeiten von Einträgen in der s_string Tabelle (Spalten en, fr)
 
     $Rev$
     $Author$
     $Date$
     $URL$
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @requirement PHP Version >= 5.4
 
-    TODO: Integration in class String
+    ToDo: Integration in class String
 
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+ */
 
 if (!$myauth->getAuth()) {
     feedback(108, 'error');
@@ -44,25 +45,25 @@ function getStrings($nr) {
 }
 
 function viewSelekt($nr = null) {
-    global $smarty;
-	$smarty->assign('dialog',['string' ,$nr , 'Text auswählen']);
-    $smarty->assign('list', getStrList());
-	$smarty->display('adm_selekt.tpl');
+    global $marty;
+	$marty->assign('dialog',['string' ,$nr , 'Text auswählen']);
+    $marty->assign('list', getStrList());
+	$marty->display('adm_selekt.tpl');
 }
 
 function viewEdit($satz) {
-    global $smarty;
-    $smarty->assign('dialog', a_display(
+    global $marty;
+    $marty->assign('dialog', a_display(
         [new d_feld('bereich', null, null, 4013),
          new d_feld('nr', $satz['nr']),
          new d_feld('de', $satz['de'], null, 10),
          new d_feld('en', $satz['en'], null, 11),
          new d_feld('fr', $satz['fr'], null, 12)]));
-	$smarty->display('adm_string_edit.tpl');
+	$marty->display('adm_string_edit.tpl');
 }
 
-$smarty->assign('dialog', ['bereich' =>  [1 => d_feld::getString(4036)]]);
-$smarty->display('main_bereich.tpl');
+$marty->assign('dialog', ['bereich' =>  [1 => $str->getStr(4036)]]);
+$marty->display('main_bereich.tpl');
 $db = MDB2::singleton();
 // Auswertung edit
 if (isset($_POST['aktion']) AND $_POST['aktion'] === 'edit') :
@@ -75,4 +76,3 @@ endif;
 if (empty($_POST['aktion']) OR
     (!empty($_POST['aktion']) AND $_POST['aktion'] !== 'selekt'))
     viewSelekt(); else viewEdit(getStrings((int)$_POST['string']));
-?>
