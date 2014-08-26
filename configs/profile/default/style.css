@@ -1,206 +1,115 @@
-@import "base.css";
+/*
+$Rev$
+$Author$
+$Date$
+$URL$
+*/
+
 @media screen {
     #menue {
-        position:fixed;
-        top:10px;
-        float:left;
-        width:12%;
-        height:400px;
-        font-size:0.9em;
-        text-align:center;
+        position: fixed;
+        float: left;
+        overflow: auto;
     }
 
     #status {
-        position:fixed;
-        bottom:10px;
+        position: fixed;
+        bottom: 10px;
     }
 
-    #main {
-        float:right;
-        width:86%;
-        margin:0px 10px;
-    }
-
-    #bereich {        /* Überschrift und Suchfeld -> Bereich */
-        top:0px;
-        color:#0080ff;
-        font-size:1.4em;
-        font-weight:bold;
-        margin:10px;
-        padding-left:1em;
-        border-bottom: 1px solid #0080ff;
-    }
-
-    #bearbzeile {padding-bottom:0.2em; padding-top:0.5em; overflow:auto;}
-    #suchfeld {float:left;}
-    #bearbbtn {float:right;}
+    #main {float: right;}
+    .darkBG {}
+    button.small {}
+    button.small_dk {}
 }
 
 @media print {
-/* Regeln für Drucker */
-    #menue {
-        display:none;
-    }
-
-    #status {
-        display:none;
-    }
-
-
+    /* Regeln für Drucker */
+    #menue {display: none; }
+    #status {display: none;}
     #main {
-        clear:none;
-        width:100%;
+        clear: none;
+        width: 100%;
     }
 
-    #bearbzeile {
-        display:none;
-    }
-
-    button.small {
-        display: none;
-    }
-
-    button.small_dk {
-        display: none;
-    }
-
+    button.small {display: none;}
+    button.small_dk {display: none;}
 }
 
-/***** Normalisierung *****/
-ul.noBullet {
-    list-style-type: none;
-    margin-left: -20px;
+ul.noBullet {}
+
+textarea.big {
+    width: 440px;
+    height: 300px;
 }
 
-textarea.big {width:440px;height:300px;}
-textarea.medium {width:350px;height:220px;}
-textarea.small {width:350px;height:150px;}
-
-input[type='text'],[type='password'] {
-    width:250px;
+textarea.medium {
+    width: 350px;
+    height: 220px;
 }
 
-input[type='text'].halb {
-    width:125px;
+textarea.small {
+    width: 350px;
+    height: 150px;
 }
 
-input[type='text'].lang {
-    width:500px;
-}
-
-input[type='submit'],[type='button'] {
-    width:125px;
-    margin:2px;
-}
-
-
-button.noBG {
-    border:none;
-}
+input[type='text'], [type='password'] {}
+input[type='text'].halb {}
+input[type='text'].lang {}
+input[type='submit'], [type='button'] {}
+select {}
+button {}
+button.noBG {}
+button.flag {}
 
 /* für Länderflaggen im Menübereich */
-button.flag {
-    border:none;
-    width:34px;
-    height:22px;
+#bereich {}
+
+/* Überschrift und Suchfeld -> Bereich */
+#bearbzeile {overflow: auto;}
+
+#bearbbtn {float: right;}
+#left {float: left;}
+#einzug {padding-left: 3em;}
+
+#portrait_gross {
+    width: 100px;
+    height: 135px;
+    float: right;
+    margin: 1em 2em 1em 1em;
 }
 
-/***** Eigene Klassen *****/
+#portrait_klein {
+    width: 40px;
+    height: 50px;
+    float: right;
+}
+
 div#overDiv {
-    position:absolute;
-    visibility:hidden;
+    position: absolute;
+    visibility: hidden;
 }
 
-.top {
-    vertical-align:top;
-}
-
-.re {
-    text-align:right;
-    padding-right:10px;
-}
-
-.mittig {
-    text-align:justify;
-}
-
-.fett {
-    font-weight: bold
-}
-
-.invers {
-    background:#F1FFC9;
-    color:#102000
-}
-
-.ready {
-    background:#F1FFC9;
-    color:#007f00;
-    text-align:right;
-    font-size:smaller;
-}
-
-.note {
-    color: #A0A0A0;
-    font-stretch:semi-condensed;
-    white-space:normal;
-    font-size: 0.9em;
-}
-
-.big {
-    font-size:28px;
-    font-weight:bold;
-    padding-left:50px;
-    padding-top:10px;
-}
-
-
-/***** Darstellungsfenster *****/
+.top {}
+.re {}
+.mittig {}
+.fett {}
+.invers {}
+.ready {}
+.note {}
+.big {}
+.darkBG {}
 .error {
     /* Fehlermeldungen für Nutzer */
-    margin: 5px;
-    padding: 5px;
-    font-family: monospace;
-    font-weight: normal;
-    white-space: pre;
-    color: #C00010;
-    background-color: #FFEfEf;
-    border: 1px solid #C00010;
 }
 
 .warng {
     /* Warnhinweis - doppelte Datensätze etc. */
-    margin: 5px;
-    padding: 5px;
-    font-family: monospace;
-    font-weight: normal;
-    white-space: pre;
-    text-decoration: blink;
-    color: #C00010;
-    background-color: #FFEf00;
-    border: 1px solid #C00010;
 }
 
 .hinw {
-    /* Hinweise für Nutzer */
-    margin: 5px;
-    padding: 5px;
-    font-family: monospace;
-    font-weight: normal;
-    white-space: pre;
-    color: black;
-    background-color: white;
-    border: 1px solid black;
 }
 
 .erfolg {
     /* Erfolgsmeldung für Nutzer */
-    margin: 5px;
-    padding: 5px;
-    font-family: monospace;
-    font-weight: normal;
-    white-space: pre;
-    color: #004000;
-    background-color: #eeffee;
-    border: 1px solid #008000;
 }

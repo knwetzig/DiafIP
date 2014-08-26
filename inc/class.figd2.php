@@ -375,7 +375,7 @@ final class Film extends Fibikern implements iFilm {
         $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
         IsDbError($list);
         $data = [];
-        // TODO: ÃƒÅ“berdenken den Einsatz von getStringList !
+        // TODO: Ueberdenken den Einsatz von getStringList !
         foreach ($list as $wert) $data[$wert] = $str->getStr($wert);
         return $data;
     }

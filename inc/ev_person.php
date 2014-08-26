@@ -1,43 +1,41 @@
-<?php /****************************************************
-    PHP Version >= 5.4
-
-    Eventhandler für Aktionen der Personenverwaltung
-
-    $Rev: 50 $
-    $Author: knwetzig $
-    $Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
-    $URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
-
-    ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht
-            wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
-
-            Löschanfrage via Datenfeld eintragen (Papierkorb). löschen als Cron-Job
-            nach 4 Wochen
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+<?php
+/**
+ * Eventhandler für Aktionen der Personenverwaltung
+ *
+ * $Rev: 50 $
+ * $Author: knwetzig $
+ * $Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+ * $URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @requirement PHP Version >= 5.4
+ *
+ * ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
+ */
 
 if (!$myauth->checkAuth()) feedback(108, 'error');
 
 // Überschrift
 $data = a_display([
-        // name,inhalt,rechte, optional-> $label,$tooltip,valString
-        new d_feld('bereich', $str->getStr(4012)),
-        new d_feld('sstring', $str->getStr(4011)),
-        new d_feld('sektion', 'P'),
-        new d_feld('add', true, EDIT, null, 10001),         // Person::add
-        new d_feld('extra', '<img src="images/addName.png" alt="addname" />', EDIT, null, 10011)   // PName::add
-    ]);
-$smarty->assign('dialog', $data);
-$smarty->assign('darkBG', 0);
-$smarty->display('main_bereich.tpl');
+                      // name,inhalt,rechte, optional-> $label,$tooltip,valString
+                      new d_feld('bereich', $str->getStr(4012)),
+                      new d_feld('sstring', $str->getStr(4011)),
+                      new d_feld('sektion', 'P'),
+                      new d_feld('add', true, EDIT, null, 10001), // Person::add
+                      new d_feld('extra', '<img src="images/addName.png" alt="addname" />', EDIT, null, 10011)
+                      // PName::add
+                  ]);
+$marty->assign('dialog', $data);
+$marty->assign('darkBG', 0);
+$marty->display('main_bereich.tpl');
 
-if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
-    $smarty->assign('aktion', $_REQUEST['aktion']);
+if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') {
+    $marty->assign('aktion', $_REQUEST['aktion']);
 
     // switch:aktion => add | edit | search | del | view
-    switch($_REQUEST['aktion']) :
+    switch ($_REQUEST['aktion']) :
         case "add":
             if (isset($_POST['form'])) :
                 // neues Formular
@@ -69,14 +67,15 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
             if (isset($_POST['sstring'])) :
                 $myauth->setAuthData('search', $_POST['sstring']);
 
-                $p = new PName();
+                $p     = new PName();
                 $plist = $p->search($myauth->getAuthData('search'));
                 if (!empty($plist) AND is_array($plist)) :
                     // Ausgabe
                     $bg = 1;
                     foreach (($plist) as $val) :
-                        ++$bg; $smarty->assign('darkBG', $bg % 2);
-                        switch($val['bereich']) :
+                        ++$bg;
+                        $marty->assign('darkBG', $bg % 2);
+                        switch ($val['bereich']) :
                             case 'N' :
                                 $nam = new PName($val['id']);
                                 $nam->display('pers_ldat.tpl');
@@ -99,7 +98,6 @@ if (isset($_REQUEST['aktion'])?$_REQUEST['aktion']:'') {
         case "view" :
             $pers = new Person($_REQUEST['id']);
             $pers->display('pers_dat.tpl');
-            break;  // Endview
     endswitch;
-}  // aus iwelchen Gründen wurde keine 'aktion' ausgelöst?
-?>
+}
+// aus iwelchen Gründen wurde keine 'aktion' ausgelöst?

@@ -26,7 +26,7 @@
     #main {
         float:right;
         width:86%;
-        margin:0px 10px;
+        margin:0 10px;
     }
 
     .darkBG {
@@ -72,10 +72,10 @@
 }
 
 /***** Normalisierung *****/
-a:link	{text-decoration:none; color:darkblue}
-a:visited {text-decoration:none; color:darkblue}
-a:hover	{text-decoration:underline; color:blue}
-a:active {text-decoration:none}
+a:link	{text-decoration:none; color:darkblue;}
+a:visited {text-decoration:none; color:darkblue;}
+a:hover	{text-decoration:underline; color:blue;}
+a:active {text-decoration:none;}
 
 body {
     background:#FAFAF7 url(../../../images/bg.png);
@@ -83,8 +83,6 @@ body {
 }
 
 img {border:none; vertical-align:middle;}
-
-ul.noBullet {list-style-type: none; margin-left: -20px;}
 
 table {border:none; }
 
@@ -105,7 +103,7 @@ legend {
     padding-right:10px;
 }
 
-input {margin:2px; vertical-align:middle}
+input {margin:2px; vertical-align:middle;}
 
 textarea.big {width:440px;height:300px;}
 textarea.medium {width:350px;height:220px;}
@@ -116,7 +114,7 @@ input[type='text'].halb {width:125px;}
 input[type='text'].lang {width:500px;}
 input[type='submit'],[type='button'] {width:125px;margin:2px;}
 
-select { width:250px; margin:2px}
+select { width:250px; margin:2px;}
 
 button {
     cursor: pointer;
@@ -131,7 +129,7 @@ button.noBG {
 
 /* für Länderflaggen im Menübereich */
 button.flag {
-    background-image:url(/diafip/images/bg.png);
+    background-image:url(../../../images/bg.png);
     border:none;
     width:34px;
     height:22px;
@@ -139,7 +137,7 @@ button.flag {
 
 /***************************** Eigene Klassen **************************/
 #bereich {        /* Überschrift und Suchfeld -> Bereich */
-    top:0px;
+    top:0;
     color:#0080ff;
     font-size:1.4em;
     font-weight:bold;
@@ -152,8 +150,10 @@ button.flag {
 #bearbbtn {float:right;}
 
 #left {float:left;}
-#einzug {padding-left:3em}
-#portrait_gross {width:100px; height:135px; float: right; margin:1em; margin-right:2em;}
+#einzug {padding-left:3em;}
+#portrait_gross {width:100px; height:135px; float: right;
+    margin: 1em 2em 1em 1em;
+}
 #portrait_klein {width:40px; height:50px; float:right;}
 
 div#overDiv {position:absolute; visibility:hidden;}
@@ -167,38 +167,13 @@ div#overDiv {position:absolute; visibility:hidden;}
     padding-right:10px;
 }
 
-.mittig {
-    text-align:justify;
-}
-
-.fett {
-    font-weight: bold
-}
-
-.invers {
-    background:#F1FFC9;
-    color:#102000
-}
-
-.ready {
-    background:#F1FFC9;
-    color:#007f00;
-    text-align:right;
-    font-size:smaller;
-}
+.fett {font-weight: bold;}
 
 .note {
     color: #A0A0A0;
     font-stretch:semi-condensed;
     white-space:normal;
     font-size: 0.9em;
-}
-
-.big {
-    font-size:28px;
-    font-weight:bold;
-    padding-left:50px;
-    padding-top:10px;
 }
 
 .darkBG {
@@ -265,6 +240,6 @@ div#overDiv {position:absolute; visibility:hidden;}
     background-color: #eeffee;
     border:1px dotted #008000;
     padding: 5px;
-    z-index: 99
+    z-index: 99;
 }
 

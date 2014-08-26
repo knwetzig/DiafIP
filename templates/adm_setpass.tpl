@@ -9,8 +9,6 @@ $Author::                      $:  Autor der letzten Übertragung
 $Date::                        $:  Datum der letzten Übertragung
 $URL$
 
-ToDo:   None
-
 ***** (c) DIAF e.V. *******************************************}
 
 <div id='bereich'>{$dialog['bereich'][2]}</div>
