@@ -1,27 +1,31 @@
 <?php
-/**************************************************************
-    PHP version: >= 5.4
+/**
+ * PHP version: >= 5.4
+ *
+ * Stellt Klassen und Funktionen für die
+ * Ein-/Ausgabefunktionalität bereit.
+ *
+ * $Rev$
+ * $Author$
+ * $Date$
+ *
+ * $URL$
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @requirement PHP Version >= 5.4
 
-    Stellt Klassen und Funktionen für die
-    Ein-/Ausgabefunktionalität bereit.
-
-    $Rev$
-    $Author$
-    $Date$
-    $URL$
-
-    Author: Knut Wetzig <knwetzig@gmail.com>
-
-**************************************************************/
+ * Author: Knut Wetzig <knwetzig@gmail.com>
+ */
 
 /** ===========================================================
                                 STRINGS
 =========================================================== **/
-interface iString {
+interface iWort {
     function getStr($nr);
 }
 
-class String implements iString {
+class Wort implements iWort {
     protected $strtable = [];
 
     function __construct($lang) {
@@ -36,12 +40,12 @@ class String implements iString {
         unset($str);
     }
 
-    function getStr($nr) {
-        if (empty($nr) OR !is_numeric($nr)) return;
+    public function getStr($nr) {
+        if (empty($nr) OR !is_numeric($nr)) return null;
         return $this->strtable[$nr];
     }
 
-    function getStrList($sl) {
+    public function getStrList($sl) {
         if (!is_array($sl)) return 1;
         $nl = [];
         foreach ($sl as $value) $nl[] = $this->strtable[$value];
@@ -50,30 +54,31 @@ class String implements iString {
 }
 
 /** ===========================================================
-                                VIEW
-=========================================================== **/
-/**************************************************************
+ * VIEW
+ * =========================================================== **/
+/*
 Repräsentiert ein Ein-/Ausgabeelement
 
   isValid()               Validierung + Variable setzen
   display()       DYNA    Gibt ein Array für Anzeige aus
-**************************************************************/
+*/
+
 class d_feld {
     protected
-        $name       = null, // Feldname aus Objekt
-        $inhalt     = null, // Wert des Objektes
-        $valStr     = null, // Regulärer Ausdruck zur Validierung des Inhalts
-        $label      = null, // Beschriftungstext
-        $tooltip    = null,
-        $rights     = null; // erforderliche Rechte (pos des Bits, 0 beginnend)
+        $name = null, // Feldname aus Objekt
+        $inhalt = null, // Wert des Objektes
+        $valStr = null, // Regulärer Ausdruck zur Validierung des Inhalts
+        $label = null, // Beschriftungstext
+        $tooltip = null,
+        $rights = null; // erforderliche Rechte (pos des Bits, 0 beginnend)
 
     function __construct($name, $wert, $rechte = null, $label = null, $tipp = null, $valStr = null) {
         global $str;
 
-        $this->name     = $name;
-        $this->inhalt   = $wert;
+        $this->name   = $name;
+        $this->inhalt = $wert;
         if (!empty($rechte) AND is_int($rechte)) $this->rights = $rechte;
-        $this->valStr   = $valStr;
+        $this->valStr = $valStr;
         if (!empty($label) AND is_int($label)) $this->label = $str->getStr($label);
         if (!empty($tipp) AND is_int($tipp)) $this->tooltip = $str->getStr($tipp);
     }
@@ -81,10 +86,10 @@ class d_feld {
     protected function isValid() {
         // Püfung auf korrekte syntax - keine semantikprüfung!
         if (isset($valStr)) {
-            if (preg_match('/'.$this->valStr.'/', $this->inhalt))
+            if (preg_match('/' . $this->valStr . '/', $this->inhalt))
                 return true; else return false;
         }
-        return 4;   // kein Validierungsstring vorhanden
+        return 4; // kein Validierungsstring vorhanden
     }
 
     function display() {
@@ -92,21 +97,22 @@ class d_feld {
         /* Test auf Berechtigung, stellt sicher, das auch nur das ausgegeben
         wird, wozu der Nutzer eine Berechtigung hat */
         if (is_int($this->rights) AND !isBit($myauth->getAuthData('rechte'),
-            $this->rights)) return false;
+                                             $this->rights)
+        ) return false;
         // feldname, inhalt, label, tooltip
-        $daten = array(
+        $daten = [
             $this->name,
             $this->inhalt,
             $this->label,
-            $this->tooltip);
+            $this->tooltip];
         return $daten;
     }
 }
 
 
 /** =================================================================
-                               arrayverarbeitung
-================================================================= **/
+ * arrayverarbeitung
+ * ================================================================= **/
 function a_display($arr) {
     $data = [];
     foreach ($arr as $val) {

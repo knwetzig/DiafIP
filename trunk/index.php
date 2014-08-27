@@ -9,13 +9,12 @@
  *
  * @author      Knut Wetzig <knwetzig@gmail.com>
  * @copyright   Deutsches Institut für Animationsfilm e.V.
- * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @license     BSD-3 License <http://opensource.org/licenses/BSD-3-Clause>
  * @requirement PHP Version >= 5.4
  */
 
 $laufzeit = -gettimeofday(true);
 require_once	'configs/config.php';
-
 $_POST = normtext($_POST);              // Filter für htmlentities
 $_GET = normtext($_GET);
 
