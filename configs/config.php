@@ -9,7 +9,7 @@
  */
 
 require_once 'config.local.php';
-require_once 'service.php';
+require_once 'inc/service.php';
 require_once 'Auth.php';
 require_once 'MDB2.php';
 require_once 'Smarty.class.php';

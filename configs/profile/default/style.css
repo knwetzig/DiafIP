@@ -1,14 +1,11 @@
-/*
-$Rev$
-$Author$
-$Date$
-$URL$
-*/
+/* $Id: $ */
 
+@import "base.css";
 @media screen {
     #menue {
         position: fixed;
         float: left;
+        width:15%;
         overflow: auto;
     }
 
@@ -17,7 +14,7 @@ $URL$
         bottom: 10px;
     }
 
-    #main {float: right;}
+    #main {float: right; width:85%;}
     .darkBG {}
     button.small {}
     button.small_dk {}
