@@ -1,13 +1,13 @@
 <?php
-/**************************************************************
+/**
  *
  * Klassenbibliothek für Bildverwaltung / -bearbeitung
  *
- * $Rev$
- * $Author$
- * $Date$
- * $URL$
- ***** (c) DIAF e.V. *******************************************/
+ * $Rev: 98 $
+ * $Author: knwetzig $
+ * $Date: 2014-08-27 00:55:16 +0200 (Wed, 27. Aug 2014) $
+ * $URL: https://diafip.googlecode.com/svn/trunk/inc/class.media.php $
+ */
 // DB->BLOB's http://pear.php.net/manual/en/package.database.mdb2.intro-fetch.php
 
 interface image {
@@ -16,9 +16,9 @@ interface image {
     public function view();
 }
 
-/** ==========================================================================
+/**
                                BILD CLASS
-========================================================================== **/
+*/
 class bild implements image {
     protected
         $id = null,
@@ -34,20 +34,11 @@ class bild implements image {
     }
 
     protected function get($nr) {
-        /****************************************************************
-         *  Aufgabe:
-         *   Aufruf:
-         *   Return: void
-         ****************************************************************/
+
     }
 
     public function add() {
-        /****************************************************************
-         *  Aufgabe:
-         *   Aufruf:
-         *   Return:
-         ****************************************************************/
-        function testValidUpload($code) {
+         function testValidUpload($code) {
             if ($code == UPLOAD_ERR_OK) return;
             global $str;
 
@@ -142,19 +133,9 @@ class bild implements image {
     } // end add
 
     public function del() {
-        /****************************************************************
-         *  Aufgabe:
-         *   Aufruf:
-         *   Return:
-         ****************************************************************/
-    }
+     }
 
     public function view() {
-        /****************************************************************
-         *  Aufgabe:
-         *   Aufruf:
-         *   Return:
-         ****************************************************************/
         header('Content-type: image/png');
         // header('Content-length: '.$image['file_size']);
 

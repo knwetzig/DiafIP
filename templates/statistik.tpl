@@ -2,10 +2,10 @@
     Enthält die statistischen Angaben
     (Anzahl Datensätze / Zeitverbrauch)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 93 $
+$Author: knwetzig $
+$Date: 2014-08-16 16:27:21 +0200 (Sat, 16. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/statistik.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 

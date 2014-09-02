@@ -10,10 +10,10 @@
                    [2] label
                    [3] Tooltip (soweit vorhanden)
 
- $Rev$
- $Author$
- $Date$
- $URL$
+ $Rev: 50 $
+ $Author: knwetzig $
+ $Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+ $URL: https://diafip.googlecode.com/svn/trunk/templates/item_planar_dialog.tpl $
 
  ***** (c) DIAF e.V. *********************************************************}
 

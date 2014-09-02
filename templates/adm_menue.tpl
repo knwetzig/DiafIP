@@ -3,10 +3,10 @@
    Menüseite für die Administration
    (Auswahl der Elemente/Presetlisten)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 77 $
+$Author: knwetzig $
+$Date: 2014-08-12 18:32:46 +0200 (Tue, 12. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_menue.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
@@ -41,3 +41,4 @@ $URL$
 
 <div id='bereich'>&nbsp;</div>
 <a href='https://code.google.com/p/diafip/' target='_new'><img src='https://ssl.gstatic.com/codesite/ph/images/phosting.ico'>&nbsp;Projektseite</a><br /><br />
+<a href='https://code.google.com/p/diafip/wiji/Leitfaden' target='_new'>Leitfaden zur Handhabung</a>

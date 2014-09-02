@@ -5,10 +5,10 @@ class: s_location_class.php
 proc:  editOrt
 param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] => tooltip)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 50 $
+$Author: knwetzig $
+$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_ortedialog.tpl $
 
 ToDo: Überarbeitung und statt diesem menü das adm_dialog.tpl verwenden
 

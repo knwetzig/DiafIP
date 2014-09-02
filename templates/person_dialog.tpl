@@ -7,10 +7,10 @@ class:  PName/Person
 proc:   edit
 param:  array([0] = Datenfeldname, [1] = inhalt, [2] = label, [3] = tooltip)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 75 $
+$Author: knwetzig $
+$Date: 2014-08-10 16:52:18 +0200 (Sun, 10. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/person_dialog.tpl $
 
 **************************************************************}
 
@@ -105,8 +105,7 @@ $URL$
         <tr class="darkBG">
           <td>&nbsp;</td>
           <td colspan=3>
-            <input
-              style='width:100px'
+            <input class="halb"
               type='text'
               name="{$dialog['plz'][0]}"
               value="{$dialog['plz'][1]}"

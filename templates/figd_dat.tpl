@@ -10,10 +10,10 @@ param:  dialog[???][0] feldname
                     [2] label
                     [3] Tooltip (soweit vorhanden)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 75 $
+$Author: knwetzig $
+$Date: 2014-08-10 16:52:18 +0200 (Sun, 10. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 

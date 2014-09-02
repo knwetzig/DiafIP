@@ -1,26 +1,19 @@
-<?php
+<?php namespace DiafIP;
 /**
- * PHP version: >= 5.4
- *
  * Stellt Klassen und Funktionen für die
  * Ein-/Ausgabefunktionalität bereit.
  *
- * $Rev$
- * $Author$
- * $Date$
- *
- * $URL$
  * @author      Knut Wetzig <knwetzig@gmail.com>
  * @copyright   Deutsches Institut für Animationsfilm e.V.
- * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @version     SVN: $Id$
+ * @since       r2 Neu
  * @requirement PHP Version >= 5.4
-
- * Author: Knut Wetzig <knwetzig@gmail.com>
  */
 
-/** ===========================================================
+/**
                                 STRINGS
-=========================================================== **/
+*/
 interface iWort {
     function getStr($nr);
 }
@@ -41,7 +34,7 @@ class Wort implements iWort {
     }
 
     public function getStr($nr) {
-        if (empty($nr) OR !is_numeric($nr)) return null;
+        if (empty($nr) OR !is_numeric($nr) OR empty($this->strtable[$nr]))  return null;
         return $this->strtable[$nr];
     }
 
@@ -53,9 +46,9 @@ class Wort implements iWort {
     }
 }
 
-/** ===========================================================
+/**
  * VIEW
- * =========================================================== **/
+ */
 /*
 Repräsentiert ein Ein-/Ausgabeelement
 
@@ -110,9 +103,9 @@ class d_feld {
 }
 
 
-/** =================================================================
+/**
  * arrayverarbeitung
- * ================================================================= **/
+ * */
 function a_display($arr) {
     $data = [];
     foreach ($arr as $val) {
