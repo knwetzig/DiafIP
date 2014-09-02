@@ -2,10 +2,10 @@
 
 Smarty-Template für die Bearbeitung/Neuanlage von filmografischen Datensätzen
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 75 $
+$Author: knwetzig $
+$Date: 2014-08-10 16:52:18 +0200 (Sun, 10. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 <form action='{$dlg['phpself']}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
@@ -244,8 +244,7 @@ $URL$
             <td><form action='#castlist' method="post"><button
                     class="small"
                     name="aktion"
-                    value="delCast" /><img src="images/del.png"
-                /></button>
+                    value="delCast"><img src="images/del.png" /></button>
                 <input type="hidden" name="sektion" value="film" />
                 <input type="hidden" name="pid" value="{$wert['pid']}" />
                 <input type="hidden" name="tid" value="{$wert['tid']}" />

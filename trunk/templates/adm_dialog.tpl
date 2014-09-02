@@ -1,8 +1,8 @@
 {**************************************************************
-$Rev$ --> FINALVERSION
-$Author$
-$Date$
-$URL$
+$Rev: 50 $ --> FINALVERSION
+$Author: knwetzig $
+$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_dialog.tpl $
 ***** (c) DIAF e.V. *******************************************}
 
 <form action='{$dlg['phpself']}' method='post'><fieldset style='margin-top:25px'><legend>{$dialog[0][2]}</legend><table>
@@ -13,8 +13,10 @@ $URL$
 </td></tr>{/if}
 
 {if isset($dialog[2])}<tr><td>{$dialog[2][2]}</td><td>
-    <input type="text" name="{$dialog[2][0]}" value="{$dialog[2][1]}" />
-</td></tr>{/if}
+        <label>
+            <input type="text" name="{$dialog[2][0]}" value="{$dialog[2][1]}"/>
+        </label>
+    </td></tr>{/if}
 
 {if isset($dialog[3])}<tr><td>{$dialog[3][2]}</td><td>
     <input type="text" name="{$dialog[3][0]}" value="{$dialog[3][1]}" />

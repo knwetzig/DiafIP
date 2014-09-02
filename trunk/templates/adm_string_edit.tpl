@@ -2,10 +2,10 @@
 
 Smarty-Template für die Bearbeitung/Neuanlage von filmografischen Datensätzen
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 50 $
+$Author: knwetzig $
+$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_string_edit.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 <form action='{$dlg['phpself']}' method='post'>

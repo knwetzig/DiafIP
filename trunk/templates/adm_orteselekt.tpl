@@ -3,10 +3,10 @@
 class: s_location_class.php
 proc:
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
-$URL$
+$Rev:: 50                      $:  Revision der letzten Übertragung
+$Author:: knwetzig             $:  Autor der letzten Übertragung
+$Date:: 2014-05-16 15:21:27 +0#$:  Datum der letzten Übertragung
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_orteselekt.tpl $
 
 ToDo:   Überarbeitung und Verwendung von adm_selekt.tpl
 

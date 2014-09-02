@@ -1,10 +1,10 @@
 {**************************************************************
 Smarty-Template für die Ansicht von Personendaten
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 93 $
+$Author: knwetzig $
+$Date: 2014-08-16 16:27:21 +0200 (Sat, 16. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
 
     call:   pers_class.php
     class:  Person
@@ -16,13 +16,14 @@ $URL$
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div {if $darkBG}style="background-image:url(images/bg_dark.png)"{/if}>
+<div {if $darkBG}class="darkBG"{/if}>
 
     <div id='bearbzeile'>
 {* --Name-- *}
         <div id='left' class="fett">
         {if !empty($dialog['pname'][1])} {$dialog['pname'][1]}{/if}
-        {if !empty($dialog['aliases'][1])}<span style="font-weight:normal">({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}){else},&nbsp;{/if}{/foreach}</span>{/if}
+        {if !empty($dialog['aliases'][1])}<span class="alias">({foreach $dialog['aliases'][1] as
+        $alias}{$alias}{if $alias@last}){else},&nbsp;{/if}{/foreach}</span>{/if}
         </div>
 
 {* --Bearbeitungssymbole-- *}

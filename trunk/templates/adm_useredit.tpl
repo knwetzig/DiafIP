@@ -7,10 +7,10 @@ section:    admin
 site:       user
 
     Für diesen Bereich ist keine Internationalisierung vorgesehen
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 50 $
+$Author: knwetzig $
+$Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_useredit.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 

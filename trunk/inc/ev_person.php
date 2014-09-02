@@ -1,4 +1,4 @@
-<?php
+<?php namespace DiafIP;
 /**
  * Eventhandler für Aktionen der Personenverwaltung
  *
@@ -30,7 +30,6 @@ $data = a_display([
 $marty->assign('dialog', $data);
 $marty->assign('darkBG', 0);
 $marty->display('main_bereich.tpl');
-
 if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') {
     $marty->assign('aktion', $_REQUEST['aktion']);
 

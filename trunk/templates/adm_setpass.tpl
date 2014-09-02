@@ -4,10 +4,10 @@ class:
 proc:
 param:  array([0] => Datenfeldname, [1] => inhalt, [2] => label, [3] = tooltip)
 
-$Rev::                         $:  Revision der letzten Übertragung
-$Author::                      $:  Autor der letzten Übertragung
-$Date::                        $:  Datum der letzten Übertragung
-$URL$
+$Rev:: 98                      $:  Revision der letzten Übertragung
+$Author:: knwetzig             $:  Autor der letzten Übertragung
+$Date:: 2014-08-27 00:55:16 +0#$:  Datum der letzten Übertragung
+$URL: https://diafip.googlecode.com/svn/trunk/templates/adm_setpass.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 

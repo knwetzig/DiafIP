@@ -1,21 +1,14 @@
-<?php
+<?php namespace DiafIP;
+use MDB2;
 /**
  *  Klassenbibliotheken für die Verwaltung von Orten (Personen/ Lagermöglichkeiten)
- *
- * $Rev$
- * $Author$
- * $Date$
- * $URL$
- *
- * @author      Knut Wetzig <knwetzig@gmail.com>
- * @copyright   Deutsches Institut für Animationsfilm e.V.
- * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
- * @requirement PHP Version >= 5.4
+ * @todo Revision dringend erforderlich
  */
 
-/** =================================================================
- * Lagerorte
- * ================================================================= **/
+
+/**
+ * Interface Lagerorte
+ */
 interface iLOrt {
     public function __construct($nr);
     public static function getLOrtList(); // listet alle Orte in einem Array
@@ -26,11 +19,16 @@ interface iLOrt {
     public function view(); // listet alle Artikel für diesn Ort
 }
 
-/***** interne routinen **********************************
- * get()         // --dito-- schreibt dies aber ins Objekt
- * exist()
- * is_linked     // prüft auf eine Verknüpfung
- **********************************************************/
+/**
+ * Klasse Lagerorte
+ *
+ * @author      Knut Wetzig <knwetzig@gmail.com>
+ * @copyright   Deutsches Institut für Animationsfilm e.V.
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @version     SVN: $ Id: $
+ * @since       r?? Neueinführung
+ * @requirement PHP Version >= 5.4
+ */
 class LOrt implements iLOrt {
     const
         SQL_get      = 'SELECT lagerort FROM i_lagerort WHERE nr = ?;',
@@ -54,18 +52,18 @@ class LOrt implements iLOrt {
     }
 
     final public function getLOrt() {
-        /****************************************************************
+        /**
          *  Aufgabe: liefert den Texteintrag zum Lagerort
          *   Return: string
-         ****************************************************************/
+         **/
         return $this->lort;
     }
 
     final public static function getLOrtList() {
-        /****************************************************************
+        /**
          *  Aufgabe: liefert die Liste mit den möglichen Lagerorten
-         *   Return: string
-         ****************************************************************/
+         *  @return string
+         **/
         $db   = MDB2::singleton();
         $list = $db->extended->getAll(
             'SELECT * FROM i_lagerort', ['integer', 'text']);
@@ -89,10 +87,13 @@ class LOrt implements iLOrt {
                                              MDB2_AUTOQUERY_INSERT, null, 'text'));
     }
 
+    /**
+     * @param bool $st
+     * @todo __________ BAUSTELLE _____________________
+     */
     public function edit($st) {
         global $marty, $db;
 
-        /** __________ BAUSTELLE _____________________ */
         if ($st) :
             $marty->assign('dialog', [
                 0 => ['lort', $this->nr, 'Lagerort&nbsp;bearbeiten'],
@@ -130,13 +131,17 @@ class LOrt implements iLOrt {
         global $myauth;
         if (!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
 
-        if ($this->is_linked()) feedback(10006, 'error'); else {
+        if (!$this->is_linked()) :
             // löschen in Tabelle
             $db = MDB2::singleton();
-            IsDbError($db->extended->autoExecute('i_lagerort', null,
-                                                 MDB2_AUTOQUERY_DELETE, 'nr = ' . $db->quote($this->nr, 'integer')));
+            IsDbError($db->extended->autoExecute('i_lagerort', null, MDB2_AUTOQUERY_DELETE,
+                                                 'nr = ' . $db->quote($this->nr, 'integer')));
             feedback(3, 'erfolg');
-        }
+            return null;
+        endif;
+
+        feedback(10006, 'error');
+        return 1;
     }
 
     public function view() { // Zeigt den Inhalt des Lagerorts
@@ -144,11 +149,8 @@ class LOrt implements iLOrt {
 }
 
 
-/** =================================================================
- * Orte
- * ================================================================= **/
-
-/**********************************************************
+/** Orte */
+/*
  * func: __construct($)
  * ::getOrt($!)    // holt die Ortsdaten aus der Ortstabelle -> array
  * get()         // --dito-- schreibt dies aber ins Objekt
@@ -158,10 +160,8 @@ class LOrt implements iLOrt {
  * del()         // löscht einen Ort
  * ::getOrtList()  // listet alle Orte in einem Array
  *
- * Anm.:
- * Die Liste mit den Staaten und Ländern wird händisch geflegt
- * Überarbeitung dieser Klasse zwingend erforderlich!
- **********************************************************/
+ * @todo Die Liste mit den Staaten und Ländern wird händisch geflegt Überarbeitung dieser Klasse zwingend erforderlich!
+ */
 class Ort {
     protected
         $oid = null,
@@ -197,27 +197,25 @@ class Ort {
     }
 
     function neu($status) {
-        /****************************************************************
+        /**
          * Aufgabe: Neuanlage einer Location
          * Aufruf: false   für Erstaufruf
          * true    Verarbeitung nach Formular
-         ****************************************************************/
+         */
         $db = MDB2::singleton();
 
         if ($status == false) $this->edit(false);
         else {
             $this->edit(true);
-            $data = $db->extended->autoExecute('s_orte', [
-                                                           'ort'  => $this->ort,
-                                                           'land' => $this->lid],
-                                               MDB2_AUTOQUERY_INSERT, null, [
-                    'text',
-                    'integer']);
+            $data = $db->extended->autoExecute(
+                's_orte', ['ort'  => $this->ort, 'land' => $this->lid], MDB2_AUTOQUERY_INSERT, null, ['text','integer']);
             IsDbError($data);
-            return 0;
         }
     }
 
+    /**
+     * @param $status
+     */
     function edit($status) {
         global $marty;
         if ($status == false) {
@@ -240,11 +238,10 @@ class Ort {
     }
 
     function set() {
-        /*************************************************************
-         * Aufgabe: schreibt das Obj. via Update in die DB zurück
-         * Return: 0  alles ok
-         * 1  leerer Datensatz
-         **************************************************************/
+        /**
+         * Schreibt das Obj. via Update in die DB zurück
+         * @return int|null  nuu = alles ok 1 =leerer Datensatz
+         */
         $db = MDB2::singleton();
         if (!$this->oid) return 1; // Abbruch weil leerer Datensatz
         $types = ['integer', 'text'];
@@ -270,6 +267,7 @@ class Ort {
             feedback("Lösche Ort: " . $this->ort, 'erfolg');
             $res = $db->extended->autoExecute('s_orte', null,
                                               MDB2_AUTOQUERY_DELETE, 'id = ' . $db->quote($this->oid, 'integer'));
+            IsDbError($res);
         } else feedback(6, 'error');
     }
 

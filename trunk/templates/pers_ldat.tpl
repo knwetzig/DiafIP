@@ -1,10 +1,10 @@
 {**************************************************************
 Smarty-Template für die Ansicht von Personendaten (Liste)
 
-$Rev$
-$Author$
-$Date$
-$URL$
+$Rev: 93 $
+$Author: knwetzig $
+$Date: 2014-08-16 16:27:21 +0200 (Sat, 16. Aug 2014) $
+$URL: https://diafip.googlecode.com/svn/trunk/templates/pers_ldat.tpl $
 
     call:   pers_class.php
     class:  Person
@@ -23,7 +23,7 @@ $URL$
         <div id='left' class="fett">
         {if !empty($dialog['pname'][1])}{$dialog['pname'][1]}{/if}
         {if !empty($dialog['aliases'][1])}
-            <span style="font-weight:normal">
+            <span class="alias">
                 ({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}){else},&nbsp;{/if}
                 {/foreach}
             </span>
@@ -49,7 +49,7 @@ $URL$
                     name="aktion"
                     onmouseover="return overlib('{$dialog['del'][3]}',DELAY,1000);"
                     onmouseout="return nd();"
-                    value="del" /><img src="images/del.png" /></button>
+                    value="del"><img src="images/del.png" /></button>
             {/if}
 
             <input type="hidden" name="form" value="true" />

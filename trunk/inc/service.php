@@ -2,21 +2,20 @@
 /**
  *      Lose Sammlung diverser Funktionen
  *
- * $Rev$
- * $Author$
- * $Date$
- * $URL$
- *
  * @author      Knut Wetzig <knwetzig@gmail.com>
  * @copyright   Deutsches Institut für Animationsfilm e.V.
- * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
+ * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
+ * @version     $ Id: $
  * @requirement PHP Version >= 5.4
  */
 
+/** Erzeugt ein Anmeldeformular und wertet es aus
+ *
+ * @param string $username Der zuletzt übergebene Benutzername
+ * @param bool $status     Der Authorisationszustand
+ * @param object $auth     Das Auth-Objekt
+ */
 function loginFunction($username = null, $status = null, &$auth = null) {
-    /*  Erwartet drei Argumente: der zuletzt übergebene Benutzername,
-        den Authorisations-Zustand und das Auth-Objekt */
-
     echo <<<FORM
     <form action={$_SERVER['PHP_SELF']} method='post' accept-charset=utf-8
         style='position:absolute; top:150px; left:150px; padding:20px; text-align:center;
@@ -35,9 +34,14 @@ function loginFunction($username = null, $status = null, &$auth = null) {
 FORM;
 }
 
-/** **** Datenbank Tools *************************************/
 
-function IsDbError($obj) { // Übergabe Datenbankobjekt
+/** Übergabe Datenbankobjekt
+ *
+ * @param object $obj ein DB-Objekt
+ * @throws <Ausgabe Error-Report und Rollback der Transaktion mit anschließendem Exit>
+ * @todo Für den Produktivbereich muß die Ausgabe über den Errorhandler erfolgen
+ */
+function IsDbError($obj) {
     if (MDB2::isError($obj)) :
         $db = MDB2::singleton();
         if ($db->inTransaction()) $db->rollback();
@@ -47,10 +51,15 @@ function IsDbError($obj) { // Übergabe Datenbankobjekt
         echo "</fieldset>\n";
         exit();
     endif;
-    return;
 }
 
-/** **** Bitfeldfunktionen / Checkboxen **********************/
+/**
+ *  Setzt ein Bit an der n-ten Stelle auf 1
+ *
+ * @param int $bitFeld
+ * @param int $n
+ * @return bool
+ */
 function setBit(&$bitFeld, $n) {
     // Ueberprueft, ob der Wert zwischen 0-31 liegt
     // $n ist die Position (0 beginnend)
@@ -63,6 +72,13 @@ function setBit(&$bitFeld, $n) {
     return true;
 }
 
+/**
+ * Setzt ein Bit an der n-ten Stelle auf 0
+ *
+ * @param int $bitFeld
+ * @param int $n
+ * @return bool
+ */
 function clearBit(&$bitFeld, $n) {
     // Loescht ein Bit oder ein Bitfeld
     // & ist nicht das logische UND sondern das BIT-and
@@ -70,11 +86,22 @@ function clearBit(&$bitFeld, $n) {
     return true;
 }
 
+/**
+ * Ist die x-te Stelle eine 1?
+ *
+ * @param int $bitFeld
+ * @param int $n
+ * @return bool
+ */
 function isBit($bitFeld, $n) {
-    // Ist die x-te Stelle eine 1?
     return (bool)($bitFeld & (0x01 << ($n)));
 }
 
+/**
+ * konvertiert ein ....
+ * @param int $wert
+ * @return array
+ */
 function bit2array($wert) {
     $a = [];
     for ($i = 0; $i < 32; $i++) :
@@ -83,38 +110,79 @@ function bit2array($wert) {
     return $a;
 }
 
+/**
+ * konvertiert ein ....
+ * @param $wert
+ * @param $arr
+ * @return mixed
+ */
 function array2wert($wert, $arr) {
     foreach ($arr as $k) setBit($wert, $k);
     return $wert;
 }
 
-/** **** ALLGEMEINE FUNKTIONEN *********************************************/
-
+/** Testet ob der Ausdruck $val mit $muster validierbar ist
+ *
+ * @param mixed $val
+ * @param string $muster
+ * @return int
+ * @todo Die Funktion ist wohl besser in der Klasse Wort aufgehoben
+ */
 function isValid($val, $muster) {
     // Prüfung auf korrekte syntax - keine semantikprüfung!
     $muster = '/' . $muster . '/';
     return preg_match($muster, $val);
 }
 
+/**
+ * Testet, ob das Datum existiert
+ *
+ * @param string $date
+ * @param string $format
+ * @return bool
+ */
 function validateDate($date, $format = 'Y-m-d H:i:s') {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
 
+/**
+ * Wandelt einen Dezimalwert in einen Hexadezimalwert um
+ *
+ * @param int $wert
+ * @return string Hexstring
+ */
 function dez2hex($wert) {
     return sprintf('%x', $wert);
 }
 
+/**
+ * Wandelt einen Hexstring in eine Dezimalzahl
+ *
+ * @param string $wert
+ * @return int
+ */
 function hex2dez($wert) {
     return intval($wert, 16);
 }
 
+/**
+ * parst die DB-Liste in ein PHP-Array  {12,34,56} --> array(12,34,56)
+ *
+ * @param string $list
+ * @return array|int
+ */
 function list2array($list) {
-//  parst die DB-Liste in ein PHP-Array  {12,34,56} --> array(12,34,56)
     if (!is_string($list)) return 1;
     return preg_split("/[,{}]/", $list, null, PREG_SPLIT_NO_EMPTY);
 }
 
+/**
+ * konvertiert ein Array in eine DB-Liste
+ *
+ * @param array $arr
+ * @return string
+ */
 function array2list($arr) {
     // wandelt ein PHP-Array in eine DB-Liste um
     /** _____ ACHTUNG! Baustelle _____
@@ -126,6 +194,12 @@ function array2list($arr) {
      * return $list; **/
 }
 
+/**
+ * Anzeige a la var_dump in einem Bereich
+ *
+ * @param mixed $text
+ * @param string|null $titel
+ */
 function _v($text, $titel = null) {
     if ($text) {
         echo "<fieldset class='visor'>";
@@ -135,6 +209,12 @@ function _v($text, $titel = null) {
     }
 }
 
+/**
+ * Anzeige a la var_dump in einem Popup-Fenster (additiv)
+ *
+ * @param mixed $text
+ * @param string|null $titel
+ */
 function _vp($text, $titel = null) {
 // wie _v aber in einem seperaten Popup-Fenster
     if ($text) :
@@ -153,6 +233,12 @@ VIS;
     endif;
 }
 
+/**
+ * Hinweistext für User
+ *
+ * @param string $msg
+ * @param string|null $form der Name der CSS-Regel
+ */
 function feedback($msg, $form = null) {
     global $str;
     if (is_numeric($msg))
@@ -160,7 +246,13 @@ function feedback($msg, $form = null) {
     else echo "<div class=$form>" . $msg . '</div>';
 }
 
-/** **** TEXTBEARBEITUNG ****************************************************/
+
+/**
+ * Normalisierung von Text der als Resource übergeben wird
+ *
+ * @param string $var
+ * @return array|string
+ */
 function normtext($var) {
     if (!is_array($var)) :
         // max drei White-Spaces erlaubt
@@ -172,11 +264,17 @@ function normtext($var) {
     endif;
 }
 
+/**
+ * Wandelt den übergeben BB-Code in valides HTML um.
+ * erlaubt sind b, i, u, pre, url, img
+ *
+ * @param string $str
+ * @return mixed
+ */
 function changetext($str) {
     /* Falls eine 60 Zeichen lange Nicht-Whitespace-Zeichenkette gefunden wird (\S{60}) wird diese Zeichenkette '\0' um ein Leerzeichen ' ' erweitert. Der Browser kann dann an dieser Stelle den Text umzubrechen. */
     $str = preg_replace('/\S{60}/', '\0 ', $str);
-    /* BB-Code Umwandlungen:
-        erlabt sind b, i, u, pre, url, img  */
+
     $str = preg_replace('=\[b\](.*)\[/b\]=Uis', '<span style="font-weight:bold;">\1</span>', $str);
     $str = preg_replace('=\[i\](.*)\[/i\]=Uis', '<span style="font-style:italic;">\1</span>', $str);
     $str = preg_replace('=\[u\](.*)\[/u\]=Uis', '<span style="text-decoration:underline;">\1</span>', $str);
@@ -186,6 +284,5 @@ function changetext($str) {
     $str = preg_replace('=\[img\](.*)\[/img\]=Uis', '<img src="\1" />', $str);
     $str = preg_replace('#(^|[^"=]{1})(http://|ftp://|mailto:|news:)([^\s<>]+)([\s\n<>]|$)#sm',
                         '\1<a href="\2\3">\2\3</a>\4', $str);
-
     return $str;
 }

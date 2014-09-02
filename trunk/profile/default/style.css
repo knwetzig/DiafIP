@@ -1,4 +1,4 @@
-/* $Id: $ */
+/* $Id$ */
 
 @import "base.css";
 @media screen {
@@ -109,4 +109,8 @@ div#overDiv {
 
 .erfolg {
     /* Erfolgsmeldung für Nutzer */
+}
+.newstitel {}
+.newstext {
+    white-space: normal;
 }
