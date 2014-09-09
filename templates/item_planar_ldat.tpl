@@ -25,7 +25,7 @@
     <tr><form action='{$dlg['phpself']}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
-            <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
+            <h3>{$dialog['bezeichner'][1]}</h3>{/if}
         <span class="note" style="float:right;">
             ID:&nbsp;{$dialog['id'][1]}
 
@@ -97,3 +97,4 @@
 
 
 </table>
+</div>

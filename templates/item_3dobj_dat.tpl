@@ -25,7 +25,7 @@
     <tr><form action='{$dlg['phpself']}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
-            <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
+            <h3>{$dialog['bezeichner'][1]}</h3>{/if}
         <span class="note" style="float:right;">
                 ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;{/if}{if !empty($dialog['chname'][1])}|&nbsp;{$dialog['chname'][1]}&nbsp;{/if}
                 {if isset($dialog['edit'])}
@@ -58,14 +58,14 @@
 
 {* -- Zuordnung zu Film -- *}
     {if !empty($dialog['zu_film'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['zu_film'][2])}{$dialog['zu_film'][2]}:{/if}
         <td>{$dialog['zu_film'][1]}<td>
     </tr>{/if}
 
 {* -- art -- *}
     {if !empty($dialog['art'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['art'][2])}{$dialog['art'][2]}:{/if}
         </td>
         <td>{$dialog['art'][1]}</td>
@@ -73,7 +73,7 @@
 
 {* -- Breite -- *}
     {if !empty($dialog['x'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['x'][2])}{$dialog['x'][2]}:{/if}
         </td>
         <td>{$dialog['x'][1]}&nbsp;mm</td>
@@ -81,7 +81,7 @@
 
 {* -- Höhe -- *}
     {if !empty($dialog['y'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['y'][2])}{$dialog['y'][2]}:{/if}
         </td>
         <td>{$dialog['y'][1]}&nbsp;mm</td>
@@ -89,7 +89,7 @@
 
 {* -- Tiefe -- *}
     {if !empty($dialog['z'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['z'][2])}{$dialog['z'][2]}:{/if}
         </td>
         <td>{$dialog['z'][1]}&nbsp;mm</td>
@@ -97,7 +97,7 @@
 
 {* -- lagerort -- *}
     {if !empty($dialog['lagerort'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['lagerort'][2])}{$dialog['lagerort'][2]}:{/if}
         </td>
         <td>{$dialog['lagerort'][1]}</td>
@@ -105,7 +105,7 @@
 
 {* -- akt_ort -- *}
     {if !empty($dialog['akt_ort'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['akt_ort'][2])}{$dialog['akt_ort'][2]}:{/if}
         </td>
         <td>{$dialog['akt_ort'][1]}</td>
@@ -113,7 +113,7 @@
 
 {* -- Stückzahl -- *}
     {if !empty($dialog['kollo'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['kollo'][2])}{$dialog['kollo'][2]}:{/if}
         </td>
         <td>{$dialog['kollo'][1]}</td>
@@ -121,7 +121,7 @@
 
 {* -- vers_wert -- *}
     {if !empty($dialog['vers_wert'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['vers_wert'][2])}{$dialog['vers_wert'][2]}:{/if}
         </td>
         <td>{$dialog['vers_wert'][1]}&nbsp;&euro;</td>
@@ -129,7 +129,7 @@
 
 {* -- Eigentümer -- *}
     {if !empty($dialog['eigner'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['eigner'][2])}{$dialog['eigner'][2]}:{/if}
         </td>
         <td>{$dialog['eigner'][1]}</td>
@@ -137,7 +137,7 @@
 
 {* -- Herkunft -- *}
     {if !empty($dialog['herkunft'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['herkunft'][2])}{$dialog['herkunft'][2]}:{/if}
         </td>
         <td>{$dialog['herkunft'][1]}</td>
@@ -145,7 +145,7 @@
 
 {* -- Eingangsdatum -- *}
     {if !empty($dialog['in_date'][1])}<tr>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['in_date'][2])}{$dialog['in_date'][2]}:{/if}
         </td>
         <td>{$dialog['in_date'][1]}</td>
@@ -153,7 +153,7 @@
 
 {* -- Beschreibung -- *}
     {if !empty($dialog['descr'][1])}<tr>
-        <td class="re top">
+        <td class="label top">
             {if !empty($dialog['descr'][2])}{$dialog['descr'][2]}:{/if}
         </td>
         <td>{$dialog['descr'][1]}</td>
@@ -161,7 +161,7 @@
 
 {* -- Zustandsbericht -- *}
     {if !empty($dialog['rest_report'][1])}<tr>
-        <td class="re top">
+        <td class="label top">
             {if !empty($dialog['rest_report'][2])}{$dialog['rest_report'][2]}:{/if}
         </td>
         <td>{$dialog['rest_report'][1]}</td>
@@ -169,13 +169,13 @@
 
 {* -- leihbar -- *}
     {if isset($dialog['leihbar'][1])}<tr>
-        <td class="re">&nbsp;</td>
+        <td class="label">&nbsp;</td>
         <td>{$dialog['leihbar'][1]}</td>
     </tr>{/if}
 
 {* -- oldsig -- *}
     {if !empty($dialog['oldsig'][1]) AND $dialog['oldsig'][1] !== 'NIL'}<tr class='note'>
-        <td class="re">
+        <td class="label">
             {if !empty($dialog['oldsig'][2])}{$dialog['oldsig'][2]}:{/if}
         </td>
         <td>{$dialog['oldsig'][1]}</td>
@@ -183,7 +183,7 @@
 
 {* -- notiz -- *}
     {if !empty($dialog['notiz'][1])}<tr>
-        <td class="re top">
+        <td class="label top">
             {if !empty($dialog['notiz'][2])}{$dialog['notiz'][2]}:{/if}
         </td>
         <td>{$dialog['notiz'][1]}</td>
