@@ -17,13 +17,14 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_ldat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
+<div class="list-item list-item-figd">
 <table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
     <tr><form action='{$dlg['phpself']}' method="post">
         <td colspan="3">
-            {if !empty($dialog['titel'][1])}<span class="fett">{$dialog['titel'][1]}</span>{/if}
+            {if !empty($dialog['titel'][1])}<h3>{$dialog['titel'][1]}</h3>{/if}
         <span class="note" style="float:right;">
                 ID:&nbsp;{$dialog['id'][1]}&nbsp;
 
@@ -74,3 +75,4 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_ldat.tpl $
     </tr>{/if}
 
 </table>
+</div>

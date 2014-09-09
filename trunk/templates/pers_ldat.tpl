@@ -16,7 +16,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_ldat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div {if $darkBG}class="darkBG"{/if}>
+<div class="list-item list-item-person">
 
     <div id='bearbzeile'>
 {* --Name-- *}

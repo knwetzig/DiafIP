@@ -17,15 +17,15 @@
 
  ***** (c) DIAF e.V. *********************************************************}
 
-
-<table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
+<div class="list-item list-item-3dobj">
+<table width="100%" {if $darkBG}class="even"{else}class="odd"{/if}>
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
     <tr><form action='{$dlg['phpself']}' method="post">
         <td colspan="3">
             {if !empty($dialog['bezeichner'][1])}
-            <span class="fett" style="float:left;">{$dialog['bezeichner'][1]}</span>{/if}
+            <h3>{$dialog['bezeichner'][1]}</h3>{/if}
         <span class="note" style="float:right;">
                 ID:&nbsp;{$dialog['id'][1]}
 
@@ -97,3 +97,4 @@
     </tr>{/if}
 
 </table>
+</div>
