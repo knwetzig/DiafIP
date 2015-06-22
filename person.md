@@ -1,0 +1,30 @@
+## Bereich Personen ##
+
+---
+
+Der Bereich Personen gliedert sich in zwei Kategorien. Zum einen gibt es die körperliche Person und zum anderen gibt es Namen, unter denen die körperliche Person bekannt ist.
+### Bedienung ###
+Auf der rechten Seite findet man im Kopfbereich je einen Button für die Neuanlage von Namen und daneben einen für Personen. Sollten sie Bedienelemente nicht sehen können, so fehlen ihnen eventuell die erforderlichen Rechte zur Ausführung der Aktion. Es empfielt sich, bevor sie einen neuen Datensatz anlegen, zu prüfen ob die erforderlichen Daten bereits angelegt sind. Das betrifft in erster Linie die Orte und die zu vergebenden Aliase. In den Datumsfeldern kann nur ein valides Datum eingetragen werden. Sollte ihnen z.B. nur das Jahr, aber nicht der genaue Tag bekannt sein, so lassen sie das Feld frei und tragen die Information im Biografiefeld ein.
+### Personen ###
+Sie können Felder für die sie keine Informationen haben freilassen und später ergänzen, Pflichtfeld ist lediglich der Name. Die Beschreibung der einzelnen Eingabefelder erfolgt in der Reihenfolge wie man sie beim durchschalten mit der Tabulatortaste erreicht.
+
+Der Bereich 8-12 ist für sie möglicherweise aus datenschutzrechtlichen Gründen nicht sicht- und bearbeitbar.
+  1. **Vornamen** Dieses Feld enthält alle Vornamen zur Person (so wie sie in einer Geburtsurkunde stehen würden). Zusätzlich werden hier alle Titel notiert (akademische/Adelstitel etc.). Sollte es erforderlich sein, einen Rufnamen zu etablieren, so ist dieser unter Namen anzulegen und der Person zuzuweisen. Bsp.: `'Dr. Klaus Eduard von'`
+  1. **Name** Hier steht ausschließlich der Familienname (wichtig für Sortierung).
+  1. **Alias** Sie können Aliase erst vergeben wenn die Person bereits angelegt wurde. Im Dialog werden die bereits vergebenen Alias-/Künstlernamen unterhalb des Vor- und Zunamens angezeigt. Darunter befindet sich dieses Auswahlfeld, mit dem man einen weiteren Künstlernamen den man zuvor angelegt hat, zu dieser Person hinzufügen kann. Eine spätere Löschung dieser Zuweisung ist nicht vorgesehen. In diesem Auswahlfeld werden nur jene Namen gelistet die noch nicht einer Person zugewiesen sind. Ein Name kann nur einer Person zugeordnet werden. Eine Person kann mehrere Namen zugeordnet bekommen.
+  1. **geb.** (Geburtsdatum) -  Die Vorgabe ist 01.01.0001. Solange dieses nicht geändert wird, erkennt die Anwendung das in diesem Feld keine Änderung gemacht wurde und ignoriert dieses Feld.
+  1. **Geburtsort**
+  1. **gest.** (Todestag)
+  1. Todesort - einfache Auswahl
+  1. **Anschrift** In diesem Feld werden die Straße mit Hausnummer oder das Postfach vermerkt. Auch Adresszusätze aller Art finden hier ihren Platz.
+  1. unbeschriftet (**PLZ**) - Die Eingabe von Postleitzahlen erfolgt ohne Länderkennung , d.h. nur Zifferneingabe mit soweit erforderlicher vorlaufender Null.
+  1. **Ort**  ..zur Anschrift - einfach auswählen
+  1. **eMail** ... hier eine valide Mailadresse eintragen
+  1. **tel** (Telefonnummer) - Für eine einheitliche Eingabe von Telefonnummern gilt: +49 351 1234567.  Bitte verwenden sie keine Leerzeichen in der Rufnummer sondern nur als Trennzeichen für die Vorwahlen.
+  1. **Biografie** - Dieses Feld enthält alle Informationen zur Person die veröffentlicht werden sollen (Also nicht zwangsweise nur biografische Daten). Jahresangaben zu Studien- bzw. Arbeitstätigkeiten immer wie folgt angeben: `1958-99`, sollte das Jahrhundert wechseln, ist auf die verkürzte Schreibweise zu verzichten: `1998-2007`
+  1. **Notiz** Hier können Bearbeitungsnotizen hinterlegt werden. Dieses Feld ist nur für Bearbeiter sichtbar.
+  1. **Validierungsvermerk** Dieser kann nur durch einen authorisierten Mitarbeiter gesetzt werden.
+Doppelte Datensätze werden vom System verworfen und können nicht erstellt werden. Ein doppelter Datensatz definiert sich durch identische Vornamen, gleiche Nachnamen und gleiches Geburtsdatum.
+
+### Namen (Aliase) ###
+Die Neuanlage erfolgt über den Bereich Personen und den dort vorhandenen Button im Kopfbereich. Es können beliebig viele identische Namen angelegt werden. Diese unterscheiden sich lediglich durch ihre Id (siehe auch Personen). Die Bedienelemente zum Bearbeiten sind nur in der Detailansicht vorhanden. Diese erreicht man durch direkte Eingabe der jeweiligen Id oder des Namens in der Suchfunktion (Bereich Personen).
