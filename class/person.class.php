@@ -369,7 +369,7 @@
             $data[] = new d_feld('plz', $this->content['plz'], IVIEW);
             $data[] = new d_feld('tel', $this->content['tel'], IVIEW, 511);
             $data[] = new d_feld('mail', $this->content['mail'], IVIEW, 512);
-            $data[] = new d_feld('castLi', $this->getCastList(), VIEW); // Verw. Film
+            $data[] = new d_feld('castLi', $this->getCastList(), VIEW);
             return $data;
         }
 

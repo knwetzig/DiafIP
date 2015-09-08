@@ -1,5 +1,7 @@
 <?php namespace DiafIP {
-    use Auth, MDB2;
+    use Auth, MDB2, Smarty;
+    global $dsn, $smartyConf;
+
     /**
      * DIAFIP - HAUPTPROGRAMM
      *
@@ -12,26 +14,29 @@
      * @requirement PHP Version >= 5.4
      */
 
-    $laufzeit = -gettimeofday(true);
-    require_once	'configs/config.php';
+    $StartTime = -gettimeofday(true);
+    $OutTime   = null;
+
+    require_once 'configs/config.local.php';
+    require_once 'configs/config.php';
     $_POST = normtext($_POST);              // Filter für htmlentities
     $_GET = normtext($_GET);
 
-// Authentifizierung
+    // Authentifizierung
     $params = ['dsn' => $dsn,
                'table' => 's_auth',
                'db_fields' => 'rechte,lang,uid,realname,notiz,profil'];
-    $myauth = new Auth("MDB2", $params, "loginFunction");
+    $myauth = new Auth('MDB2', $params, 'DiafIP\loginFunction');   // alternativ: DiafIP\loginFunction
     $myauth->start();
     if (!$myauth->checkAuth()) exit();
 
-// DB-Initialisierung
+    // DB-Initialisierung
     $db = MDB2::singleton($dsn, ['use_transactions' => true, 'persistent' => true]);
     IsDbError($db);
     $db->setFetchMode(MDB2_FETCHMODE_ASSOC);
     $db->loadModule('Extended');
 
-// Abfangen von Aktionen die nicht durch nachfolgende Eventhandler bedient werden
+    // Abfangen von Aktionen die nicht durch nachfolgende Eventhandler bedient werden
     if (isset($_GET['aktion'])) switch ($_GET['aktion']) :
         case 'logout' :
             $db->disconnect();
@@ -43,13 +48,12 @@
         case 'fr' :
             $myauth->setAuthData('lang', $_GET['aktion']);
             if ($myauth->getAuthData('uid') != 4) :
-                IsDbError($db->extended->autoExecute('s_auth',
-                                                     ['lang' => $_GET['aktion']], MDB2_AUTOQUERY_UPDATE,
-                                                     'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
+                IsDbError($db->extended->autoExecute('s_auth', ['lang' => $_GET['aktion']], MDB2_AUTOQUERY_UPDATE, 'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
             endif;
     endswitch;
 
-    switch ($myauth->getAuthData('lang')) :         // locale der DB einstellen
+    // locale der DB einstellen
+    switch ($myauth->getAuthData('lang')) :
         case 'de' :
             $db->query("SET datestyle TO German");
             break;
@@ -64,21 +68,23 @@
             $db->query("SET datestyle TO ISO");
     endswitch;
 
+    // Laden der Klassen
     require_once 'entity.class.php';        // Basisklasse
-    require_once 'pname.class.php' ;        // Aliasnamen
+    require_once 'pname.class.php';        // Aliasnamen
     require_once 'person.class.php';        // Personenklasse
-    require_once 'fibikern.class.php';      // Basisklasse für Biblio-/Filmogr. Daten
-    require_once 'bibl2.class.php';         // Bibliografische Daten
+    require_once 'fibimain.class.php';      // Basisklasse für Biblio-/Filmogr. Daten
+//    require_once 'bibl2.class.php';         // Bibliografische Daten
     require_once 'figd2.class.php';         // Filmografische Daten
-    require_once 'class.view.php';
-    require_once 'class.s_location.php';
-    require_once 'class.media.php';
-    require_once 'class.item.php';
-    require_once 'class.statistik.php';
-// Initialisierung String-Objekt
+    require_once 'view.class.php';
+    require_once 's_location.class.php';
+//    require_once 'media.class.php';
+//    require_once 'item.class.php';
+    require_once 'statistik.class.php';
+
+    // Initialisierung String-Objekt
     $str = new Wort($myauth->getAuthData('lang'));
 
-// Laden Menübereich
+    // Laden Menübereich
     $menue = ['F'        => $str->getStr(4008),
               'Y'        => $str->getStr(4028),
               'P'        => $str->getStr(4003),
@@ -97,13 +103,23 @@
         $menue['messg'] = $str->getStr(4037);
         $menue['pref']  = $str->getStr(4006);
     endif;
+
+    // Smarty initialisieren
+    $marty = new Smarty;
+    $marty->setTemplateDir($smartyConf['template_dir']);
+    $marty->setCompileDir($smartyConf['compile_dir']);
+    $marty->setConfigDir($smartyConf['config_dir']);
+    $marty->setCacheDir($smartyConf['cache_dir']);
+    $marty->force_compile = $smartyConf['force_compile'];
+    $marty->debugging = $smartyConf['debugging'];
+
     $marty->assign('dlg', $menue);
     $marty->display('header.tpl');
 
     require_once 'inc/main.php';
 
-// Laden Statistikanzeige
-    $stat = new db_stat();
+    // Laden Statistikanzeige
+    $stat = new db_stat($StartTime, $OutTime);
     $marty->assign('stat', $stat->view());
     $marty->display('statistik.tpl');
     echo '</body></html>';

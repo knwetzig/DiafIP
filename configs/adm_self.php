@@ -1,4 +1,5 @@
 <?php namespace DiafIP {
+    global $marty, $myauth;
     /**
      * Eventhandler für Änderung des eigenen Passwortes
      *

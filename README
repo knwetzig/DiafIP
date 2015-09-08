@@ -43,7 +43,7 @@ RICHTLINIEN:
     Detaillierte Angaben unter: www.opensource.org/licenses/
 
     Es gibt verschiedene Nutzerprofile. Die einzelnen Profile stehen im Verzeichnis
-    'configs/profile/'. Sie steuern das Erscheinungsbild der Applikation, nicht die
+    '/profile/'. Sie steuern das Erscheinungsbild der Applikation, nicht die
     Funktionalität. Diese wird durch die Templates für alle angemeldeten Nutzer bereit
     gestellt.
 

@@ -2,7 +2,7 @@
 
  Smarty-Template für Dokumente/Phasen Urkunden und alle planaren Gegenstände
 
- call:   class.item.php
+ call:   item.class.php
  class:  Planar
  proc:   view
  param:	dialog[???][0] feldname

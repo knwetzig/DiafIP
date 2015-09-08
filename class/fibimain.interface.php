@@ -10,7 +10,7 @@
      * @since       r99 Abtrennung von Klasse
      */
 
-    interface iFibikern {
+    interface iFibiMain extends iEntity {
         public static function getSTitelList();
         public static function getTitelList();
         public function getTitel();

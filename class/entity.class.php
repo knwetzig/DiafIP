@@ -17,6 +17,7 @@
      * @requirement PHP Version >= 5.4
      *
      * @todo        Bildauswertung einfügen
+     *              funktion get in __construct integrieren
      */
     abstract class Entity implements iEntity {
 
@@ -37,14 +38,14 @@
          */
         protected
             $content = ['id'       => null,
-                        'bereich'  => '', // Enthält die Bereichskennung
-                        'descr'    => '', // Beschreibung bzw. Biografie bei Personen
+                        'bereich'  => '',    // Enthält die Bereichskennung
+                        'descr'    => '',    // Beschreibung bzw. Biografie bei Personen
                         'bilder'   => '',
-                        'notiz'    => '', // selbsterklärend ;-)
+                        'notiz'    => '',    // selbsterklärend ;-)
                         'isvalid'  => false, // Flag zur Kennzeichnung, das dieser Datensatz
-                        // abschließend bearbeitet wurde
+                                             // abschließend bearbeitet wurde
                         'del'      => false, // Löschflag
-                        'editfrom' => null, // uid des Bearbeiters
+                        'editfrom' => null,  // uid des Bearbeiters
                         'editdate' => null]; // timestamp width Timezone
 
         /**
@@ -170,7 +171,7 @@
         }
 
         /**
-         * Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB Alternativ kann man diese Funktion nutzen
+         * Schaltet das Löschflag um und schreibt das gesamte Objekt in die DB alternativ kann man diese Funktion nutzen
          * um das Element wieder aus dem Papierkorb zu holen.
          *
          * @return int

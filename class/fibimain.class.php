@@ -12,8 +12,8 @@
  * @requirement PHP Version >= 5.4
  */
 
-/** FIBIKERN CLASS */
-abstract class Fibikern extends Entity implements iFibikern {
+/** FIBIMAIN CLASS */
+abstract class FibiMain extends Entity implements iFibiMain {
 
     const
         TYPEFIBI  = 'text,text,text,integer,integer,text,text,text,text,',
@@ -79,7 +79,8 @@ abstract class Fibikern extends Entity implements iFibikern {
          *  Aufgabe: Ausgabe des Titels
          *   Return: String / Fehlercode
          */
-        return '<a href="index.php?' . $this->bereich . '=' . $this->id . '">' . $this->titel . '</a>';
+        return '<a href="index.php?' . $this->content['bereich'] . '=' . $this->content['id'] . '">' . $this->content['titel'] .
+        '</a>';
     }
 
     final protected function ifDouble() {
@@ -95,7 +96,7 @@ abstract class Fibikern extends Entity implements iFibikern {
 
     final protected static function getTaetigList() {
         /**
-         * Aufgabe: gibt ein Array(num, text) der Taetigkeiten zurück
+         * Aufgabe: gibt ein Array(num, text) der Tätigkeiten zurück
          * Return:
          */
         $db = MDB2::singleton();
@@ -115,7 +116,7 @@ abstract class Fibikern extends Entity implements iFibikern {
          */
         $db       = MDB2::singleton();
         $ergebnis = [];
-        $erg      =& $db->query(self::GETSTILI);
+        $erg      = $db->query(self::GETSTILI);
         IsDbError($erg);
         while ($row = $erg->fetchRow()) :
             $ergebnis[$row['sertitel_id']] = $row['titel'];
@@ -145,7 +146,7 @@ abstract class Fibikern extends Entity implements iFibikern {
          */
         $db   = MDB2::singleton();
         $data = $db->extended->getOne(
-            self::EXCAST, integer, [$this->content['id'], $p, $t],
+            self::EXCAST, 'integer', [$this->content['id'], $p, $t],
             ['integer', 'integer', 'integer']);
         IsDbError($data);
         return $data;
@@ -227,14 +228,11 @@ abstract class Fibikern extends Entity implements iFibikern {
          * Param:  string
          * Return: Array der gefunden ID's | Fehlercode
          */
-        global $myauth;
-        if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
         $s  = "%" . $s . "%";
         $db = MDB2::singleton();
 
         // Suche in titel, atitel, utitel
-        $data = $db->extended->getCol(self::SEARCH, ['integer'], [$s, $s, $s . $s]);
+        $data = $db->extended->getCol(self::SEARCH, ['integer'], [$s, $s, $s, $s]);
         IsDbError($data);
         if ($data) :
             return $data;
@@ -250,7 +248,7 @@ abstract class Fibikern extends Entity implements iFibikern {
          * ausgabe via display()
          * Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
          */
-        global $myauth, $marty;
+        global $myauth;
         if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data   = parent::view();
@@ -264,8 +262,8 @@ abstract class Fibikern extends Entity implements iFibikern {
         $data[] = new d_feld('anmerk', changetext($this->content['anmerk']), VIEW, 572);
         $data[] = new d_feld('quellen', $this->content['quellen'], VIEW, 578);
         $data[] = new d_feld('thema', $this->content['thema'], VIEW, 577); // Schlagwortliste
-//        new d_feld('isVal',     $this->isvalid,             VIEW, 10009);
-//        new d_feld('cast',      $this->getCastList(),       VIEW);
+        $data[] = new d_feld('isVal', $this->content['isvalid'], VIEW, 10009);
+        $data[] = new d_feld('cast',  $this->getCastList(), VIEW);
         return $data;
     }
 }

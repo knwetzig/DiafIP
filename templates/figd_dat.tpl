@@ -50,17 +50,17 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
         </form>
     </tr>
 
-{* --Bild-- *}
+{* --Bild--
 	<tr class="row-picture">
 		<td colspan="2">
 		{if !empty($dialog['bild_id'][1])}
 			<img src="{$dialog['bild_id'][1]}" width="250" height="250" border="1" />
 		{else}
-			<img src="http://dummyimage.com/250x250/00A6EB/0011ff.png&text=Bild" width="250" height="250" border="1" />
+			<img src="images/platzhalter.png" width="250" height="250" border="1" />
 		{/if}
 		</td>
 	</tr>
-
+*}
 
 {* --Untertitel-- *}
     {if !empty($dialog['utitel'][1])}<tr>

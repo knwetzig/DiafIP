@@ -1,4 +1,5 @@
 <?php namespace DiafIP {
+    global $marty, $myauth;
     /**
      * Eventhandler für Verwaltung von Ortsdaten
      *
@@ -14,7 +15,8 @@
      * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
      * @requirement PHP Version >= 5.4
      *
-     * ToDo: Für das Menü das Template adm_dialog.tpl und adm_selekt verwenden. Das Programm dahin gehend umstellen und anschließend adm_orteselekt.tpl löschen.Das gleiche für das Dialog-Template in der Klassendefinition
+     * ToDo: Für das Menü das Template adm_dialog.tpl und adm_selekt verwenden. Das Programm dahingehend
+     * umstellen und anschließend adm_orteselekt.tpl löschen.Das gleiche für das Dialog-Template in der Klassendefinition
      */
 
     if (!$myauth->getAuth()) :

@@ -6,7 +6,7 @@ $Author: knwetzig $
 $Date: 2014-08-16 16:27:21 +0200 (Sat, 16. Aug 2014) $
 $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_ldat.tpl $
 
-    call:   pers_class.php
+    call:   person2.class.php
     class:  Person
     proc:   sview
     param:  dialog[???][0] feldname
@@ -16,7 +16,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_ldat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div class="list-item list-item-person">
+<div class="list-item list-item-person {if $darkBG}darkBG{/if}">
 
     <div id='bearbzeile'>
 {* --Name-- *}

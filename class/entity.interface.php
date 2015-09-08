@@ -15,6 +15,7 @@
      * @since       r99 Aufteilung Klasse
      */
     interface iEntity {
+
         /**
          * Test ob id/bereich in der DB existiert
          *

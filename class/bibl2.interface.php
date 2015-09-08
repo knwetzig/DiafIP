@@ -1,6 +1,6 @@
 <?php namespace DiafIP;
 /**
- * Klassenbibliotheken für Filmogr.-/Bibliografische Daten
+ * Klassenbibliotheken für Bibliografische Daten
  *
  * $Rev: 99 $
  * $Author: knwetzig $
@@ -12,11 +12,10 @@
  * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
  * @requirement PHP Version >= 5.4
  *
- * ToDo:  Momentan über 80 Warnungen die bearbeitet werden müssen
  */
 
 
-interface iBiblio extends iFibikern {
+interface iBiblio extends iFibiMain {
     public function add($status = null);
     public function edit($status = null);
     public function save();

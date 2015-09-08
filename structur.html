@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Übersicht über den Aufbau der Applikation</title>
+    <style>
+        ul.first {list-style-type: none}
+        .descr {color: #666666; font-size: smaller }
+    </style>
+</head>
+<body>
+<h3>Bereitstellung</h3>
+    <ul class="first">
+        <li><h4>Ladereihenfolge:</h4>
+            <ol>
+                <li>index.php
+                </li>
+                <li>config.local.php
+                    <dl>
+                        <dt>Pfade</dt><dd>Include-Pfad/Smarty-Verzeichnisse</dd>
+                        <dt>DSN</dt><dd>Includieren der Datei in Variable</dd>
+                        <dt>Zeitzone</dt>
+                        <dt>Error Reporting</dt>
+                    </dl>
+                </li>
+                <li>config.php
+                    <dl>
+                        <dt>service.php</dt><dd>Enthält alle relevanten Hilfsroutinen (Framework)</dd>
+                        <dt>Bibliotheken</dt><dd>MDB2/Auth/Smarty</dd>
+                        <dt>Klasseninterfaces</dt>
+                        <dt>Konstanten</dt>
+                        <dt>Steuerungsvariablen</dt><dd>Links auf die einzelnen Bereiche</dd>
+                    </dl>
+                </li>
+            </ol>
+        </li>
+        <li><h4>Initialisierung</h4>
+            erfolgt in der "index.php"
+            <ol>
+                <li>Authentifizierung<div class="descr">&nbsp;Automatisch als User "Gast". Abmelden erzeugt ein neues
+                    Loginfenster. Im Moment noch etwas Baustelle ;(</div></li>
+                <li>Bereitstellung einer persistenten Datenbankverbindung</li>
+                <li>GET-Behandlung<div class="descr">&nbsp;Login/logout Prozedur und Spracheinstellung</div></li>
+                <li>Setzen der locale in der DB</li>
+                <li>Laden der Klassenbibliotheken der Applikation</li>
+                <li>Initialisierung der Stringtabelle anhand der Spracheinstellung</li>
+                <li>Laden
+                    Menübereich<div class="descr">&nbsp;Zusammenstellung anhand der Rechte und Sprache des Users</div></li>
+                <li>Schreiben des Headers</li>
+            </ol>
+        </li>
+        damit ist die Initialisierung abgeschlossen und der Mainframe wird geladen
+    </ul>
+<h3>Applikation</h3>
+</body>
+</html>

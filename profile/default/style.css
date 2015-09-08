@@ -1,6 +1,12 @@
 /* $Id$ */
 
 @import "base.css";
+/* todo importieren soweit benötigt
+<link rel='stylesheet' type='text/css' href='responsive.css' />
+<link rel='stylesheet' type='text/css' href='font-awesome.css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+*/
+
 @media screen {
     #menue {
         position: fixed;

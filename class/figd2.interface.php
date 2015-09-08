@@ -11,7 +11,7 @@
      * @requirement PHP Version >= 5.4
      */
 
-    interface iFilm extends iFibikern {
+    interface iFilm extends iFibiMain {
         public function add($status = null);
         public function edit($status = null);
         public function save();

@@ -290,7 +290,7 @@
         }
 
         /**
-         * Liefert den zusammngesetzten und verlinkten Namen zurück
+         * Liefert den zusammen gesetzten und verlinkten Namen zurück
          *
          * @return string
          */

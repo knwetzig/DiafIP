@@ -1,4 +1,5 @@
 <?php namespace DiafIP {
+    global $myauth, $marty;
     /**
      * Eventhandler für Verwaltung von Lagerorten
      *

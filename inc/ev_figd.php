@@ -1,4 +1,5 @@
 <?php namespace DiafIP {
+    global $myauth, $marty, $str;
     /**
      *
      * Eventhandler für Aktionen der Filmverwaltung
@@ -20,13 +21,13 @@
         exit;
     endif;
 
-// Kopfbereich
+    // Kopfbereich
     $data = a_display([
-                          // name,inhalt,rechte, optional-> $label,$tooltip,valString
-                          new d_feld('bereich', $str->getStr(4008)),
-                          new d_feld('sstring', $str->getStr(4011)),
-                          new d_feld('sektion', 'film'),
-                          new d_feld('add', true, EDIT, null, 4024)]);
+              // name,inhalt,rechte, optional-> $label,$tooltip,valString
+              new d_feld('bereich', $str->getStr(4008)),
+              new d_feld('sstring', $str->getStr(4011)),
+              new d_feld('sektion', 'film'),
+              new d_feld('add', true, EDIT, null, 4024)]);
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);
     $marty->display('main_bereich.tpl');
@@ -34,46 +35,47 @@
     if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
         $marty->assign('aktion', $_REQUEST['aktion']);
 
-// switch:action => add | edit | search | del | view
+        // switch:action => add | edit | search | del | view
         switch (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : 'view') :
             case "add":
                 if (isset($_POST['form'])) {
-                    $film = new Film; // Formular anfordern
-                    $film->add(false);
+                    $motpic = new Film; // Formular anfordern
+                    $motpic->add(false);
                 } else {
-                    $film = unserialize($myauth->getAuthData('obj'));
-                    $film->add(true); // Auswertezweig
-                    $film->view();
+                    $motpic = unserialize($myauth->getAuthData('obj'));
+                    $motpic->add(true); // Auswertezweig
+                    $motpic->view();
                 }
                 break; // Ende add
 
             case "edit" :
                 if (isset($_POST['form'])) {
-                    $film = new Film($_POST['id']);
-                    $film->edit(false); // Formular anfordern
+                    $motpic = new Film($_POST['id']);
+                    $motpic->edit(false); // Formular anfordern
                 } else { // Auswertezweig
-                    $film = unserialize($myauth->getAuthData('obj'));
-                    $film->edit(true);
-                    $erg = $film->set();
+                    $motpic = unserialize($myauth->getAuthData('obj'));
+                    $motpic->edit(true);
+                    $erg = $motpic->set();
                     if ($erg) feedback($erg, 'error');
-                    $film->view();
+                    $motpic->view();
                 }
                 break; // Ende edit
 
             case "search" :
                 if (isset($_POST['sstring'])) :
-                    $str = $_POST['sstring'];
-                    $myauth->setAuthData('search', $str);
+                    $suche = $_POST['sstring'];
+                    $myauth->setAuthData('search', $suche);
                     $tlist = new Film;
-                    $tlist = $tlist->search($str);
+                    $tlist = $tlist->search($suche);
                     if (!empty($tlist) AND is_array($tlist)) :
                         // Ausgabe
                         $bg = 1;
                         foreach (($tlist) as $nr) :
                             ++$bg;
                             $marty->assign('darkBG', $bg % 2);
-                            $film = new Film($nr);
-                            $film->sview();
+                            $motpic = new Film($nr);
+                            $motpic->display('figd_ldat.tpl');
+                            unset($motpic);
                         endforeach;
                     else :
                         feedback(102, 'hinw'); // kein Erg.
@@ -82,28 +84,28 @@
                 break;
 
             case "del" :
-                $film = new Film($_POST['id']);
-                $erg  = $film->del();
+                $motpic = new Film($_POST['id']);
+                $erg  = $motpic->del();
                 if (empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'warng');
                 break;
 
             case 'view' :
-                $film = new Film((int)$_REQUEST['id']);
-                $film->display('blabla_film.tpl');
+                $motpic = new Film((int)$_REQUEST['id']);
+                $motpic->display('figd_dat.tpl');
                 break;
 
             case 'addCast' :
-                $film = new Film($_POST['id']);
-                $film->addCast($_POST['pid'], $_POST['tid']);
+                $motpic = new Film($_POST['id']);
+                $motpic->addCast($_POST['pid'], $_POST['tid']);
                 $marty->assign('aktion', 'edit');
-                $film->edit(false);
+                $motpic->edit(false);
                 break;
 
             case 'delCast' :
-                $film = new Film($_POST['id']);
-                $film->delCast($_POST['pid'], $_POST['tid']);
+                $motpic = new Film($_POST['id']);
+                $motpic->delCast($_POST['pid'], $_POST['tid']);
                 $marty->assign('aktion', 'edit');
-                $film->edit(false);
+                $motpic->edit(false);
                 break;
 
             case 'addImage' :

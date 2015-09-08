@@ -1,4 +1,6 @@
 <?php namespace DiafIP {
+    use MDB2;
+    global $marty, $myauth, $str;
     /**
     Bearbeiten von Einträgen in der s_string Tabelle (Spalten en, fr)
 
@@ -11,12 +13,10 @@
      * @copyright   Deutsches Institut für Animationsfilm e.V.
      * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
      * @requirement PHP Version >= 5.4
-
-    ToDo: Integration in class String
-
+     *
+     * ToDo: Integration in class String
+     *
      */
-
-    use DiafIP\d_feld;
 
     if (!$myauth->getAuth()) {
         feedback(108, 'error');

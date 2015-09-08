@@ -2,7 +2,7 @@
 
  Smarty-Template für Filmkopien (Detailansicht)
 
- call:   class.item.php
+ call:   item.class.php
  class:  FilmKopie
  proc:   view
  param:	dialog[???][0] feldname

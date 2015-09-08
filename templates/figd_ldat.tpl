@@ -22,10 +22,10 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_ldat.tpl $
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr><form action='{$dlg['phpself']}' method="post">
-        <td colspan="3">
+    <tr>
+        <td colspan="3"><form action='{$dlg['phpself']}' method="post">
             {if !empty($dialog['titel'][1])}<h3>{$dialog['titel'][1]}</h3>{/if}
-        <span class="note" style="float:right;">
+        <span class="note bearbbtn">
                 ID:&nbsp;{$dialog['id'][1]}&nbsp;
 
                 <button
@@ -53,8 +53,8 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_ldat.tpl $
                 {/if}
                 <input type="hidden" name="form" value="true" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
-        </span></td>
-    </form></tr>
+        </span></form></td>
+    </tr>
 
 {* --Regie-- *}
     {if !empty($dialog['regie'][1])}<tr>
