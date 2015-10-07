@@ -255,8 +255,8 @@ class Ort {
     function del() {
         $db = MDB2::singleton();
         // Abfrage, ob Ort mit einer Person verküpft ist
-        $sql  = "SELECT p_person.id FROM public.p_person
-                WHERE p_person.tort = ? OR p_person.gort = ? OR p_person.wort = ?;";
+        $sql  = "SELECT p_person2.id FROM public.p_person2
+                WHERE p_person2.tort = ? OR p_person2.gort = ? OR p_person2.wort = ?;";
         $data = $db->extended->getCol(
             $sql, null,
             [$this->oid, $this->oid, $this->oid],

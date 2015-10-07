@@ -11,11 +11,9 @@
      * @copyright   Deutsches Institut für Animationsfilm e.V.
      * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
      * @requirement PHP Version >= 5.4
-     *
-     * ToDo:   Die Methode search in der Klassenbibliothek funktioniert nicht wie gewünscht. Eine Überarbeitung der SQL-Abfrage ist erforderlich.
      */
 
-    global $myauth, $OutTime, $marty, $str;
+    global $myauth, $marty, $str;
     if (!$myauth->checkAuth()) feedback(108, 'error');
 
     // Überschrift
@@ -31,9 +29,9 @@
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);
     $marty->display('main_bereich.tpl');
+
     if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') {
         $marty->assign('aktion', $_REQUEST['aktion']);
-
         // switch:aktion => add | edit | search | del | view
         switch ($_REQUEST['aktion']) :
             case "add":
@@ -45,7 +43,10 @@
                     $np = unserialize($myauth->getAuthData('obj'));
                     // Formular auswerten
                     $np->add(true);
-                    $np->display('pers_dat.tpl');
+                    $nr = $np->getId();
+                    unset($np);
+                    $pers = new Person($nr);
+                    $pers->display('pers_dat.tpl');
                 endif;
                 break; // Ende --addPerson--
 
@@ -58,17 +59,21 @@
                     $ePer = unserialize($myauth->getAuthData('obj'));
                     $ePer->edit(true);
                     $erg = $ePer->save();
-                    if ($erg) feedback($erg, 'error');
-                    $ePer->display('pers_dat.tpl');
+                    if ($erg) :
+                        feedback($erg, 'error');
+                        exit();
+                    endif;
+                    $nr = $ePer->getId();
+                    unset($ePer);
+                    $pers = new Person($nr);
+                    $pers->display('pers_dat.tpl');
                 endif;
                 break; // Ende --edit --
 
             case "search" :
                 if (isset($_POST['sstring'])) :
                     $myauth->setAuthData('search', $_POST['sstring']);
-
-                    $p     = new PName();
-                    $PersonList = $p->search($myauth->getAuthData('search'));
+                    $PersonList = Person::search($myauth->getAuthData('search'));
                     if (!empty($PersonList) AND is_array($PersonList)) :
                         // Ausgabe
                         $bg = 1;
@@ -95,11 +100,13 @@
             case "del" :
                 $pers = new Person($_POST['id']);
                 $pers->del();
+                unset($pers);
                 break;
 
             case "view" :
                 $pers = new Person($_REQUEST['id']);
                 $pers->display('pers_dat.tpl');
+                unset($pers);
         endswitch;
     }
 // aus irgend welchen Gründen wurde keine 'aktion' ausgelöst?

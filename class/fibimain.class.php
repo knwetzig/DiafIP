@@ -25,17 +25,22 @@ abstract class FibiMain extends Entity implements iFibiMain {
         GETCALI   = 'SELECT f_cast.tid, f_cast.pid FROM f_cast WHERE f_cast.fid = ? ORDER BY tid;',
         ISLINK    = 'SELECT COUNT(*) FROM f_cast WHERE fid = ?',
         GETSTILI  = 'SELECT sertitel_id, titel FROM f_stitel ORDER BY titel ASC;',
-        GETTILI   = 'SELECT f_main2.id, f_main2.titel FROM public.f_main2 WHERE f_main2.del != TRUE ORDER BY f_main2.titel ASC;',
+        GETTILI   = 'SELECT f_main2.id, f_main2.titel FROM public.f_main2 WHERE f_main2.del != TRUE
+                     ORDER BY f_main2.titel ASC;',
         SEARCH    = 'SELECT DISTINCT id FROM f_main2, f_stitel
-                    WHERE (f_main2.del = FALSE) AND
-                          (f_main2.titel ILIKE ? OR f_main2.atitel ILIKE ? OR
-                           f_main2.utitel ILIKE ? OR
-                          (f_stitel.titel ILIKE ? AND f_stitel.sertitel_id = f_main2.sid));';
+                     WHERE (f_main2.del = FALSE) AND (f_main2.titel ILIKE ? OR
+                        f_main2.atitel ILIKE ? OR
+                        f_main2.utitel ILIKE ? OR
+                        (f_stitel.titel ILIKE ? AND f_stitel.sertitel_id = f_main2.sid));';
 
     protected
         $stitel = null, // Serientitel -> diafip.f_stitel.titel
         $sdescr = null; // Beschreibung Serie
 
+    /**
+     * Initialisiert das Objekt (auch gelöschte)
+     * @param null $nr
+     */
     public function __construct($nr = null) {
         parent::__construct($nr);
         $this->content['titel']     = null; // Originaltitel
@@ -46,59 +51,66 @@ abstract class FibiMain extends Entity implements iFibiMain {
         $this->content['prod_jahr'] = null;
         $this->content['anmerk']    = null;
         $this->content['quellen']   = null;
-        $this->content['thema']     = null; // Schlagwortverzeichnis
-        if ((isset($nr)) AND is_numeric($nr)) self::get(intval($nr));
-    }
+        $this->content['thema']     = []; // Schlagwortverzeichnis
+        if ((isset($nr)) AND is_numeric($nr)) :
+            $db   = MDB2::singleton();
+            $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEFIBI), $nr, 'integer');
+            if(!empty($data['thema'])) $data['thema'] = list2array($data['thema']);
+            self::WertZuwCont($data);
 
-    protected function get($nr) {
-        /**
-         * Aufgabe: Initialisiert das Objekt (auch gelöschte)
-         * Return: void
-         */
-        $db   = MDB2::singleton();
-        $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEFIBI), $nr, 'integer');
-        IsDbError($data);
-        if ($data) :
-            foreach ($data as $key => $val) $this->content[$key] = $val;
-        else:
-            feedback(4, 'error'); // kein Datensatz vorhanden
-            exit(4);
-        endif;
-
-        // Serientitel holen, soweit vorhanden
-        if ($this->content['sid']) :
-            $data = $db->extended->getRow(self::GETSTITEL, null, $this->content['sid']);
-            IsDbError($data);
-            $this->stitel = $data['titel'];
-            $this->sdescr = $data['descr'];
+            // Serientitel holen, soweit vorhanden
+            if ($this->content['sid']) :
+                $data = $db->extended->getRow(self::GETSTITEL, null, $this->content['sid'], 'integer');
+                IsDbError($data);
+                $this->stitel = $data['titel'];
+                $this->sdescr = $data['descr'];
+            endif;
         endif;
     }
 
+    /**
+     * Ausgabe des Titels
+     * @return string
+     */
     public function getTitel() {
-        /**
-         *  Aufgabe: Ausgabe des Titels
-         *   Return: String / Fehlercode
-         */
         return '<a href="index.php?' . $this->content['bereich'] . '=' . $this->content['id'] . '">' . $this->content['titel'] .
         '</a>';
     }
 
+    /**
+     * Ermitteln gleichlautender Titel
+     * @return mixed
+     */
     final protected function ifDouble() {
-        /**
-         * Aufgabe: Ermitteln gleichlautender Titel
-         * Return: int (ID des letzten Datensatzes | null )
-         */
         $db   = MDB2::singleton();
         $data = $db->extended->getOne(self::IFDOUBLE, null, $this->content['titel']);
         IsDbError($data);
         return $data;
     }
 
+    /**
+     * @param $titel
+     * @param $descr
+     * @return int|null
+     */
+    public static function addSerTitel($titel, $descr) {
+        global $myauth;
+        if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+        $db = MDB2::singleton();
+
+        $erg = $db->extended->autoExecute('f_stitel', [$titel,$descr], MDB2_AUTOQUERY_INSERT, null,['text','text']);
+        IsDbError($erg);
+        return null;
+    }
+
+    public static function editSerTitel($nr, $status = null) {}
+    public static function delSerTitel($nr) {}
+
+    /**
+     * gibt ein Array(num, text) der Tätigkeiten zurück
+     * @return array
+     */
     final protected static function getTaetigList() {
-        /**
-         * Aufgabe: gibt ein Array(num, text) der Tätigkeiten zurück
-         * Return:
-         */
         $db = MDB2::singleton();
         global $str;
         $list = $db->extended->getCol(self::GETTAETIG, 'integer');
@@ -109,11 +121,11 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return $data;
     }
 
+    /**
+     * Ausgabe der Serientitelliste
+     * @return array|int
+     */
     final public static function getSTitelList() {
-        /**
-         * Aufgabe: Ausgabe der Serientitelliste
-         * Return: array | Fehlercode
-         */
         $db       = MDB2::singleton();
         $ergebnis = [];
         $erg      = $db->query(self::GETSTILI);
@@ -124,11 +136,11 @@ abstract class FibiMain extends Entity implements iFibiMain {
         if ($ergebnis) return $ergebnis; else return 1;
     }
 
+    /**
+     * Ausgabe der Titelliste (Filme/Bücher)
+     * @return array
+     */
     final public static function getTitelList() {
-        /**
-         * Aufgabe: Ausgabe der Titelliste (Filme/Bücher)
-         * Return: array | Fehlercode
-         */
         $db   = MDB2::singleton();
         $list = $db->extended->getAll(self::GETTILI);
         IsDbError($list);
@@ -138,12 +150,13 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return $data;
     }
 
+    /**
+     * Testet ob ein Castingeintrag für fid vorhanden ist
+     * @param $p
+     * @param $t
+     * @return mixed
+     */
     final private function existCast($p, $t) {
-        /**
-         * Aufgabe: Testet ob ein Castingeintrag für fid vorhanden ist
-         * Aufruf: int ($pid), int ($taetigkeit)
-         * Return: int (Anzahl)
-         */
         $db   = MDB2::singleton();
         $data = $db->extended->getOne(
             self::EXCAST, 'integer', [$this->content['id'], $p, $t],
@@ -152,15 +165,15 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return $data;
     }
 
+    /**
+     * Fügt einen Castingdatensatz ein
+     * @param $p
+     * @param $t
+     * @return int|null
+     */
     final public function addCast($p, $t) {
-        /**
-         * Aufgabe: fügt einen Castingdatensatz ein
-         * Aufruf: int ($pid), int ($taetigkeit)
-         * Return: Fehlercode
-         */
         $db = MDB2::singleton();
-        // testen, das nix doppelt eingetragen wird!
-        if (self::existCast($p, $t)) return 8;
+        if (self::existCast($p, $t)) return 8;      // testen, das nix doppelt eingetragen wird!
 
         IsDbError($db->extended->autoExecute(
                       'f_cast', ['fid' => $this->content['id'], 'pid' => $p, 'tid' => $t],
@@ -168,12 +181,13 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return null;
     }
 
+    /**
+     * löscht einen Castingsatz für diesen Eintrag
+     * @param $p
+     * @param $t
+     * @return int|null
+     */
     final public function delCast($p, $t) {
-        /**
-         * Aufgabe: löscht einen Castingsatz für diesen Eintrag
-         * Aufruf: int ($pid), int ($taetigkeit)
-         * Return: Fehlercode
-         */
         global $myauth;
         if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
 
@@ -185,14 +199,14 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return null;
     }
 
+    /**
+     * Gibt die Besetzungsliste für diesen Datensatz aus
+     * Anm.: Die Sortierreihenfolge ist durch die ID in der Stringtabelle
+     *  fest vorgegeben. Bei Änderung bitte den Eintrag in der Tabelle
+     *  f_taetig korrigieren.
+     * @return array (name, tid, pid, job)
+     */
     final protected function getCastList() {
-        /**
-         * Aufgabe: gibt die Besetzungsliste für diesen Datensatz aus
-         * Return: array(name, tid, pid, job)
-         * Die Sortierreihenfolge ist durch die ID in der Stringtabelle
-         * fest vorgegeben. Bei Änderung bitte den Eintrag in der Tabelle
-         * f_taetig korrigieren.
-         */
         $db = MDB2::singleton();
         global $str;
         if (empty($this->content['id'])) return null;
@@ -210,11 +224,11 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return $data;
     }
 
+    /**
+     * Prüft ob der Datensatz verknüpft ist
+     * @return mixed
+     */
     final protected function isLinked() {
-        /**
-         * Aufgabe: Prüft ob der Datensatz verknüpft ist
-         * Return: int $Anzahl
-         */
         $db = MDB2::singleton();
         // Prüfkandidaten: f_cast.fid / ...?
         $data = $db->extended->getOne(self::ISLINK, null, $this->content['id']);
@@ -222,12 +236,12 @@ abstract class FibiMain extends Entity implements iFibiMain {
         return $data;
     }
 
-    public function search($s) {
-        /**
-         * Aufgabe: Suchfunktion in allen Titelspalten incl. Serientiteln
-         * Param:  string
-         * Return: Array der gefunden ID's | Fehlercode
-         */
+    /**
+     * Suchfunktion in allen Titelspalten incl. Serientiteln
+     * @param $s
+     * @return array | int
+     */
+    static public function search($s) {
         $s  = "%" . $s . "%";
         $db = MDB2::singleton();
 
@@ -241,18 +255,21 @@ abstract class FibiMain extends Entity implements iFibiMain {
         endif;
     }
 
+    /**
+     * Zusammenstellung der Daten eines Datensatzes, Einstellen der Rechteparameter
+     * Auflösen von Listen und holen der Strings aus der Tabelle Zuweisungen und
+     * ausgabe via display()
+     * Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
+     * @return array|int
+     */
     public function view() {
-        /**
-         * Aufgabe: Zusammenstellung der Daten eines Datensatzes, Einstellen der Rechteparameter
-         * Auflösen von Listen und holen der Strings aus der Tabelle Zuweisungen und
-         * ausgabe via display()
-         * Anm.:   Zentrales Objekt zur Handhabung der Ausgabe
-         */
         global $myauth;
         if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
         $data   = parent::view();
-        $data[] = new d_feld('titel', $this->content['titel'], VIEW, 500); // Originaltitel
+
+        $data[] = new d_feld('descr', changetext($this->content['descr']), VIEW, 506); // Beschreibung
+        $data[] = new d_feld('titel', self::getTitel(), VIEW, 500); // Originaltitel
         $data[] = new d_feld('atitel', $this->content['atitel'], VIEW, 503); // Arbeitstitel
         $data[] = new d_feld('utitel', $this->content['utitel'], VIEW, 501); // Untertitel
         $data[] = new d_feld('stitel', $this->stitel, VIEW, 504); // Serientitel

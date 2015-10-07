@@ -1,5 +1,5 @@
 <?php namespace DiafIP {
-    global $db, $datei, $marty, $myauth;
+    global $datei, $marty, $myauth;
 
     /**
      * Das Ladeprogramm für die Hauptseite
@@ -19,7 +19,6 @@
      **************************************************************/
 
     echo "<div id='main'>";
-
     if (!empty($_REQUEST)) :
         /* Da hier offensichtlich was steht wird versucht die 'sektion'
             zuzuweisen und evt. eine id zu ermitteln
@@ -39,7 +38,7 @@
             $_REQUEST['sektion'] = key($_REQUEST);
         endif;
 
-        // Variante: Es wurde im Suchfeld eine Nr. eingegeben
+        // Variante: Es wurde im Suchfeld eine Ganzzahl eingegeben
         if (!empty($_POST['sstring']) AND is_numeric($_POST['sstring'])) :
             $nr      = intval($_POST['sstring']);
             $bereich = Entity::getBereich($nr);
@@ -58,8 +57,10 @@
         $marty->assign('sektion', $_REQUEST['sektion']);
         include $datei[$_REQUEST['sektion']];
     else :
+        // Leere- bzw. Vorgabeseite
         if ($myauth->getAuthData('uid') == 4) :
             // mehrsprachige Vorgabeseite
+            $db = \MDB2::singleton();
             $data = $db->extended->getOne(
                 'SELECT ' . $myauth->getAuthData('lang') . ' FROM s_strings WHERE id = 13;');
             IsDbError($data);

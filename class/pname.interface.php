@@ -44,7 +44,7 @@
          *
          * @param string $s
          */
-        function search($s);
+        static function search($s);
 
         /**
          * Legt ein neues Objekt an

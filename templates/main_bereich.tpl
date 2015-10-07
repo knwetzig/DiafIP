@@ -15,7 +15,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/main_bereich.tpl $
         {if isset($dialog['sstring'])}
         <div id='left'>
             <form action='{$dlg['phpself']}' method='post'>
-                <input
+                <input title="{$dialog['sstring'][2]}"
                 type='text'
                 name='sstring'
                 value="{$dialog['sstring'][1]}"

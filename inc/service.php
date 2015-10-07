@@ -1,5 +1,5 @@
 <?php namespace DiafIP {
-    use MDB2;
+    use MDB2, DateTime;
     /**
      *      Lose Sammlung diverser Funktionen
      *
@@ -11,8 +11,8 @@
      */
 
 
-    /** Übergabe Datenbankobjekt
-     *
+    /**
+     * Testet Datenbankresource auf Fehler und bricht entsprechend ab
      * @param object $obj ein DB-Objekt
      * @throws <Ausgabe Error-Report und Rollback der Transaktion mit anschließendem Exit>
      * @todo Für den Produktivbereich muß die Ausgabe über den Errorhandler erfolgen
@@ -88,7 +88,7 @@
     }
 
     /**
-     * konvertiert ein ....
+     * setzt die Binärstellen in einem Wert
      *
      * @param $wert
      * @param $arr
@@ -99,8 +99,8 @@
         return $wert;
     }
 
-    /** Testet ob der Ausdruck $val mit $muster validierbar ist
-     *
+    /**
+     * Testet ob der Ausdruck $val mit $muster validierbar ist
      * @param mixed $val
      * @param string $muster
      * @return int
@@ -109,18 +109,6 @@
         // Prüfung auf korrekte syntax - keine semantikprüfung!
         $muster = '/' . $muster . '/';
         return preg_match($muster, $val);
-    }
-
-    /**
-     * Testet, ob das Datum existiert
-     *
-     * @param string $date
-     * @param string $format
-     * @return bool
-     */
-    function validateDate($date, $format = 'Y-m-d H:i:s') {
-        $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) == $date;
     }
 
     /**
@@ -155,20 +143,21 @@
     }
 
     /**
-     * konvertiert ein Array in eine DB-Liste
+     * konvertiert ein PHP-Array in eine DB-Liste
      *
      * @param array $arr
-     * @return string
+     * @return string | 'Error'
      */
     function array2list($arr) {
-        // wandelt ein PHP-Array in eine DB-Liste um
-        /** _____ ACHTUNG! Baustelle _____
-         * _v(count($arr));
-         * _v($arr,'array');
-         * $list = '{';
-         * foreach ($arr as $val) $list .= $val.',';
-         * $list[strlen($list)-1] = '}';
-         * return $list; **/
+        if (!is_array($arr)) return 1;
+        $anz = count($arr)-1;
+        $list = '{';
+        foreach ($arr as $key => $val) :
+            $list .= $val;
+            if($key !== $anz) $list .= ','; else $list .= '}';
+        endforeach;
+        return $list;
+
     }
 
     /**
@@ -230,6 +219,7 @@ VIS;
      *
      * @param string $var
      * @return array|string
+     * @todo Ausgiebige Tests auf Filterung von Sonderzeichen steht noch aus (Zeilenumbrüche, Hochkommatas etc.)
      */
     function normtext($var) {
         if (!is_array($var)) :

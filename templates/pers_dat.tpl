@@ -22,8 +22,18 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
 {* --Name-- *}
         <div id='left' class="fett">
         {if !empty($dialog['pname'][1])} {$dialog['pname'][1]}{/if}
-        {if !empty($dialog['aliases'][1])}<span class="alias">({foreach $dialog['aliases'][1] as
-        $alias}{$alias}{if $alias@last}){else},&nbsp;{/if}{/foreach}</span>{/if}
+        {if !empty($dialog['aliases'][1])}
+            <span class="alias">
+            ({foreach $dialog['aliases'][1] as $alias}
+                {$alias}
+                {if $alias@last}
+                    )
+                {else}
+                    ,&nbsp;
+                {/if}
+            {/foreach}
+            </span>
+        {/if}
         </div>
 
 {* --Bearbeitungssymbole-- *}
@@ -69,7 +79,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
 
 {* --Todeszeile-- *}
     {if !empty($dialog['ttag'][1]) OR !empty($dialog['tort'][1])}<div id='einzug'>
-        {if !empty($dialog['ttag'][1])}{$dialog['ttag'][2]}:&nbsp;{/if}
+        {if !empty($dialog['ttag'][2])}{$dialog['ttag'][2]}:&nbsp;{/if}
         {if !empty($dialog['ttag'][1])}{$dialog['ttag'][1]}{/if}
         {if !empty($dialog['tort'][1])}
             &nbsp;{$dialog['tort'][2]}&nbsp;{$dialog['tort'][1]['ort']}
@@ -108,7 +118,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
 {* --Verweis auf Filmografie-- *}
     {if !empty($dialog['castLi'][1])}<div id='einzug'>
         {foreach $dialog['castLi'][1] as $cast}
-            {$cast['ftitel']}&nbsp;{$cast['job']}
+            {$cast['ftitel']}&nbsp;{$cast['job']}<br />
         {/foreach}</div>
     {/if}
 

@@ -17,38 +17,43 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
-<table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
-{* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr>
-	    <form action='{$dlg['phpself']}' method="post">
-	        <td colspan="3">
-	            {if !empty($dialog['titel'][1])}<h3>{$dialog['titel'][1]}</h3>{/if}
-	            <span class="note" style="float:right;">
+    {* --- Name/Status/Bearbeitungssymbole --- *}
+    <div id="bearbzeile">
+        {if !empty($dialog['titel'][1])}
+            <div id="left" class="fett">{$dialog['titel'][1]}</div>
+        {/if}
+
+        <form id="bearbbtn" action='{$dlg['phpself']}' method="post">
+            <span class="note">
 	                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
-	                {if isset($dialog['edit'])}
-	                    <button
-	                        class={if $darkBG}"small_dk"{else}"small"{/if}
-	                        name="aktion"
-	                        onmouseover="return overlib('{$dialog['edit'][3]}',DELAY,1000);"
-	                        onmouseout="return nd();"
-	                        value="edit"><img src="images/edit.png" /></button>
-	                {/if}
-	                {if isset($dialog['del'])}
-	                    <button
-	                        class={if $darkBG}"small_dk"{else}"small"{/if}
-	                        name="aktion"
-	                        onmouseover="return overlib('{$dialog['del'][3]}',DELAY,1000);"
-	                        onmouseout="return nd();"
-	                        value="del" /><img src="images/del.png" /></button>
-	                {/if}
-	                <input type="hidden" name="form" value="true" />
-	                <input type="hidden" name="id" value="{$dialog['id'][1]}" />
-	            </span>
-	        </td>
+            </span>
+
+            {if isset($dialog['edit'])}
+                <button
+                    class="small"
+                    name="aktion"
+                    onmouseover="return overlib('{$dialog['edit'][3]}',DELAY,1000);"
+                    onmouseout="return nd();"
+                    value="edit"><img src="images/edit.png" /></button>
+            {/if}
+
+            {if isset($dialog['del'])}
+                <button
+                    class="small"
+                    name="aktion"
+                    onmouseover="return overlib('{$dialog['del'][3]}',DELAY,1000);"
+                    onmouseout="return nd();"
+                    value="del"><img src="images/del.png" /></button>
+            {/if}
+            <input type="hidden" name="form" value="true" />
+            <input type="hidden" name="sektion" value="{$dialog['bereich'][1]}" />
+            <input type="hidden" name="id" value="{$dialog['id'][1]}" />
         </form>
-    </tr>
+    </div>
+
+<table width="100%">
+    <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --Bild--
 	<tr class="row-picture">
@@ -107,10 +112,14 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
         </td>
     </tr>{/if}
 
-{* --thema-- *}
+{* --thema-- ist ein array*}
     {if !empty($dialog['thema'][1])}<tr>
         <td class="re label">{$dialog['thema'][2]}:</td>
-        <td class="value">{$dialog['thema'][1]}</td>
+        <td class="value">
+            {foreach from=$dialog['thema'][1] item=wert}
+                {$wert}{if !$wert@last},{/if}
+            {/foreach}
+        </td>
     </tr>{/if}
 
 {* --gattung-- *}
@@ -122,7 +131,11 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 {* --prodtech-- *}
     {if !empty($dialog['prodtech'][1])}<tr>
         <td class="re label" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
-        <td class="value">{foreach from=$dialog['prodtech'][1] item=wert}{$wert}<br />{/foreach}</td>
+        <td class="value">
+            {foreach from=$dialog['prodtech'][1] item=wert}
+                {$wert}{if !$wert@last},{/if}
+            {/foreach}
+        </td>
     </tr>{/if}
 
 {* --laenge-- *}
@@ -144,9 +157,9 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
     </tr>{/if}
 
 {* --urrauff-- *}
-    {if !empty($dialog['urrauff'][1])}<tr>
-        <td class="re label">{$dialog['urrauff'][2]}:</td>
-        <td class="value">{$dialog['urrauff'][1]}</td>
+    {if !empty($dialog['urauff'][1])}<tr>
+        <td class="re label">{$dialog['urauff'][2]}:</td>
+        <td class="value">{$dialog['urauff'][1]}</td>
     </tr>{/if}
 
 {* --bildformat-- *}
@@ -158,7 +171,13 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 {* --mediaspezi-- *}
     {if !empty($dialog['mediaspezi'][1])}<tr>
         <td class="re label" style="vertical-align:top">{$dialog['mediaspezi'][2]}:</td>
-        <td class="value">{foreach from=$dialog['mediaspezi'][1] item=wert}{$wert}<br />{/foreach}</td>
+        <td class="value">
+            {foreach from=$dialog['mediaspezi'][1] item=wert}
+                {$wert}
+                {if !$wert@last}
+                    ,&nbsp;
+                {/if}
+            {/foreach}</td>
     </tr>{/if}
 
 {* --Besetzung-- *}
@@ -179,10 +198,10 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 		{/foreach}
 	{/if}
 
-{* --inhalt-- *}
-    {if !empty($dialog['inhalt'][1])}<tr>
-        <td class="re label" style="vertical-align:top">{$dialog['inhalt'][2]}:</td>
-        <td class="value">{$dialog['inhalt'][1]|nl2br}</td>
+{* --descr-- *}
+    {if !empty($dialog['descr'][1])}<tr>
+        <td class="re label" style="vertical-align:top">{$dialog['descr'][2]}:</td>
+        <td class="value">{$dialog['descr'][1]|nl2br}</td>
     </tr>{/if}
 
 {* --quellen-- *}

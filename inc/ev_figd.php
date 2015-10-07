@@ -26,7 +26,7 @@
               // name,inhalt,rechte, optional-> $label,$tooltip,valString
               new d_feld('bereich', $str->getStr(4008)),
               new d_feld('sstring', $str->getStr(4011)),
-              new d_feld('sektion', 'film'),
+              new d_feld('sektion', 'F'),
               new d_feld('add', true, EDIT, null, 4024)]);
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);
@@ -38,27 +38,29 @@
         // switch:action => add | edit | search | del | view
         switch (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : 'view') :
             case "add":
-                if (isset($_POST['form'])) {
+                if (isset($_POST['form'])) :
                     $motpic = new Film; // Formular anfordern
                     $motpic->add(false);
-                } else {
+                else :
                     $motpic = unserialize($myauth->getAuthData('obj'));
                     $motpic->add(true); // Auswertezweig
                     $motpic->view();
-                }
+                endif;
                 break; // Ende add
 
             case "edit" :
-                if (isset($_POST['form'])) {
+                if (isset($_POST['form'])) :
                     $motpic = new Film($_POST['id']);
                     $motpic->edit(false); // Formular anfordern
-                } else { // Auswertezweig
+                else : // Auswertezweig
                     $motpic = unserialize($myauth->getAuthData('obj'));
                     $motpic->edit(true);
-                    $erg = $motpic->set();
-                    if ($erg) feedback($erg, 'error');
-                    $motpic->view();
-                }
+                    $motpic->save();
+                    $FilmNr = $motpic->getId();
+                    unset($motpic);
+                    $fKontroll = new Film($FilmNr);
+                    $fKontroll->display('figd_dat.tpl');
+                endif;
                 break; // Ende edit
 
             case "search" :
@@ -109,11 +111,11 @@
                 break;
 
             case 'addImage' :
-                /** --- BAUSTELLE --- **/
+                /** --- BAUSTELLE
                 // aufruf von figd_dialog.tpl
                 $img = new Bild();
                 $img->add();
-
+                --- **/
         endswitch;
     endif;
 }

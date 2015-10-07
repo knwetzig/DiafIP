@@ -13,9 +13,10 @@
      * @requirement PHP Version >= 5.4
      **************************************************************/
 
+    global $marty, $myauth, $str;
     if (!$myauth->checkAuth()) feedback(108, 'error');
 
-// Überschrift
+    // Kopf
     $data = [new d_feld('bereich', $str->getStr(4012)),
              new d_feld('sektion', 'N')];
     $marty->assign('dialog', a_display($data));
@@ -23,7 +24,6 @@
     $marty->display('main_bereich.tpl');
 
     if (isset($_REQUEST['aktion']) ? $_REQUEST['aktion'] : '') :
-
         // switch:aktion => add | edit | search | del | view
         switch ($_REQUEST['aktion']) :
             case 'extra':

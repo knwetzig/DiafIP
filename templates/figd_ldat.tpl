@@ -17,62 +17,67 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_ldat.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
 
-<div class="list-item list-item-figd">
-<table width="100%" {if $darkBG} style="background-image:url(images/bg_dark.png)"{/if}>
-    <colgroup><col width="200px"><col><col width="200px"></colgroup>
+<div class="list-item list-item-figd {if $darkBG}darkBG{/if}">
 
-{* --- Name/Status/Bearbeitungssymbole --- *}
-    <tr>
-        <td colspan="3"><form action='{$dlg['phpself']}' method="post">
-            {if !empty($dialog['titel'][1])}<h3>{$dialog['titel'][1]}</h3>{/if}
-        <span class="note bearbbtn">
-                ID:&nbsp;{$dialog['id'][1]}&nbsp;
+    {* --- Name/Status/Bearbeitungssymbole --- *}
+    <div id='bearbzeile'>
+        {* --Titel-- *}
+        <div id='left' class="fett">
+            {if !empty($dialog['titel'][1])}{$dialog['titel'][1]}{/if}
+        </div>
 
+        {* --Bearbeitungssymbole-- *}
+        <form id=bearbbtn action='{$dlg['phpself']}' method="post">
+            <span class="note">ID:&nbsp;{$dialog['id'][1]}&nbsp;</span>
+
+            {if isset($dialog['edit'])}
                 <button
                     class={if $darkBG}"small_dk"{else}"small"{/if}
                     name="aktion"
-                    value="view"><img src="images/view_detailed.png" />
-                </button>
+                    onmouseover="return overlib('{$dialog['edit'][3]}',DELAY,1000);"
+                    onmouseout="return nd();"
+                    value="edit"><img src="images/edit.png" /></button>
+            {/if}
 
-                {if isset($dialog['edit'])}
-                    <button
-                        class={if $darkBG}"small_dk"{else}"small"{/if}
-                        name="aktion"
-                        onmouseover="return overlib('{$dialog['edit'][3]}',DELAY,1000);"
-                        onmouseout="return nd();"
-                        value="edit"><img src="images/edit.png" /></button>
+            {if isset($dialog['del'])}
+                <button
+                    class={if $darkBG}"small_dk"{else}"small"{/if}
+                    name="aktion"
+                    onmouseover="return overlib('{$dialog['del'][3]}',DELAY,1000);"
+                    onmouseout="return nd();"
+                    value="del" /><img src="images/del.png" /></button>
+            {/if}
+            <input type="hidden" name="form" value="true" />
+            <input type="hidden" name="sektion" value="{$dialog['bereich'][1]}" />
+            <input type="hidden" name="id" value="{$dialog['id'][1]}" />
+        </form>
+    </div>
+
+    {* --Regie-- *}
+    {if !empty($dialog['regie'][1])}
+    <div id="einzug">
+        {$dialog['regie'][2]}:&nbsp;{foreach $dialog['regie'][1] as $wert}{$wert}<br />{/foreach}
+
+    </div>
+    {/if}
+
+    {* --prod_jahr-- *}
+    {if !empty($dialog['prod_jahr'][1])}
+        <div id="einzug">
+            {$dialog['prod_jahr'][2]}:&nbsp;{$dialog['prod_jahr'][1]}
+        </div>
+    {/if}
+
+    {* --prodtech-- *}
+    {if !empty($dialog['prodtech'][1])}
+        <div id="einzug">
+            {$dialog['prodtech'][2]}:&nbsp;
+            {foreach from=$dialog['prodtech'][1] item=wert}
+                {$wert}
+                {if !$wert@last}
+                    ,&nbsp;
                 {/if}
-
-                {if isset($dialog['del'])}
-                    <button
-                        class={if $darkBG}"small_dk"{else}"small"{/if}
-                        name="aktion"
-                        onmouseover="return overlib('{$dialog['del'][3]}',DELAY,1000);"
-                        onmouseout="return nd();"
-                        value="del" /><img src="images/del.png" /></button>
-                {/if}
-                <input type="hidden" name="form" value="true" />
-                <input type="hidden" name="id" value="{$dialog['id'][1]}" />
-        </span></form></td>
-    </tr>
-
-{* --Regie-- *}
-    {if !empty($dialog['regie'][1])}<tr>
-        <td class="re">{$dialog['regie'][2]}:</td>
-        <td>{$dialog['regie'][1]}</td>
-    </tr>{/if}
-
-{* --prod_jahr-- *}
-    {if !empty($dialog['prod_jahr'][1])}<tr>
-        <td class="re">{$dialog['prod_jahr'][2]}:</td>
-        <td>{$dialog['prod_jahr'][1]}</td>
-    </tr>{/if}
-
-{* --prodtech-- *}
-    {if !empty($dialog['prodtech'][1])}<tr>
-        <td class="re" style="vertical-align:top">{$dialog['prodtech'][2]}:</td>
-        <td>{foreach $dialog['prodtech'][1] as $wert}{$wert}<br />{/foreach}</td>
-    </tr>{/if}
-
-</table>
+            {/foreach}
+        </div>
+    {/if}
 </div>

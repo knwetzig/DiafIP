@@ -21,12 +21,7 @@
 
         public function __construct($nr = null) {
             parent::__construct($nr);
-            if (isset($nr)) self::get($nr);
-        }
-
-        protected function get($nr) {
-            parent::get($nr);
-            // ....
+            // ... Konstruktor ehem. get()
         }
 
         public function add($status = null) {

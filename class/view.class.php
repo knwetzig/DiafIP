@@ -113,8 +113,11 @@
 
     /**
      * arrayverarbeitung
+     *
      * @todo: Zuordnung in das Klassensystem!
-     * */
+     * @param $arr
+     * @return array
+     */
     function a_display($arr) {
         $data = [];
         foreach ($arr as $val) {

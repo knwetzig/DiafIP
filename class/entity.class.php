@@ -15,9 +15,6 @@
      * @version     $Id$
      * @since       r52
      * @requirement PHP Version >= 5.4
-     *
-     * @todo        Bildauswertung einfügen
-     *              funktion get in __construct integrieren
      */
     abstract class Entity implements iEntity {
 
@@ -29,7 +26,7 @@
          * @var string GETMUELL <SQL-Statement für Indizierung Papierkorb>
          */
         const
-            TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,timestamp,',
+            TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text,',
             GETDATA    = 'SELECT * FROM entity WHERE id = ?;',
             GETMUELL   = 'SELECT id, bereich FROM entity WHERE del = TRUE;';
 
@@ -54,25 +51,44 @@
          * @param int $nr
          */
         function __construct($nr = null) {
-            if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
+            if (isset($nr) AND is_numeric($nr)) :
+                $db   = MDB2::singleton();
+                $result = $db->extended->getRow(self::GETDATA, list2array(self::TYPEENTITY), $nr, 'integer');
+                self::WertZuwCont($result);
+            endif;
         }
 
-        /**
-         * Diese Funktion initialisiert das Objekt
-         *
-         * @param int $nr
-         * @throws <Nr in DB nicht gefunden. Objekt wird nicht initialisiert. Verarbeitung abgebrochen>
-         */
-        protected function get($nr) {
-            $db   = MDB2::singleton();
-            $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEENTITY), $nr, 'integer');
+        protected function WertZuwCont($data){
             IsDbError($data);
-            if ($data) :
+            // Ergebnis -> Objekt schreiben
+            if (!empty($data)) :
                 foreach ($data as $key => $val) $this->content[$key] = $val;
             else :
                 feedback(4, 'error');
                 exit(4);
             endif;
+        }
+
+        /**
+         * @return integer
+         */
+        public function getId() {
+            return $this->content['id'];
+        }
+
+        /**
+         * Testet ob es einen Datensatz mit dieser Nummer gibt
+         * @param $nr
+         * @return bool
+         */
+        static function existId($nr) {
+            $db = MDB2::singleton();
+            $anzahl = false;
+            if ($nr AND is_numeric($nr)) :
+                $anzahl = $db->extended->getOne('SELECT COUNT(*) FROM entity WHERE id = ?;', 'integer', $nr, 'integer');
+                IsDbError($anzahl);
+            endif;
+            return (bool)$anzahl;
         }
 
         /**
@@ -105,7 +121,7 @@
             $data = null;
 
             if ($nr AND is_numeric($nr)) :
-                $data = $db->extended->getOne('SELECT bereich FROM entity WHERE id = ?;', null, $nr);
+                $data = $db->extended->getOne('SELECT bereich FROM entity WHERE id = ?;', 'text', $nr, 'integer');
                 IsDbError($data);
             endif;
             return $data;
@@ -142,13 +158,6 @@
          * @return mixed
          */
         abstract function edit($status = null);
-
-        /**
-         * Suchfunktion
-         *
-         * @param string $s Teilstring als Suchparameter
-         */
-        abstract function search($s);
 
         /**
          * Bearbeitungsflag setzen (Kippschalter)
@@ -226,7 +235,6 @@
                 // name,inhalt optional-> $rechte,$label,$tooltip,valString
                 new d_feld('id', $this->content['id'], VIEW),
                 new d_feld('bereich', $this->content['bereich'], VIEW),
-                new d_feld('descr', changetext($this->content['descr']), VIEW, 513), // Beschreibung
                 new d_feld('bilder', $this->content['bilder'], VIEW),
                 new d_feld('notiz', changetext($this->content['notiz']), IVIEW, 514),
                 new d_feld('isVal', $this->content['isvalid'], IVIEW, 10009),

@@ -1,6 +1,5 @@
 <?php namespace DiafIP {
-    use ErrorException;
-    use MDB2;
+    use MDB2, ErrorException, DateTime, DateInterval;
     /**
      * Klassenbibliotheken für Personen und Aliasnamen
      *
@@ -22,22 +21,16 @@
 
         const
             TYPEPERSON = 'date,integer,date,integer,text,text,integer,text,text,text',
-            GETDATA    =
-            'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
-             FROM p_person2 WHERE id = ?;',
-            GETPERLI   =
-            'SELECT id, vname, nname FROM ONLY p_person2 WHERE del = FALSE
-             ORDER BY nname, vname ASC;',
-            // Casting-Liste
-            GETCALI    = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',
-            IFDOUBLE   =
-            'SELECT id FROM p_person2 WHERE gtag = ? AND vname = ? AND nname = ?;';
+            GETDATA    = 'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
+                          FROM p_person2 WHERE id = ?;',
+            GETPERLI   = 'SELECT id, vname, nname FROM ONLY p_person2 WHERE del = FALSE ORDER BY nname, vname ASC;',
+            GETCALI    = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',      // Casting-Liste
+            IFDOUBLE   = 'SELECT id FROM p_person2 WHERE gtag = ? AND vname = ? AND nname = ?;';
 
         /**
          * Initialisiert das Personenobjekt
          *
          * @param int|null $nr
-         * @todo Die Funktion get() in den Konstruktor integrieren
          */
         function __construct($nr = null) {
             parent::__construct($nr);
@@ -52,29 +45,10 @@
             $this->content['tel']     = null; // Telefonnummer
             $this->content['mail']    = null; // mailadresse
             $this->content['aliases'] = null;
-            if (isset($nr) AND is_numeric($nr)) self::get(intval($nr));
-        }
-
-        /**
-         * Datensatz holen und in $this schreiben
-         *
-         * @param  int $nr ID des Personendatensatzes (NOT STATIC)
-         * @return void
-         * @throws <Meldung Parameterfehler und Abbruch>
-         */
-        protected function get($nr) {
-            $db = MDB2::singleton();
-
-            $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEPERSON), $nr);
-            IsDbError($data);
-            // Ergebnis -> Objekt schreiben
-            if ($data) :
-                foreach ($data as $key => $val) :
-                    $this->content[$key] = $val;
-                endforeach;
-            else :
-                feedback(4, 'error');
-                exit(4);
+            if (isset($nr) AND is_numeric($nr)) :
+                $db = MDB2::singleton();
+                $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEPERSON), $nr, 'integer');
+                self::WertZuwCont($data);
             endif;
         }
 
@@ -85,20 +59,10 @@
          */
         static function getPersList() {
             $db = MDB2::singleton();
-            global $str;
             $data = $db->extended->getAll(
                 self::GETPERLI, ['integer', 'text', 'text']);
             IsDbError($data);
-
-            $alist = [$str->getStr(0)]; // kein Eintrag
-            foreach ($data as $val) :
-                if ($val['vname'] === '-') :
-                    $alist[$val['id']] = $val['nname'];
-                else :
-                    $alist[$val['id']] = $val['vname'] . '&nbsp;' . $val['nname'];
-                endif;
-            endforeach;
-            return $alist;
+            return self::arrpack($data);
         }
 
         /**
@@ -122,7 +86,7 @@
                 $data = $db->extended->getOne("SELECT nextval('entity_id_seq');");
                 IsDbError($data);
                 $this->content['id']      = $data;
-                $this->content['bereich'] = 'P'; // Namen
+                $this->content['bereich'] = 'P';
                 $this->edit(false);
             else :
                 $this->edit(true);
@@ -162,7 +126,7 @@
                     new d_feld('aliases', $this->getAliases(), VIEW),
                     new d_feld('addalias', null, EDIT, 515),
                     new d_feld('notiz', $this->content['notiz'], EDIT, 514),
-                    new d_feld('isvalid', $this->content['isvalid'], SEDIT, 10009),
+                    new d_feld('isvalid', false, SEDIT, 10009),
                     new d_feld('gtag', $this->content['gtag'], EDIT, 502, 10000),
                     new d_feld('gort', $this->content['gort'], EDIT, 4014),
                     new d_feld('ttag', $this->content['ttag'], EDIT, 509, 10000),
@@ -210,9 +174,20 @@
 
                     if (isset($_POST['ttag'])) :
                         if ($_POST['ttag']) :
-                            if (isValid($_POST['ttag'], DATUM))
-                                $this->content['ttag'] = $_POST['ttag'];
-                            else throw new ErrorException(null, 103, E_WARNING);
+                            if (isValid($_POST['ttag'], DATUM)) :
+
+                                // Test das Geburt vor Tod liegt ;-)
+                                $born = new DateTime($this->content['gtag']);
+                                $dead = new DateTime($_POST['ttag']);
+                                $erg = $born->diff($dead);
+                                if (!$erg->invert) :
+                                    $this->content['ttag'] = $_POST['ttag'];
+                                else :
+                                    throw new ErrorException(null, 112, E_WARNING);
+                                endif;
+                            else :
+                                throw new ErrorException(null, 103, E_WARNING);
+                            endif;
                         else : $this->content['ttag'] = null; endif;
                     endif;
 
@@ -339,9 +314,9 @@
             $types = list2array(self::TYPEENTITY . self::TYPENAME . self::TYPEPERSON);
 
             IsDbError($db->extended->autoExecute(
-                          'p_person2', $this->content,
-                                                 MDB2_AUTOQUERY_UPDATE,
-                                                 'id = ' . $db->quote($this->content['id'], 'integer'), $types));
+                'p_person2', $this->content, MDB2_AUTOQUERY_UPDATE,
+                'id = ' . $db->quote($this->content['id'], 'integer'), $types)
+            );
             return null;
         }
 
@@ -359,6 +334,7 @@
             if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
 
             $data   = parent::view();
+            $data[] = new d_feld('descr', changetext($this->content['descr']), VIEW, 513); // Biografie
             $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);
             $data[] = new d_feld('gtag', $this->fiGtag(), VIEW, 502);
             $data[] = new d_feld('gort', Ort::getOrt($this->content['gort']), VIEW, 4014);

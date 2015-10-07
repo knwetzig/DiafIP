@@ -8,7 +8,7 @@ $Date: 2014-08-10 16:52:18 +0200 (Sun, 10. Aug 2014) $
 $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
 
 ***** (c) DIAF e.V. *******************************************}
-<form action='{$dlg['phpself']}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;</legend>
+<form action='{$dlg['phpself']}' method='post'><fieldset><legend>&nbsp;{$dialog['bereich'][2]}&nbsp;#{$dialog['id'][1]}</legend>
     <table>
         <colgroup><col><col></colgroup>
         <tr><td style="vertical-align:top"><!-- linke Seite -->
@@ -22,13 +22,13 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
 {* --- utitel --- *}
     {if isset($dialog['utitel'])}<tr>
         <td class="re">{$dialog['utitel'][2]}:</td>
-        <td><input type='text' name='utitel' value="{$dialog['utitel'][1]}" /></td>
+        <td><input title="{$dialog['utitel'][2]}" type='text' name='utitel' value="{$dialog['utitel'][1]}" /></td>
     </tr>{/if}
 
 {* --- atitel --- *}
     {if isset($dialog['atitel'])}<tr>
         <td class="re">{$dialog['atitel'][2]}:</td>
-        <td><input type='text' name='atitel' value="{$dialog['atitel'][1]}" /></td>
+        <td><input title="{$dialog['atitel'][2]}" type='text' name='atitel' value="{$dialog['atitel'][1]}" /></td>
     </tr>{/if}
 
 {* --- stitel --- *}
@@ -64,10 +64,13 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
         <td><input type="text" class="halb" name={$dialog['prod_jahr'][0]} value="{$dialog['prod_jahr'][1]}" /></td>
     </tr>{/if}
 
-{* --- Thema --- *}
+{* --- Thema --- array *}
     {if isset($dialog['thema'])}<tr>
         <td class="re">{$dialog['thema'][2]}:</td>
-        <td><input type="text" name={$dialog['thema'][0]} value="{$dialog['thema'][1]}" /></td>
+        <td>
+            <input type="text" name={$dialog['thema'][0]} value='{foreach from=$dialog['thema'][1]
+            item=wert}{$wert}{if !$wert@last},&nbsp;{/if}{/foreach}' >
+        </td>
     </tr>{/if}
 
 {* --- Gattung --- *}
@@ -197,7 +200,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
             <span class="note">(intern)</span>
         </td>
         <td><textarea
-            cols="26"
+            cols="40"
             rows="8"
             wrap="soft"
             name={$dialog['notiz'][0]}
@@ -223,7 +226,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
 </table>
   </td><!-- rechter Block -->
 </tr></table>
-    <input type='hidden' name='sektion' value='film' />
+    <input type="hidden" name="sektion" value="{$dialog['bereich'][1]}" />
     <input type='hidden' name='aktion' value='{$aktion}' />
 </fieldset></form>
 
@@ -245,7 +248,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
                     class="small"
                     name="aktion"
                     value="delCast"><img src="images/del.png" /></button>
-                <input type="hidden" name="sektion" value="film" />
+                <input type="hidden" name="sektion" value="F" />
                 <input type="hidden" name="pid" value="{$wert['pid']}" />
                 <input type="hidden" name="tid" value="{$wert['tid']}" />
                 <input type="hidden" name="id" value="{$dialog['id'][1]}" />
@@ -253,26 +256,23 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
         </tr>
         {/foreach}
 
-        <tr><form action='#castlist' method='post'>
-            <td>{html_options
-                    name=tid
-                    options=$dialog['taetigLi'][1]}
-            </td>
-            <td>{html_options
-                    name=pid
-                    options=$dialog['persLi'][1]}
-            </td>
-            <td><button
+
+        <tr>
+            <td><form action='#castlist' method='post'>
+                {html_options name=tid options=$dialog['taetigLi'][1]}</td>
+            <td>{html_options name=pid options=$dialog['persLi'][1]}</td>
+            <td>
+                    <button
                     class='small'
                     name='aktion'
                     value='addCast'>
                 <img src="images/add.png" alt="add" />
                 </button>
-            </td>
-            <input type="hidden" name="sektion" value="film" />
+            <input type="hidden" name="sektion" value="F" />
             <input type="hidden" name="aktion" value="addCast" />
             <input type="hidden" name="id" value={$dialog['id'][1]} />
-        </form></tr>
+            </form></td>
+        </tr>
     </table>
     </fieldset>
   </td>

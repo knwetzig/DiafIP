@@ -19,7 +19,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/adm_dialog.tpl $
     </td></tr>{/if}
 
 {if isset($dialog[3])}<tr><td>{$dialog[3][2]}</td><td>
-    <input type="text" name="{$dialog[3][0]}" value="{$dialog[3][1]}" />
+    <input title="{$dialog[3][2]}" type="text" name="{$dialog[3][0]}" value="{$dialog[3][1]}" />
 </td></tr>{/if}
 
 {if isset($dialog[4])}<tr><td class="top">{$dialog[4][2]}</td><td>

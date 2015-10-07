@@ -41,4 +41,4 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/adm_menue.tpl $
 
 <div id='bereich'>&nbsp;</div>
 <a href='https://code.google.com/p/diafip/' target='_new'><img src='https://ssl.gstatic.com/codesite/ph/images/phosting.ico'>&nbsp;Projektseite</a><br /><br />
-<a href='https://code.google.com/p/diafip/wiji/Leitfaden' target='_new'>Leitfaden zur Handhabung</a>
+<a href='https://github.com/knwetzig/diafip/blob/wiki/Leitfaden.md' target='_new'>Leitfaden zur Handhabung</a>

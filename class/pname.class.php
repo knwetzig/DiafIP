@@ -33,9 +33,8 @@
              WHERE del = FALSE
              ORDER BY nname,vname;',
             SEARCH      =
-            'SELECT id,bereich FROM p_namen
-             WHERE (del = FALSE) AND ((nname ILIKE ?) OR (vname ILIKE ?))
-             ORDER BY nname,vname,id LIMIT ? OFFSET ?;';
+            'SELECT id,bereich FROM p_namen WHERE (del = FALSE) AND ((nname ILIKE ?) OR (vname ILIKE ?))
+             ORDER BY nname,vname,id;';
 
         /**
          * Verweis auf die Person die den Alias verwendet
@@ -56,9 +55,7 @@
             $this->content['vname']   = '-';
             $this->content['nname']   = '';
             if (isset($nr) AND is_numeric($nr)) :
-                $nr = intval($nr);
                 $db = MDB2::singleton();
-
                 $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPENAME), $nr, 'integer');
                 IsDbError($data);
                 if ($data) :
@@ -69,27 +66,6 @@
                     feedback(4, 'error');
                     exit(4);
                 endif;
-            endif;
-        }
-
-        /**
-         * Diese Funktion initialisiert das Objekt
-         *
-         * @param int $nr
-         * @deprecated
-         */
-        protected function get($nr) {
-            $db = MDB2::singleton();
-
-            $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPENAME), $nr, 'integer');
-            IsDbError($data);
-            if ($data) :
-                $this->content['vname'] = $data['vname'];
-                $this->content['nname'] = $data['nname'];
-                $this->alias            = self::getPerson();
-            else :
-                feedback(4, 'error');
-                exit(4);
             endif;
         }
 
@@ -110,6 +86,24 @@
         }
 
         /**
+         * Stellt die Liste mit den Id's und Namen zusammen
+         *
+         * @param $arr
+         * @return array
+         */
+        protected function arrpack($arr) {
+            $erg = [];
+            foreach ($arr as $val) :
+                if ($val['vname'] === '-') :
+                    $erg[$val['id']] = $val['nname'];
+                else :
+                    $erg[$val['id']] = $val['vname'] . '&nbsp;' . $val['nname'];
+                endif;
+            endforeach;
+            return $erg;
+        }
+
+        /**
          * Liefert die Namensliste für Drop-Down-Menü
          *
          * @return  array   [id, vname+name]
@@ -119,33 +113,14 @@
          */
         static function getNameList() {
             global $str;
-            /**
-             * Stellt die Liste mit den Id's und Namen zusammen
-             *
-             * @param $arr
-             * @return array
-             */
-            function arrpack($arr) {
-                $erg = [];
-                foreach ($arr as $val) :
-                    if ($val['vname'] === '-') :
-                        $erg[$val['id']] = $val['nname'];
-                    else :
-                        $erg[$val['id']] = $val['vname'] . '&nbsp;' . $val['nname'];
-                    endif;
-                endforeach;
-                return $erg;
-            }
 
             $db   = MDB2::singleton();
-            $data = $db->extended->getAll(
-                self::GETALIAS, ['integer', 'text', 'text']);
+            $data = $db->extended->getAll(self::GETALIAS, ['integer', 'text', 'text']);
             IsDbError($data);
-            $data = arrpack($data);
-            $all  = $db->extended->getAll(
-                self::GETALLNAMES, ['integer', 'text', 'text']);
+            $data = self::arrpack($data);
+            $all  = $db->extended->getAll(self::GETALLNAMES, ['integer', 'text', 'text']);
             IsDbError($all);
-            $all    = arrpack($all);
+            $all    = self::arrpack($all);
             $erg[0] = $str->getStr(0); // kein Eintrag
             $erg += array_diff($all, $data);
             return $erg;
@@ -246,9 +221,9 @@
             $db    = MDB2::singleton();
             $types = list2array(self::TYPEENTITY . self::TYPENAME);
 
-            IsDbError($db->extended->autoExecute('p_namen', $this->content,
-                                                 MDB2_AUTOQUERY_UPDATE,
-                                                 'id = ' . $db->quote($this->content['id'], 'integer'), $types));
+            IsDbError($db->extended->autoExecute(
+                'p_namen', $this->content, MDB2_AUTOQUERY_UPDATE,
+                'id = ' . $db->quote($this->content['id'], 'integer'), $types));
             return null;
         }
 
@@ -258,23 +233,15 @@
          * @param string $s Suchmuster
          * @return array|null  Id's oder null (Namen und Personen)
          */
-        public function search($s) {
-            global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
-
+        static public function search($s) {
             $db  = MDB2::singleton();
+            /* Ermittelt die Anzahl der gültigen Aliase und Personen
             $max = $db->extended->getOne('SELECT COUNT(*) FROM p_namen WHERE del = FALSE;', 'integer');
-            IsDbError($max);
-            $limit  = null;
-            $offset = null;
+            IsDbError($max); */
 
-            // Suche nach Teilstring
-            $s = "%" . $s . "%";
-
-            $data = $db->extended->getAll(
-                self::SEARCH, ['integer', 'text'], [$s, $s, $limit, $offset]);
+            $s = "%" . $s . "%";                // Suche nach Teilstring
+            $data = $db->extended->getAll(self::SEARCH, ['integer', 'text'], [$s, $s]);
             IsDbError($data);
-
             if ($data) return $data; else return 102;
         }
 

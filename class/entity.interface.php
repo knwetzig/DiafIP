@@ -17,6 +17,19 @@
     interface iEntity {
 
         /**
+         * Gibt die Id des Objektes zurück
+         * @return int
+         */
+        public function getId();
+
+        /**
+         * Testet ob es einen Datensatz mit dieser Nummer gibt
+         * @param $nr
+         * @return bool
+         */
+        static function existId($nr);
+
+        /**
          * Test ob id/bereich in der DB existiert
          *
          * @param int $nr

@@ -1,4 +1,5 @@
 <?php namespace DiafIP {
+    global $db, $myauth;
     /**
      * Ein internes Board zum Austauschen von Nachrichten.
      *
@@ -23,23 +24,21 @@
         exit();
     endif;
 
+    // Kopfbereich
     echo '<div id="bereich">Nachrichten';
-    if (!isset($_POST['aktion'])) {
-        // einfügen -> ist Benutzer berechtigt neue Artike zu erstellen
         echo "<form method='post'>
             <input type='submit' name='aktion' value='neu' />
             <input type='hidden' name='sektion' value='news' />
         </form>";
-    }
     echo '</div>';
 
     switch (isset($_POST['aktion']) ? $_POST['aktion'] : '') :
 
         case "neu":
-            if (!isset($_POST['submit'])) {
-                // Formular anzeigen
+            if (!isset($_POST['submit'])) :
 
-                ?>
+                // Formular anzeigen
+                echo <<<FORMNEU
                 <form method='post'>
                     <fieldset>
                         <legend> Beitrag erstellen</legend>
@@ -51,8 +50,8 @@
                         <input type='submit' name='submit'/>
                     </fieldset>
                 </form>
-            <?php
-            } else {
+FORMNEU;
+             else :
                 //  Auswertung evt. Eingaben
                 if (!preg_match('/[!-ÿ]/', $_POST['titel'])) {
                     feedback(100, 'warng');
@@ -66,29 +65,29 @@
                                                    MDB2_AUTOQUERY_INSERT, null, ['text', 'text', 'integer']);
                 IsDbError($data);
                 unset($_POST['aktion']);
-            }
+            endif;
             break; // Ende --neu--
 
         case "edit" :
-            if (!isset($_POST['submit'])) {
+            if (!isset($_POST['submit'])) :
                 $sql  = "SELECT * FROM s_news WHERE id = {$_POST['news']};";
                 $data = $db->extended->getRow($sql);
                 IsDbError($data);
                 // Formular anzeigen
-                echo <<<EDITFORM
-<form method='post'>
-    <fieldset>
-        <legend> Beitrag bearbeiten </legend>
-        <input type='text' name='titel' value='{$data['titel']}' style='width:500px' /><br />
-        <textarea name='text' style='width:500px;height:300px'>{$data['inhalt']}</textarea><br />
-        <input type='hidden' name='sektion' value='news' />
-        <input type='hidden' name='aktion' value='edit' />
-        <input type='hidden' name='news' value='{$data['id']}' />
-        <input type='submit' name='submit' />
-    </fieldset>
-</form>
-EDITFORM;
-            } else {
+                echo <<<FORMEDIT
+                    <form method='post'>
+                        <fieldset>
+                            <legend> Beitrag bearbeiten </legend>
+                            <input type='text' name='titel' value='{$data['titel']}' style='width:500px' /><br />
+                            <textarea name='text' style='width:500px;height:300px'>{$data['inhalt']}</textarea><br />
+                            <input type='hidden' name='sektion' value='news' />
+                            <input type='hidden' name='aktion' value='edit' />
+                            <input type='hidden' name='news' value='{$data['id']}' />
+                            <input type='submit' name='submit' />
+                        </fieldset>
+                    </form>
+FORMEDIT;
+            else :
                 // Auswertung evt. Eingaben
                 if (!preg_match('/[!-ÿ]/', $_POST['titel'])) {
                     feedback(100, 'warng');
@@ -100,7 +99,7 @@ EDITFORM;
                                                    ['text', 'text']);
                 IsDbError($data);
                 unset($_POST['aktion']);
-            }
+            endif;
             break;
 
         case "del" : // Löschen ohne Formular
@@ -114,7 +113,7 @@ EDITFORM;
     endswitch;
 
 
-// Anzeige von die Scheiß
+    // Anzeige aller Nachrichten
     $sql  = "SELECT
             s_news.id AS nid,
             s_news.titel,
@@ -135,20 +134,17 @@ EDITFORM;
     foreach ($data as $wert) :
         echo "<form id='news' method='post'><span style='float:right' class='note'>\n"
             . $wert['chdatum'] . "&nbsp;|&nbsp;" . $wert['realname'] . "&nbsp;\n";
-        /* Nutzer berechtigt zu editieren? */
+        // Nutzer berechtigt zu editieren?
         if ($myauth->getAuthdata('uid') === $wert['autor'] OR
-            isbit($myauth->getAuthData('rechte'), SU)
-        ) {
-            echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n";
-            echo "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
-        }
+            isbit($myauth->getAuthData('rechte'), SU)) :
+               echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n" .
+                    "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
+        endif;
         echo "<input type='hidden' name='sektion' value='news' />
-        <input type='hidden' name='news' value='{$wert['nid']}' /></span>\n";
+            <input type='hidden' name='news' value='{$wert['nid']}' /></span>\n";
 
         // Der eigtl. Inhalt
-        echo "<div class='newstitel'>" . $wert['titel'] . "</div>\n";
-        echo "<div class='newstext'>" . nl2br(changetext($wert['inhalt'])) . "</div>\n";
-        echo "</form>\n";
+        echo "<div class=newstitel>".$wert['titel']."</div><div class=newstext>".nl2br(changetext($wert['inhalt'])).
+             "</div>\n</form>\n";
     endforeach;
 }
-// Ende Anzeige

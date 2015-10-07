@@ -46,7 +46,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/person_dialog.tpl $
         <tr>
           <td>{$dialog['addalias'][2]}</td>
           <td>
-            {html_options name={$dialog['addalias'][0]} options=$alist}
+            {html_options name=$dialog['addalias'][0] options=$alist}
           </td>
         </tr>
 {/if}

@@ -14,8 +14,11 @@
         public static function getSTitelList();
         public static function getTitelList();
         public function getTitel();
+        public static function addSerTitel($titel, $descr);
+        public static function editSerTitel($nr, $status = null);
+        public static function delSerTitel($nr);
         public function addCast($p, $t);
         public function delCast($p, $t);
-        public function search($s);
+        static public function search($s);
     }
 }

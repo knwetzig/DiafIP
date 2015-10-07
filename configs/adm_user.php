@@ -15,17 +15,15 @@
      * @requirement PHP Version >= 5.4
      */
 
-    if (!$myauth->getAuth()) {
+    if (!$myauth->getAuth()) :
         feedback(108, 'error');
         exit();
-    }
+    endif;
 
-    if (!(isBit($myauth->getAuthData('rechte'), ADMIN) OR
-        (isBit($myauth->getAuthData('rechte'), SU)))
-    ) {
+    if (!(isBit($myauth->getAuthData('rechte'), ADMIN) OR (isBit($myauth->getAuthData('rechte'), SU)))) :
         feedback(2, 'error');
         exit(2);
-    }
+    endif;
 
     function getUserList() {
     // Nutzerauswahlliste erstellen

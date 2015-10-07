@@ -16,11 +16,11 @@
     /* Die DSN steht in einer separaten Datei ausserhalb DocumentRoot */
     require_once '../../conf/dsn';
 
-    $smartyConf = array(
+    $smartyConf = [
         'compile_dir'   => '/tmp',          // '/tmp';
         'config_dir'    => 'configs',       // Verzeichnis der Kongurationsdateien
         'cache_dir'     => '/tmp',
         'force_compile' => false,
         'debugging'     => false           // (true | false)
-    );
+    ];
 }
