@@ -33,7 +33,7 @@ Alle mehrzeiligen Texteingabefelder verfügen über die Fähigkeit BBCode darste
 |Zitat        |`[pre]fester Zeichenabstand[/pre]`|
 |Verweis      |`[url]`http://example.com `[/url]`|
 |Verweis      |`[url=http://example.com]`Verweistext`[/url]`|
-|Bilder       |`[img=http://example.com/bild.png][/img]`|
+|Bilder       |`[img]http://example.com/bild.png[/img]`|
 
 Die Elemente können verschachtelt werden, wobei die Reihenfolge der schließenden Tags einzuhalten ist.
 
