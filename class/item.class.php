@@ -122,28 +122,28 @@
             switch ($set) :
                 case 'edit' :
                     $data = array(
-                        new d_feld('persLi', Person::getPersonLi()), // Personenliste
+                        new d_feld('nameLi', Person::getPersonLi()), // Personenliste
                         new d_feld('lortLi', LOrt::getLOrtList()), // Liste Lagerorte
                         new d_feld('filmLi', Film::getTitelList()), // Liste filmogr.
-                        new d_feld('bezeichner', $this->bezeichner, EDIT, 4029),
-                        new d_feld('x', $this->x, EDIT, 469, null, ANZAHL),
-                        new d_feld('y', $this->y, EDIT, 470, null, ANZAHL),
-                        new d_feld('kollo', $this->kollo, EDIT, 475, null, ANZAHL),
-                        new d_feld('lagerort', $this->lagerort, ARCHIV, 472, null, ANZAHL),
-                        new d_feld('akt_ort', $this->akt_ort, EDIT, 476),
-                        new d_feld('zu_film', $this->zu_film, EDIT, 5, null, ANZAHL),
-                        new d_feld('eigner', $this->eigner, IEDIT, 473, null, ANZAHL),
-                        new d_feld('herkunft', $this->herkunft, IEDIT, 480, null, ANZAHL),
-                        new d_feld('in_date', $this->in_date, IEDIT, 481, null, DATUM),
-                        new d_feld('leihbar', $this->leihbar, ARCHIV, 474, null, BOOL),
-                        new d_feld('a_wert', $this->a_wert, IEDIT, 4031, null, DZAHL),
-                        new d_feld('rest_report', $this->rest_report, EDIT, 482),
-                        new d_feld('descr', $this->descr, EDIT, 506),
-                        new d_feld('notiz', $this->notiz, EDIT, 514),
-                        new d_feld('isvalid', null /* $this->isvalid*/, ARCHIV, 10010)
+                        new d_feld('bezeichner', $this->bezeichner, RE_EDIT, 4029),
+                        new d_feld('x', $this->x, RE_EDIT, 469, null, REG_ANZAHL),
+                        new d_feld('y', $this->y, RE_EDIT, 470, null, REG_ANZAHL),
+                        new d_feld('kollo', $this->kollo, RE_EDIT, 475, null, REG_ANZAHL),
+                        new d_feld('lagerort', $this->lagerort, RE_ARCHIV, 472, null, REG_ANZAHL),
+                        new d_feld('akt_ort', $this->akt_ort, RE_EDIT, 476),
+                        new d_feld('zu_film', $this->zu_film, RE_EDIT, 5, null, REG_ANZAHL),
+                        new d_feld('eigner', $this->eigner, RE_IEDIT, 473, null, REG_ANZAHL),
+                        new d_feld('herkunft', $this->herkunft, RE_IEDIT, 480, null, REG_ANZAHL),
+                        new d_feld('in_date', $this->in_date, RE_IEDIT, 481, null, REG_DATUM),
+                        new d_feld('leihbar', $this->leihbar, RE_ARCHIV, 474, null, REG_BOOL),
+                        new d_feld('a_wert', $this->a_wert, RE_IEDIT, 4031, null, REG_DZAHL),
+                        new d_feld('rest_report', $this->rest_report, RE_EDIT, 482),
+                        new d_feld('descr', $this->descr, RE_EDIT, 506),
+                        new d_feld('notiz', $this->notiz, RE_EDIT, 514),
+                        new d_feld('isvalid', null /* $this->isvalid*/, RE_ARCHIV, 10010)
                     );
                     if (empty($this->oldsig))
-                        $data[] = new d_feld('oldsig', null, EDIT, 479, NAMEN);
+                        $data[] = new d_feld('oldsig', null, RE_EDIT, 479, REG_NAMEN);
                     break;
 
                 case 'view' :
@@ -159,27 +159,27 @@
                     $data     = array( // name, inhalt, opt -> rechte, label,tooltip
                                        new d_feld('id', $this->id),
                                        //          new d_feld('bild_id',   $this->bild_id),
-                                       new d_feld('notiz', changetext($this->notiz), EDIT, 514),
-                                       new d_feld('edit', null, EDIT, null, 4013), // edit-Button
-                                       new d_feld('del', null, DELE, null, 4020), // Lösch-Button
-                                       new d_feld('chdatum', $this->editdate, IVIEW),
-                                       new d_feld('chname', $bearbeiter, IVIEW),
-                                       new d_feld('isvalid', $this->isvalid, IVIEW, 10010),
-                                       new d_feld('bezeichner', $this->bezeichner, VIEW),
-                                       new d_feld('lagerort', $lagerort->getLOrt(), IVIEW, 472),
-                                       new d_feld('eigner', $besitzer->getName(), IVIEW, 473),
-                                       new d_feld('leihbar', $this->leihbar, IVIEW, 474),
-                                       new d_feld('x', $this->x, VIEW, 469),
-                                       new d_feld('y', $this->y, VIEW, 470),
-                                       new d_feld('kollo', $this->kollo, IVIEW, 475),
-                                       new d_feld('zu_film', Film::getTitel($this->zu_film), VIEW, 5),
-                                       new d_feld('akt_ort', $this->akt_ort, IVIEW, 476),
-                                       new d_feld('vers_wert', $this->VWert(), IVIEW, 477),
-                                       new d_feld('oldsig', $this->getOSig(), IVIEW, 479),
-                                       new d_feld('herkunft', $vbesitz->getName(), IVIEW, 480),
-                                       new d_feld('in_date', $this->in_date, IVIEW, 481),
-                                       new d_feld('descr', changetext($this->descr), VIEW, 506),
-                                       new d_feld('rest_report', changetext($this->rest_report), IVIEW, 482),
+                                       new d_feld('notiz', changetext($this->notiz), RE_EDIT, 514),
+                                       new d_feld('edit', null, RE_EDIT, null, 4013), // edit-Button
+                                       new d_feld('del', null, RE_DELE, null, 4020), // Lösch-Button
+                                       new d_feld('chdatum', $this->editdate, RE_IVIEW),
+                                       new d_feld('chname', $bearbeiter, RE_IVIEW),
+                                       new d_feld('isvalid', $this->isvalid, RE_IVIEW, 10010),
+                                       new d_feld('bezeichner', $this->bezeichner, RE_VIEW),
+                                       new d_feld('lagerort', $lagerort->getLOrt(), RE_IVIEW, 472),
+                                       new d_feld('eigner', $besitzer->getName(), RE_IVIEW, 473),
+                                       new d_feld('leihbar', $this->leihbar, RE_IVIEW, 474),
+                                       new d_feld('x', $this->x, RE_VIEW, 469),
+                                       new d_feld('y', $this->y, RE_VIEW, 470),
+                                       new d_feld('kollo', $this->kollo, RE_IVIEW, 475),
+                                       new d_feld('zu_film', Film::getTitel($this->zu_film), RE_VIEW, 5),
+                                       new d_feld('akt_ort', $this->akt_ort, RE_IVIEW, 476),
+                                       new d_feld('vers_wert', $this->VWert(), RE_IVIEW, 477),
+                                       new d_feld('oldsig', $this->getOSig(), RE_IVIEW, 479),
+                                       new d_feld('herkunft', $vbesitz->getName(), RE_IVIEW, 480),
+                                       new d_feld('in_date', $this->in_date, RE_IVIEW, 481),
+                                       new d_feld('descr', changetext($this->descr), RE_VIEW, 506),
+                                       new d_feld('rest_report', changetext($this->rest_report), RE_IVIEW, 482),
                     );
             endswitch;
             return $data;
@@ -225,7 +225,7 @@
                 if (!empty($_POST['herkunft'])) $this->herkunft = intval($_POST['herkunft']);
 
                 if (!empty($_POST['in_date']))
-                    if (isvalid($_POST['in_date'], DATUM))
+                    if (isvalid($_POST['in_date'], REG_DATUM))
                         $this->in_date = $_POST['in_date'];
                     else throw new Exception(null, 103);
 
@@ -291,7 +291,7 @@
             global $myauth;
             $db = MDB2::singleton();
 
-            if (!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_DELE)) return 2;
 
             IsDbError($db->extended->autoExecute(
                           'i_main', array('del' => true), MDB2_AUTOQUERY_UPDATE,
@@ -432,7 +432,7 @@
              *   Return:  Fehlercode
              */
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             $db = MDB2::singleton();
             if ($stat == false) :
@@ -469,11 +469,11 @@
              *   Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             if ($stat == false) : // Formular anzeigen
                 $data          = a_display(self::ea_struct('edit'));
-                $a             = new d_feld('art', $this->art, EDIT, 4030);
+                $a             = new d_feld('art', $this->art, RE_EDIT, 4030);
                 $data['art']   = $a->display();
                 $a             = new d_feld('artLi', self::getArtLi());
                 $data['artLi'] = $a->display();
@@ -497,7 +497,7 @@
              *    Return: Fehlercode
              */
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if (!$this->id) return 4; // Abbruch: leerer Datensatz
 
             // Uhrzeit und User setzen
@@ -521,7 +521,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             $s = "%" . $s . "%";
 
             // Suche in Bezeichner (rudimentär)
@@ -539,12 +539,12 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
             $data          = parent::view();
-            $a             = new d_feld('art', d_feld::getString($this->art), VIEW, 483);
+            $a             = new d_feld('art', d_feld::getString($this->art), RE_VIEW, 483);
             $data['art']   = $a->display();
-            $a             = new d_feld('masze', $this->x . 'x' . $this->y, VIEW, 484);
+            $a             = new d_feld('masze', $this->x . 'x' . $this->y, RE_VIEW, 484);
             $data['masze'] = $a->display();
             $marty->assign('dialog', $data);
             $marty->display('item_planar_ldat.tpl');
@@ -556,10 +556,10 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
             $data        = parent::view();
-            $a           = new d_feld('art', d_feld::getString($this->art), VIEW, 483);
+            $a           = new d_feld('art', d_feld::getString($this->art), RE_VIEW, 483);
             $data['art'] = $a->display();
 
             $marty->assign('dialog', $data);
@@ -626,7 +626,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if ($stat == false) :
                 $db->beginTransaction('new3Ditem');
                 IsDbError($db);
@@ -660,17 +660,17 @@
              */
             global $myauth, $marty;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             if ($stat == false) : // Formular anzeigen
                 $data = a_display(self::ea_struct('edit'));
 
                 $a             = new d_feld('artLi', self::getArtLi());
                 $data['artLi'] = $a->display();
-                $a             = new d_feld('art', $this->art, EDIT, 4030);
+                $a             = new d_feld('art', $this->art, RE_EDIT, 4030);
                 $data['art']   = $a->display();
 
-                $a         = new d_feld('z', $this->z, EDIT, 471, ANZAHL);
+                $a         = new d_feld('z', $this->z, RE_EDIT, 471, REG_ANZAHL);
                 $data['z'] = $a->display();
                 $marty->assign('dialog', $data);
                 $marty->display('item_3dobj_dialog.tpl');
@@ -694,7 +694,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if (!$this->id) return 4; // Abbruch: leerer Datensatz
 
             // Uhrzeit und User setzen
@@ -716,7 +716,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
 
             $s = "%" . $s . "%";
 
@@ -736,13 +736,13 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
 
             $data          = parent::view();
-            $a             = new d_feld('art', d_feld::getString($this->art), VIEW, 483);
+            $a             = new d_feld('art', d_feld::getString($this->art), RE_VIEW, 483);
             $data['art']   = $a->display();
-            $a             = new d_feld('masze', $this->x . 'x' . $this->y . 'x' . $this->z, VIEW, 484);
+            $a             = new d_feld('masze', $this->x . 'x' . $this->y . 'x' . $this->z, RE_VIEW, 484);
             $data['masze'] = $a->display();
             $marty->assign('dialog', $data);
             $marty->display('item_3dobj_ldat.tpl');
@@ -755,13 +755,13 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
 
             $data        = parent::view();
-            $a           = new d_feld('art', d_feld::getString($this->art), VIEW, 483);
+            $a           = new d_feld('art', d_feld::getString($this->art), RE_VIEW, 483);
             $data['art'] = $a->display();
-            $a           = new d_feld('z', $this->z, VIEW, 471);
+            $a           = new d_feld('z', $this->z, RE_VIEW, 471);
             $data['z']   = $a->display();
             $marty->assign('dialog', $data);
             $marty->display('item_3dobj_dat.tpl');
@@ -881,7 +881,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             if ($stat == false) :
                 $db->beginTransaction('newFKop');
@@ -914,7 +914,7 @@
              *   Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             $db = MDB2::singleton();
 
             if ($stat == false) : // Formular anzeigen
@@ -922,23 +922,23 @@
 
                 $a                = new d_feld('mediumLi', self::getMediumLi());
                 $data['mediumLi'] = $a->display();
-                $a                = new d_feld('medium', $this->medium, EDIT, 490, ANZAHL);
+                $a                = new d_feld('medium', $this->medium, RE_EDIT, 490, REG_ANZAHL);
                 $data['medium']   = $a->display();
 
                 $a                  = new d_feld('materialLi', self::getMaterialLi());
                 $data['materialLi'] = $a->display();
-                $a                  = new d_feld('material', $this->material, EDIT, 488, ANZAHL);
+                $a                  = new d_feld('material', $this->material, RE_EDIT, 488, REG_ANZAHL);
                 $data['material']   = $a->display();
 
                 $a                = new d_feld('tonartLi', self::getTonartLi());
                 $data['tonartLi'] = $a->display();
-                $a                = new d_feld('tonart', $this->tonart, EDIT, 491, ANZAHL);
+                $a                = new d_feld('tonart', $this->tonart, RE_EDIT, 491, REG_ANZAHL);
                 $data['tonart']   = $a->display();
 
-                $a           = new d_feld('fps', $this->fps, EDIT, 489, ANZAHL);
+                $a           = new d_feld('fps', $this->fps, RE_EDIT, 489, REG_ANZAHL);
                 $data['fps'] = $a->display();
 
-                $a             = new d_feld('lzeit', $this->laufzeit, EDIT, 580, 10007, DAUER);
+                $a             = new d_feld('lzeit', $this->laufzeit, RE_EDIT, 580, 10007, REG_DAUER);
                 $data['lzeit'] = $a->display();
 
                 $marty->assign('dialog', $data);
@@ -959,7 +959,7 @@
 
                     if (isset($_POST['lzeit'])) :
                         if ($_POST['lzeit']) {
-                            if (isvalid($_POST['lzeit'], DAUER))
+                            if (isvalid($_POST['lzeit'], REG_DAUER))
                                 $this->laufzeit = $_POST['lzeit'];
                             else throw new Exception(null, 4);
                         } else $this->laufzeit = null;
@@ -981,7 +981,7 @@
              */
             global $myauth;
             $db = MDB2::singleton();
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if (!$this->id) return 4; // Abbruch: leerer Datensatz
 
             // Uhrzeit und User setzen
@@ -1003,7 +1003,7 @@
              *   Return: Array der gefunden ID's | Fehlercode
              */
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
 
             $s  = "%" . $s . "%";
             $db = MDB2::singleton();
@@ -1024,13 +1024,13 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
 
             $data             = parent::view();
-            $a                = new d_feld('medium', self::getMedium($this->medium), VIEW, 490);
+            $a                = new d_feld('medium', self::getMedium($this->medium), RE_VIEW, 490);
             $data['medium']   = $a->display();
-            $a                = new d_feld('laufzeit', $this->laufzeit, VIEW, 580);
+            $a                = new d_feld('laufzeit', $this->laufzeit, RE_VIEW, 580);
             $data['laufzeit'] = $a->display();
 
             $marty->assign('dialog', $data);
@@ -1044,23 +1044,23 @@
              *    Return: none
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             if ($this->isDel()) return; // nichts ausgeben, da gelöscht
 
             $data = parent::view();
             // Film, DVD etc  DB->i_medium
-            $a              = new d_feld('medium', self::getMedium($this->medium), VIEW, 490);
+            $a              = new d_feld('medium', self::getMedium($this->medium), RE_VIEW, 490);
             $data['medium'] = $a->display();
             // Trägermaterial DB->i_material
-            $a                = new d_feld('material', self::getMaterial($this->material), VIEW, 488);
+            $a                = new d_feld('material', self::getMaterial($this->material), RE_VIEW, 488);
             $data['material'] = $a->display();
             // Tonverfahren DB->i_tonart, Vorgabe LT-Mono
-            $a              = new d_feld('tonart', self::getTonart($this->tonart), VIEW, 1320);
+            $a              = new d_feld('tonart', self::getTonart($this->tonart), RE_VIEW, 1320);
             $data['tonart'] = $a->display();
-            $a              = new d_feld('fps', $this->fps, VIEW, 489);
+            $a              = new d_feld('fps', $this->fps, RE_VIEW, 489);
             $data['fps']    = $a->display();
             // Laufzeit bei angegebner fps in sekunden
-            $a                = new d_feld('laufzeit', $this->laufzeit, VIEW, 580);
+            $a                = new d_feld('laufzeit', $this->laufzeit, RE_VIEW, 580);
             $data['laufzeit'] = $a->display();
 
             $marty->assign('dialog', $data);

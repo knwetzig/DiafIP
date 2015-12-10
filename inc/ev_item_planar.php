@@ -21,7 +21,7 @@
                         new d_feld('bereich', $str->getStr(4028)),
                         new d_feld('sstring', $str->getStr(4011)),
                         new d_feld('sektion', 'i_planar'),
-                        new d_feld('add', true, EDIT, null)
+                        new d_feld('add', true, RE_EDIT, null)
                       ]);
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);

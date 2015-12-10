@@ -14,8 +14,10 @@
      * @requirement PHP Version >= 5.4
      */
 
+    // Variablen zum Profiling
     $StartTime = -gettimeofday(true);
     $OutTime   = null;
+    $counter   = null;
 
     require_once 'configs/config.local.php';
     require_once 'configs/config.php';
@@ -48,7 +50,12 @@
         case 'fr' :
             $myauth->setAuthData('lang', $_GET['aktion']);
             if ($myauth->getAuthData('uid') != 4) :
-                IsDbError($db->extended->autoExecute('s_auth', ['lang' => $_GET['aktion']], MDB2_AUTOQUERY_UPDATE, 'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'));
+                IsDbError($db->extended->autoExecute(
+                    's_auth',
+                    ['lang' => $_GET['aktion']],
+                    MDB2_AUTOQUERY_UPDATE,
+                    'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'
+                ));
             endif;
     endswitch;
 
@@ -91,6 +98,7 @@
               'stat'     => $str->getStr(4009),
               'Z'        => $str->getStr(4032),
               'K'        => $str->getStr(4038),
+              'impr'     => $str->getStr(4040),
               //    'login'    => $str->getStr(4004),
               'logout'   => $str->getStr(4005),
               'realname' => $myauth->getAuthData('realname'),
@@ -119,7 +127,7 @@
     require_once 'inc/main.php';
 
     // Laden Statistikanzeige
-    $stat = new db_stat($StartTime, $OutTime);
+    $stat = new db_stat($counter, $StartTime, $OutTime);
     $marty->assign('stat', $stat->view());
     $marty->display('statistik.tpl');
     echo '</body></html>';

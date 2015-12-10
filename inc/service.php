@@ -21,10 +21,10 @@
         if (MDB2::isError($obj)) :
             $db = MDB2::singleton();
             if ($db->inTransaction()) $db->rollback();
-            echo "<fieldset class='error'><legend>DBMS-Fehler:</legend>";
-            print_r($obj->getUserInfo());
+            echo "<div class='error'>";
             print_r($obj->getMessage());
-            echo "</fieldset>\n";
+            print_r($obj->getUserInfo());
+            echo '</div>';
             exit();
         endif;
     }

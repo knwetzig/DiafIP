@@ -24,14 +24,8 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
         {if !empty($dialog['pname'][1])} {$dialog['pname'][1]}{/if}
         {if !empty($dialog['aliases'][1])}
             <span class="alias">
-            ({foreach $dialog['aliases'][1] as $alias}
-                {$alias}
-                {if $alias@last}
-                    )
-                {else}
-                    ,&nbsp;
-                {/if}
-            {/foreach}
+            {* Folgende Zeile darf nicht umgebrochen werden wegen Schreibweise-Leerzeichen *}
+            ({foreach $dialog['aliases'][1] as $alias}{$alias}{if $alias@last}){else},&nbsp;{/if}{/foreach}
             </span>
         {/if}
         </div>
@@ -116,10 +110,31 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/pers_dat.tpl $
     {/if}
 
 {* --Verweis auf Filmografie-- *}
-    {if !empty($dialog['castLi'][1])}<div id='einzug'>
-        {foreach $dialog['castLi'][1] as $cast}
+    {if !empty($dialog['castLi'][1])}
+        <table id='einzug'>
+
+        {* -Alt-
+        foreach $dialog['castLi'][1] as $cast}
             {$cast['ftitel']}&nbsp;{$cast['job']}<br />
-        {/foreach}</div>
+        {/foreach
+        -Alt-*}
+
+            {foreach from=$dialog['castLi'][1] item=cast key=index name=count}
+                {assign var="cnt" value="{$smarty.foreach.count.index}"}
+                {if $cnt > 0 && $cast['ftitel'] == $dialog['castLi'][1][{$cnt-1}]['ftitel']}
+                    <tr>
+                        <td class="re label"></td>
+                        <td class="value">{$cast['job']}</td>
+                    </tr>
+                {else}
+                    <tr>
+                        <td class="re label">{$cast['ftitel']}:</td>
+                        <td class="value">{$cast['job']}</td>
+                    </tr>
+                {/if}
+            {/foreach}
+
+        </table>
     {/if}
 
 {* --Notizfeld-- *}

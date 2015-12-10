@@ -129,7 +129,7 @@ class LOrt implements iLOrt {
 
     public function del() {
         global $myauth;
-        if (!isBit($myauth->getAuthData('rechte'), ARCHIV)) return 2;
+        if (!isBit($myauth->getAuthData('rechte'), RE_ARCHIV)) return 2;
 
         if (!$this->is_linked()) :
             // löschen in Tabelle
@@ -222,14 +222,14 @@ class Ort {
             $marty->assign('llist', self::getLandList());
             $data = a_display([
                                   // name, inhalt optional-> rechte, label, tooltip, valString
-                                  new d_feld('ort', $this->ort, SEDIT),
+                                  new d_feld('ort', $this->ort, RE_SEDIT),
                                   new d_feld('lid', $this->lid)]);
             $marty->assign('dialog', $data);
             $marty->display('adm_ortedialog.tpl');
         } else {
             // Formular auswerten und in Obj speichern
             if (isset($_POST['ort'])) :
-                if (isValid($_POST['ort'], NAMEN))
+                if (isValid($_POST['ort'], REG_NAMEN))
                     $this->ort = $_POST['ort'];
                 else feedback(107, 'warng');
             endif;

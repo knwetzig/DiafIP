@@ -67,6 +67,7 @@ button.flag {}
 
 /* für Länderflaggen im Menübereich */
 #bereich {}
+#ueschrift {}
 
 /* Überschrift und Suchfeld -> Bereich */
 #bearbzeile {overflow: auto;}

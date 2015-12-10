@@ -9,7 +9,7 @@
          * @var array
          */
         public $statistic = [];
-        protected $laufzeit, $outtime;
+        protected $zaehler, $laufzeit, $outtime;
 
         /**
          * Objektinitialisierung
@@ -17,8 +17,9 @@
          * @param $lz
          * @param null $oz
          */
-        function __construct($lz, $oz=null) {
+        function __construct($zae, $lz, $oz=null) {
             global $myauth;
+            $this->zaehler  = $zae;
             $this->laufzeit = $lz;
             $this->outtime  = $oz;
             if ($myauth->getAuthData('uid') != 4) $this->getStat(); // für Gäste gibt's keine Statistik
@@ -65,6 +66,10 @@
             // Prozesszeit = Laufzeit - Zeit die Ausgaberoutinen verschlungen haben
             if (!empty($this->outtime)) :
                 $this->statistic[$str->getStr(9)] = sprintf('%1.3f', $this->laufzeit - $this->outtime);
+            endif;
+
+            if(!empty($this->zaehler)) :
+                $this->statistic[$str->getStr(14)] = $this->zaehler;
             endif;
         }
 

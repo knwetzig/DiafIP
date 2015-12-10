@@ -13,15 +13,27 @@
      */
     final class Film extends FibiMain implements iFilm {
         const
-            TYPE_FILM   = 'integer,integer,integer,integer,integer,date,text,integer',
-            GETFILM      = 'SELECT gattung, prodtechnik, fsk, praedikat, mediaspezi, urauffuehr, laenge, bildformat
-                            FROM f_film2 WHERE id = ?;',
-            SQL_getPraed = 'SELECT * FROM f_praed ORDER BY praed ASC;',
-            SQL_getGenre = 'SELECT * FROM f_genre;',
-            SQL_getBfLi  = 'SELECT * FROM f_bformat ORDER BY id ASC;',
-            SQL_getBF    = 'SELECT format FROM f_bformat WHERE id = ?;',
-            SQL_getMS    = 'SELECT * FROM f_mediaspezi;',
-            SQL_getPT    = 'SELECT * FROM f_prodtechnik;';
+            SQL_GET_FILM        = 'SELECT gattung,prodtechnik,fsk,praedikat,mediaspezi,urauffuehr,laenge,bildformat
+                                   FROM f_film2
+                                   WHERE id = ?;',
+
+            GET_BILDFORMAT      = 'SELECT format
+                                   FROM f_bformat
+                                   WHERE id = ?;',
+
+            SQL_GET_BILDFORMAT_LI = 'SELECT *
+                                     FROM f_bformat
+                                     ORDER BY id ASC;',
+
+            SQL_GET_GENRE       = 'SELECT * FROM f_genre;',
+
+            SQL_GET_MEDIASPEZ   = 'SELECT * FROM f_mediaspezi;',
+
+            SQL_GET_PRAED       = 'SELECT * FROM f_praed ORDER BY praed ASC;',
+
+            SQL_GET_PRODTECHNIK = 'SELECT * FROM f_prodtechnik;',
+
+            TYPE_FILM           = 'integer,integer,integer,integer,integer,date,text,integer';
 
         private $fehler = [];
 
@@ -37,9 +49,23 @@
             $this->content['bildformat'] = 0;
             if ((isset($nr)) AND is_numeric($nr)) :
                 $db   = MDB2::singleton();
-                $data = $db->extended->getRow(self::GETFILM, list2array(self::TYPE_FILM), $nr, 'integer');
+                $data = $db->extended->getRow(self::SQL_GET_FILM, list2array(self::TYPE_FILM), $nr, 'integer');
                 self::WertZuwCont($data);
             endif;
+        }
+
+        /**
+         * @return array
+         */
+        public function getContent() {
+            return $this->content;
+        }
+
+        /**
+         * @param array $content
+         */
+        public function setContent($content) {
+            $this->content = $content;
         }
 
         /**
@@ -49,7 +75,7 @@
          */
         public function add($status = null) {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             $db = MDB2::singleton();
             if ($status == false) :
@@ -67,7 +93,7 @@
                 $data = null;
                 foreach ($this->content as $key => $wert) $data[$key] = $wert;
                 $erg = $db->extended->autoExecute('f_film2', $data, MDB2_AUTOQUERY_INSERT, null,
-                    list2array(parent::TYPEENTITY . parent::TYPEFIBI . self::TYPE_FILM));
+                    list2array(parent::TYPE_ENTITY . parent::TYPE_FIBI . self::TYPE_FILM));
                 IsDbError($erg);
 
                 $db->commit('newFilm');
@@ -84,7 +110,7 @@
          */
         public function edit($status = null) {
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if ($status == false) : // Formular anzeigen
                 $data = [];
                     // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
@@ -95,33 +121,33 @@
                 $data[] = new d_feld('prodTecLi', self::getListProdTech());
                 $data[] = new d_feld('bildFormLi', self::getListBildformat());
                 $data[] = new d_feld('mediaSpezLi', self::getListMediaSpez());
-                $data[] = new d_feld('persLi', Person::getPersList());
-                $data[] = new d_feld('bereich', $this->content['bereich'], VIEW, 4027);
+                $data[] = new d_feld('nameLi', PName::getNameList());
+                $data[] = new d_feld('bereich', $this->content['bereich'], RE_VIEW, 4027);
                 $data[] = new d_feld('id', $this->content['id']);
-                $data[] = new d_feld('titel', $this->content['titel'], EDIT, 500);
-                $data[] = new d_feld('atitel', $this->content['atitel'], EDIT, 503);
-                $data[] = new d_feld('utitel', $this->content['utitel'], EDIT, 501);
-                $data[] = new d_feld('stitel', $this->stitel, EDIT, 504);
-                $data[] = new d_feld('sfolge', $this->content['sfolge'], EDIT, 505);
+                $data[] = new d_feld('titel', $this->content['titel'], RE_EDIT, 500);
+                $data[] = new d_feld('atitel', $this->content['atitel'], RE_EDIT, 503);
+                $data[] = new d_feld('utitel', $this->content['utitel'], RE_EDIT, 501);
+                $data[] = new d_feld('stitel', $this->stitel, RE_EDIT, 504);
+                $data[] = new d_feld('sfolge', $this->content['sfolge'], RE_EDIT, 505);
                 $data[] = new d_feld('sid', $this->content['sid']);
-                $data[] = new d_feld('bild_id', 'bilddaten[]', EDIT);
-                $data[] = new d_feld('prod_jahr', $this->content['prod_jahr'], EDIT, 576);
-                $data[] = new d_feld('thema', $this->content['thema'], EDIT, 577); // Schlagwortliste - array
-                $data[] = new d_feld('quellen', $this->content['quellen'], EDIT, 578);
-                $data[] = new d_feld('inhalt', $this->content['descr'], EDIT, 506);
-                $data[] = new d_feld('notiz', $this->content['notiz'], EDIT, 514);
-                $data[] = new d_feld('anmerk', $this->content['anmerk'], EDIT, 572);
-                $data[] = new d_feld('gattung', $this->content['gattung'], EDIT, 579);
-                $data[] = new d_feld('prodtech', bit2array($this->content['prodtechnik']), EDIT, 571);
-                $data[] = new d_feld('laenge', $this->content['laenge'], EDIT, 580, 10007);
-                $data[] = new d_feld('fsk', $this->content['fsk'], EDIT, 581);
-                $data[] = new d_feld('praedikat', $this->content['praedikat'], EDIT, 582);
-                $data[] = new d_feld('bildformat', $this->content['bildformat'], EDIT, 608);
-                $data[] = new d_feld('mediaspezi', bit2array($this->content['mediaspezi']), EDIT, 583);
-                $data[] = new d_feld('urauff', $this->content['urauffuehr'], EDIT, 584);
-                $data[] = new d_feld('isvalid', false, IEDIT, 10009);
+                $data[] = new d_feld('bild_id', 'bilddaten[]', RE_EDIT);
+                $data[] = new d_feld('prod_jahr', $this->content['prod_jahr'], RE_EDIT, 576);
+                $data[] = new d_feld('thema', $this->content['thema'], RE_EDIT, 577); // Schlagwortliste - array
+                $data[] = new d_feld('quellen', $this->content['quellen'], RE_EDIT, 578);
+                $data[] = new d_feld('inhalt', $this->content['descr'], RE_EDIT, 506);
+                $data[] = new d_feld('notiz', $this->content['notiz'], RE_EDIT, 514);
+                $data[] = new d_feld('anmerk', $this->content['anmerk'], RE_EDIT, 572);
+                $data[] = new d_feld('gattung', $this->content['gattung'], RE_EDIT, 579);
+                $data[] = new d_feld('prodtech', bit2array($this->content['prodtechnik']), RE_EDIT, 571);
+                $data[] = new d_feld('laenge', $this->content['laenge'], RE_EDIT, 580, 10007);
+                $data[] = new d_feld('fsk', $this->content['fsk'], RE_EDIT, 581);
+                $data[] = new d_feld('praedikat', $this->content['praedikat'], RE_EDIT, 582);
+                $data[] = new d_feld('bildformat', $this->content['bildformat'], RE_EDIT, 608);
+                $data[] = new d_feld('mediaspezi', bit2array($this->content['mediaspezi']), RE_EDIT, 583);
+                $data[] = new d_feld('urauff', $this->content['urauffuehr'], RE_EDIT, 584);
+                $data[] = new d_feld('isvalid', false, RE_IEDIT, 10009);
                 // CastListe nur beim bearbeiten und nicht bei Neuanlage zeigen.
-                if ($this->content['titel']) $data[] = new d_feld('cast', $this->getCastList(), EDIT);
+                if ($this->content['titel']) $data[] = new d_feld('cast', $this->getCastList(), RE_EDIT);
 
                 $marty->assign('dialog', a_display($data));
                 $marty->display('figd_dialog.tpl');
@@ -176,13 +202,14 @@
                     endif;
 
                     if (isset($_POST['thema'])) :
+                        // todo: Leerzeichen und Aufzählung korrigieren
                         if ($_POST['thema']) $this->content['thema'] = preg_split("/[\s,]+/", $_POST['thema'], null, PREG_SPLIT_NO_EMPTY);
                         else $this->content['thema'] = null;
                     endif;
 
                     if (isset($_POST['gattung'])) :
                         if ($_POST['gattung']) {
-                            if (isvalid($_POST['gattung'], ANZAHL))
+                            if (isvalid($_POST['gattung'], REG_ANZAHL))
                                 $this->content['gattung'] = intval($_POST['gattung']);
                             else throw new Exception(null, 4);
                         } else $this->content['gattung'] = null;
@@ -193,12 +220,12 @@
                     else $this->content['prodtechnik'] = null;
 
                     if (!empty($_POST['laenge']))
-                        if (isValid($_POST['laenge'], DAUER)) $this->content['laenge'] = $_POST['laenge']; else feedback(4, 'warng');
+                        if (isValid($_POST['laenge'], REG_DAUER)) $this->content['laenge'] = $_POST['laenge']; else feedback(4, 'warng');
                     else $this->content['laenge'] = null;
 
                     if (isset($_POST['fsk'])) :
                         if (!empty($_POST['fsk'])) {
-                            if (isvalid($_POST['fsk'], ANZAHL))
+                            if (isvalid($_POST['fsk'], REG_ANZAHL))
                                 $this->content['fsk'] = intval($_POST['fsk']);
                             else throw new Exception(null, 4);
                         } else $this->content['fsk'] = null;
@@ -206,7 +233,7 @@
 
                     if (isset($_POST['praedikat'])) :
                         if ($_POST['praedikat']) {
-                            if (isvalid($_POST['praedikat'], ANZAHL))
+                            if (isvalid($_POST['praedikat'], REG_ANZAHL))
                                 $this->content['praedikat'] = intval($_POST['praedikat']);
                             else throw new Exception(null, 4);
                         } else $this->content['praedikat'] = null;
@@ -214,7 +241,7 @@
 
                     if (isset($_POST['urauff'])) :
                         if ($_POST['urauff']) {
-                            if (isvalid($_POST['urauff'], DATUM))
+                            if (isvalid($_POST['urauff'], REG_DATUM))
                                 $this->content['urauffuehr'] = $_POST['urauff'];
                             else feedback(103, 'warng');
                         } else $this->content['urauffuehr'] = null;
@@ -263,10 +290,10 @@
         /**
          * @return array
          */
-        protected static function getListGattung() {
+        static function getListGattung() {
             $db = MDB2::singleton();
             global $str;
-            $list = $db->extended->getCol(self::SQL_getGenre, 'integer');
+            $list = $db->extended->getCol(self::SQL_GET_GENRE, 'integer');
             $data = [];
             IsDbError($list);
             foreach ($list as $wert) :
@@ -280,12 +307,12 @@
          * Gibt eine Liste der Prädikate aus
          * @return array
          */
-        protected static function getListPraedikat() {
+        static function getListPraedikat() {
             global $str;
             $db = MDB2::singleton();
             $data = [];
 
-            $list = $db->extended->getCol(self::SQL_getPraed, 'integer');
+            $list = $db->extended->getCol(self::SQL_GET_PRAED, 'integer');
             IsDbError($list);
             foreach($list as $wert) $data[$wert] = $str->getStr($wert);
             return $data;
@@ -295,10 +322,10 @@
          * Gibt eine Liste der Produktionstechniken zurück
          * @return array (string)
          */
-        protected static function getListProdTech() {
+        static function getListProdTech() {
             global $str;
             $db   = MDB2::singleton();
-            $data = $db->extended->getCol(self::SQL_getPT, 'integer');
+            $data = $db->extended->getCol(self::SQL_GET_PRODTECHNIK, 'integer');
             IsDbError($data);
             return $str->getStrList($data);
         }
@@ -309,7 +336,7 @@
          */
         protected static function getListBildformat() {
             $db   = MDB2::singleton();
-            $list = $db->extended->getAll(self::SQL_getBfLi);
+            $list = $db->extended->getAll(self::SQL_GET_BILDFORMAT_LI);
             IsDbError($list);
             $data = [];
             foreach ($list as $wert) $data[$wert['id']] = $wert['format'];
@@ -323,7 +350,7 @@
         protected static function getListMediaSpez() {
             global $str;
             $db   = MDB2::singleton();
-            $data = $db->extended->getCol(self::SQL_getMS, 'integer');
+            $data = $db->extended->getCol(self::SQL_GET_MEDIASPEZ, 'integer');
             IsDbError($data);
             return $str->getStrList($data);
         }
@@ -334,14 +361,14 @@
          */
         public function save() {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if (!$this->content['id']) return 4; // Abbruch: leerer Datensatz
             // Preparierung Thema array -> db-Liste
             if (!empty($this->content['thema'])) $this->content['thema'] = array2list($this->content['thema']);
             $db  = MDB2::singleton();
             IsDbError($db->extended->autoExecute('f_film2', $this->content, MDB2_AUTOQUERY_UPDATE,
                 'id = ' . $db->quote($this->content['id'], 'integer'),
-                 list2array(parent::TYPEENTITY . parent::TYPEFIBI . self::TYPE_FILM)));
+                 list2array(parent::TYPE_ENTITY . parent::TYPE_FIBI . self::TYPE_FILM)));
             return  null;
         }
 
@@ -351,20 +378,20 @@
          */
         public function view() {
             global $myauth, $str;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
 
             $data = parent::view();
             // name, inhalt, opt -> rechte, label,tooltip
-            $data[] = new d_feld('prod_land', self::getProdLand(), VIEW, 698);
-            $data[] = new d_feld('gattung', $str->getStr($this->content['gattung']), VIEW, 579);
-            $data[] = new d_feld('prodtech', self::getThisProdTech(), VIEW, 571);
-            $data[] = new d_feld('laenge', $this->content['laenge'], VIEW, 580);
-            $data[] = new d_feld('fsk', $this->content['fsk'], VIEW, 581);
-            $data[] = new d_feld('praedikat', $str->getStr($this->content['praedikat']), VIEW, 582);
-            $data[] = new d_feld('bildformat', self::getBildformat(), VIEW, 608);
-            $data[] = new d_feld('mediaspezi', self::getThisMediaSpez(), VIEW, 583);
-            $data[] = new d_feld('urauff', $this->content['urauffuehr'], VIEW, 584);
-            $data[] = new d_feld('regie', self::getRegie(), VIEW, 1000);
+            $data[] = new d_feld('prod_land', self::getProdLand(), RE_VIEW, 698);
+            $data[] = new d_feld('gattung', $str->getStr($this->content['gattung']), RE_VIEW, 579);
+            $data[] = new d_feld('prodtech', self::getThisProdTech(), RE_VIEW, 571);
+            $data[] = new d_feld('laenge', $this->content['laenge'], RE_VIEW, 580);
+            $data[] = new d_feld('fsk', $this->content['fsk'], RE_VIEW, 581);
+            $data[] = new d_feld('praedikat', $str->getStr($this->content['praedikat']), RE_VIEW, 582);
+            $data[] = new d_feld('bildformat', self::getBildformat(), RE_VIEW, 608);
+            $data[] = new d_feld('mediaspezi', self::getThisMediaSpez(), RE_VIEW, 583);
+            $data[] = new d_feld('urauff', $this->content['urauffuehr'], RE_VIEW, 584);
+            $data[] = new d_feld('regie', self::getRegie(), RE_VIEW, 1000);
 
             return $data;
         }
@@ -381,7 +408,7 @@
             IsDbError($Regie);
             $namen = [];
             foreach($Regie as $wert) :
-                $pers = new Person($wert);
+                $pers = new PName($wert);
                 $namen[] = $pers->getName();
             endforeach;
             return $namen;
@@ -424,7 +451,7 @@
             $db = MDB2::singleton();
             if (empty($this->content['bildformat'])) return null;
             $data = $db->extended->getOne(
-                self::SQL_getBF, null, $this->content['bildformat']);
+                self::GET_BILDFORMAT, null, $this->content['bildformat']);
             IsDbError($data);
             return $data;
         }

@@ -136,7 +136,7 @@ FORMEDIT;
             . $wert['chdatum'] . "&nbsp;|&nbsp;" . $wert['realname'] . "&nbsp;\n";
         // Nutzer berechtigt zu editieren?
         if ($myauth->getAuthdata('uid') === $wert['autor'] OR
-            isbit($myauth->getAuthData('rechte'), SU)) :
+            isbit($myauth->getAuthData('rechte'), RE_SU)) :
                echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n" .
                     "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
         endif;

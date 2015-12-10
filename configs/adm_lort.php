@@ -20,7 +20,7 @@
         exit();
     }
 
-    if (!isBit($myauth->getAuthData('rechte'), SEDIT)) {
+    if (!isBit($myauth->getAuthData('rechte'), RE_SEDIT)) {
         feedback(2, 'error');
         exit(2);
     }
@@ -53,7 +53,7 @@
         default :
             // Ausgabe: Liste zum auswählen
             $marty->assign('list', LOrt::getLOrtList());
-            $data = new d_feld('lort', null, ARCHIV, 472);
+            $data = new d_feld('lort', null, RE_ARCHIV, 472);
             $marty->assign("dialog", $data->display());
             $marty->display("adm_selekt.tpl");
 

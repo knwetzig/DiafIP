@@ -23,7 +23,7 @@
          *
          * @return mixed
          */
-        static function getNameList();
+        static function getUnusedAliasNameList();
 
         /**
          * Ermittelt die Person zum Aliasnamen
@@ -38,6 +38,14 @@
          * @return mixed
          */
         function getName();
+
+        /**
+         * Testet ob dieser Namenseintrag in Tabelle p_namen oder p_person existiert
+         * @param $vname
+         * @param $nname
+         * @return bool
+         */
+        static function getIdFromName($nname, $vname = null);
 
         /**
          * liefert die ID's+Bereich des Suchmusters

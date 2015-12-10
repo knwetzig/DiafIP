@@ -11,14 +11,14 @@
      */
 
     interface iFibiMain extends iEntity {
-        public static function getSTitelList();
-        public static function getTitelList();
-        public function getTitel();
-        public static function addSerTitel($titel, $descr);
-        public static function editSerTitel($nr, $status = null);
-        public static function delSerTitel($nr);
-        public function addCast($p, $t);
-        public function delCast($p, $t);
-        static public function search($s);
+        static function getSTitelList();
+        static function getTitelList();
+        function getTitel();
+        static function addSerTitel($titel, $descr);
+        static function editSerTitel($nr, $status = null);
+        static function delSerTitel($nr);
+        static function addCast($cast);
+        static function delCast($cast);
+        static function search($s);
     }
 }

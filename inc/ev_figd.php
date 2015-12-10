@@ -27,7 +27,7 @@
               new d_feld('bereich', $str->getStr(4008)),
               new d_feld('sstring', $str->getStr(4011)),
               new d_feld('sektion', 'F'),
-              new d_feld('add', true, EDIT, null, 4024)]);
+              new d_feld('add', true, RE_EDIT, null, 4024)]);
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);
     $marty->display('main_bereich.tpl');
@@ -44,7 +44,10 @@
                 else :
                     $motpic = unserialize($myauth->getAuthData('obj'));
                     $motpic->add(true); // Auswertezweig
-                    $motpic->view();
+                    $FilmNr = $motpic->getId();
+                    unset($motionpic);
+                    $fKontroll = new Film($FilmNr);
+                    $fKontroll->display('figd_dat.tpl');
                 endif;
                 break; // Ende add
 
@@ -67,17 +70,19 @@
                 if (isset($_POST['sstring'])) :
                     $suche = $_POST['sstring'];
                     $myauth->setAuthData('search', $suche);
-                    $tlist = new Film;
-                    $tlist = $tlist->search($suche);
+                    $tlist = Film::search($suche);
                     if (!empty($tlist) AND is_array($tlist)) :
                         // Ausgabe
                         $bg = 1;
                         foreach (($tlist) as $nr) :
-                            ++$bg;
-                            $marty->assign('darkBG', $bg % 2);
-                            $motpic = new Film($nr);
-                            $motpic->display('figd_ldat.tpl');
-                            unset($motpic);
+                            // Eingrenzung Filme
+                            if(Entity::getBereich($nr) === 'F') :
+                                ++$bg;
+                                $motpic = new Film($nr);
+                                $marty->assign('darkBG', $bg % 2);
+                                $motpic->display('figd_ldat.tpl');
+                                unset($motpic);
+                            endif;
                         endforeach;
                     else :
                         feedback(102, 'hinw'); // kein Erg.
@@ -86,26 +91,32 @@
                 break;
 
             case "del" :
-                $motpic = new Film($_POST['id']);
+                $motpic = new Film(intval($_POST['id']));
                 $erg  = $motpic->del();
                 if (empty($erg)) feedback(3, 'erfolg'); else feedback($erg, 'warng');
                 break;
 
             case 'view' :
-                $motpic = new Film((int)$_REQUEST['id']);
+                $motpic = new Film(intval($_REQUEST['id']));
                 $motpic->display('figd_dat.tpl');
                 break;
 
             case 'addCast' :
+                $cast = ['fid' => intval($_POST['id']),
+                         'pid' => intval($_POST['pid']),
+                         'tid' => intval($_POST['tid'])];
                 $motpic = new Film($_POST['id']);
-                $motpic->addCast($_POST['pid'], $_POST['tid']);
-                $marty->assign('aktion', 'edit');
+                $motpic->addCast($cast);
+                $marty->assign('aktion', 'edit');           // Anzeige nach Bearbeitung
                 $motpic->edit(false);
                 break;
 
             case 'delCast' :
+                $cast = ['fid' => intval($_POST['id']),
+                         'pid' => intval($_POST['pid']),
+                         'tid' => intval($_POST['tid'])];
                 $motpic = new Film($_POST['id']);
-                $motpic->delCast($_POST['pid'], $_POST['tid']);
+                $motpic->delCast($cast);
                 $marty->assign('aktion', 'edit');
                 $motpic->edit(false);
                 break;

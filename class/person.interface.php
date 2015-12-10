@@ -19,15 +19,9 @@
      *
      */
     interface iPerson extends iPName {
-        /**
-         * Listet alle Personen (ohne Aliasnamen)
-         *
-         * @return array
-         */
-        static function getPersList();
 
         /**
-         * gibt ein Array der Namen zurück
+         * gibt ein Array der Namen zurück unter der diese Person noch bekannt ist.
          *
          * @return array|null
          */

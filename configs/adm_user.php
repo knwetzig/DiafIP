@@ -20,7 +20,7 @@
         exit();
     endif;
 
-    if (!(isBit($myauth->getAuthData('rechte'), ADMIN) OR (isBit($myauth->getAuthData('rechte'), SU)))) :
+    if (!(isBit($myauth->getAuthData('rechte'), RE_ADMIN) OR (isBit($myauth->getAuthData('rechte'), RE_SU)))) :
         feedback(2, 'error');
         exit(2);
     endif;

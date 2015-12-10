@@ -21,11 +21,9 @@
 
         const
             TYPEPERSON = 'date,integer,date,integer,text,text,integer,text,text,text',
-            GETDATA    = 'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
+            SQL_GET_DATA    = 'SELECT gtag, gort, ttag, tort, strasse, plz, wort, tel, mail, aliases
                           FROM p_person2 WHERE id = ?;',
-            GETPERLI   = 'SELECT id, vname, nname FROM ONLY p_person2 WHERE del = FALSE ORDER BY nname, vname ASC;',
-            GETCALI    = 'SELECT fid, tid FROM f_cast WHERE pid= ? ORDER BY fid;',      // Casting-Liste
-            IFDOUBLE   = 'SELECT id FROM p_person2 WHERE gtag = ? AND vname = ? AND nname = ?;';
+            SQL_IF_DOUBLE   = 'SELECT id FROM p_person2 WHERE gtag = ? AND vname = ? AND nname = ?;';
 
         /**
          * Initialisiert das Personenobjekt
@@ -34,7 +32,7 @@
          */
         function __construct($nr = null) {
             parent::__construct($nr);
-            $this->content['bereich'] = 'P';
+            if(!empty($nr) AND $this->content['bereich'] !== 'P') return 1;
             $this->content['gtag']    = '0001-01-01'; // Geburtstag
             $this->content['gort']    = null; // Geburtsort
             $this->content['ttag']    = null; // Todestag
@@ -47,22 +45,9 @@
             $this->content['aliases'] = null;
             if (isset($nr) AND is_numeric($nr)) :
                 $db = MDB2::singleton();
-                $data = $db->extended->getRow(self::GETDATA, list2array(self::TYPEPERSON), $nr, 'integer');
+                $data = $db->extended->getRow(self::SQL_GET_DATA, list2array(self::TYPEPERSON), $nr, 'integer');
                 self::WertZuwCont($data);
             endif;
-        }
-
-        /**
-         * Liefert die Namensliste für Drop-Down-Menü
-         *
-         * @return array id, vname+name
-         */
-        static function getPersList() {
-            $db = MDB2::singleton();
-            $data = $db->extended->getAll(
-                self::GETPERLI, ['integer', 'text', 'text']);
-            IsDbError($data);
-            return self::arrpack($data);
         }
 
         /**
@@ -73,10 +58,10 @@
          */
         public function add($status = null) {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             $db    = MDB2::singleton();
-            $types = list2array(self::TYPEENTITY . self::TYPENAME . self::TYPEPERSON);
+            $types = list2array(self::TYPE_ENTITY . self::TYPENAME . self::TYPEPERSON);
 
             if ($status == false) :
                 // begin TRANSACTION anlage person
@@ -106,39 +91,44 @@
          * @return     null|int Fehlercode
          */
         public function edit($status = null) {
-            global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            global $myauth, $marty, $str;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
 
             if ($status == false) :
                 // Liste mit Alias erstellen und smarty übergeben
                 if (self::IsInDB($this->content['id'], $this->content['bereich'])) :
-                    $marty->assign('alist', parent::getNameList());
+                    $ual = parent::getUnusedAliasNameList();
+                    if(!empty($ual)) :
+                        $ual = [0 => $str->getStr(0)];
+                        $ual += parent::getUnusedAliasNameList();
+                        $marty->assign('alist', $ual);
+                    endif;
                 endif;
                 $marty->assign('ortlist', Ort::getOrtList());
 
                 // Daten einsammeln und für Dialog bereitstellen :-)
                 $data = [
                     // $name,$inhalt optional-> $rechte,$label,$tooltip,valString
-                    new d_feld('kopf', null, VIEW, 4013),
+                    new d_feld('kopf', null, RE_VIEW, 4013),
                     new d_feld('id', $this->content['id']),
-                    new d_feld('vname', $this->content['vname'], EDIT, 516),
-                    new d_feld('nname', $this->content['nname'], EDIT, 517),
-                    new d_feld('aliases', $this->getAliases(), VIEW),
-                    new d_feld('addalias', null, EDIT, 515),
-                    new d_feld('notiz', $this->content['notiz'], EDIT, 514),
-                    new d_feld('isvalid', false, SEDIT, 10009),
-                    new d_feld('gtag', $this->content['gtag'], EDIT, 502, 10000),
-                    new d_feld('gort', $this->content['gort'], EDIT, 4014),
-                    new d_feld('ttag', $this->content['ttag'], EDIT, 509, 10000),
-                    new d_feld('tort', $this->content['tort'], EDIT, 4014),
-                    new d_feld('strasse', $this->content['strasse'], IEDIT, 510),
-                    new d_feld('wort', $this->content['wort'], IEDIT),
-                    new d_feld('plz', $this->content['plz'], IEDIT),
-                    new d_feld('tel', $this->content['tel'], IEDIT, 511, 10002),
-                    new d_feld('mail', $this->content['mail'], IEDIT, 512),
-                    new d_feld('descr', $this->content['descr'], EDIT, 513)];
+                    new d_feld('vname', $this->content['vname'], RE_EDIT, 516),
+                    new d_feld('nname', $this->content['nname'], RE_EDIT, 517),
+                    new d_feld('aliases', $this->getAliases(), RE_VIEW),
+                    new d_feld('addalias', null, RE_EDIT, 515),
+                    new d_feld('notiz', $this->content['notiz'], RE_EDIT, 514),
+                    new d_feld('isvalid', false, RE_SEDIT, 10009),
+                    new d_feld('gtag', $this->content['gtag'], RE_EDIT, 502, 10000),
+                    new d_feld('gort', $this->content['gort'], RE_EDIT, 4014),
+                    new d_feld('ttag', $this->content['ttag'], RE_EDIT, 509, 10000),
+                    new d_feld('tort', $this->content['tort'], RE_EDIT, 4014),
+                    new d_feld('strasse', $this->content['strasse'], RE_IEDIT, 510),
+                    new d_feld('wort', $this->content['wort'], RE_IEDIT),
+                    new d_feld('plz', $this->content['plz'], RE_IEDIT),
+                    new d_feld('tel', $this->content['tel'], RE_IEDIT, 511, 10002),
+                    new d_feld('mail', $this->content['mail'], RE_IEDIT, 512),
+                    new d_feld('descr', $this->content['descr'], RE_EDIT, 513)];
                 $marty->assign('dialog', a_display($data));
-                $marty->display('person_dialog.tpl');
+                $marty->display('pers_dialog.tpl');
                 $myauth->setAuthData('obj', serialize($this));
             else : // Formular auswerten
                 // Reinitialisierung muss vom aufrufenden Programm erledigt werden
@@ -161,7 +151,7 @@
 
                     if (isset($_POST['gtag'])) :
                         if ($_POST['gtag']) :
-                            if (isValid($_POST['gtag'], DATUM)) //prüft nur den String !Kalender
+                            if (isValid($_POST['gtag'], REG_DATUM)) //prüft nur den String !Kalender
                                 $this->content['gtag'] = $_POST['gtag'];
                             else throw new ErrorException(null, 103, E_WARNING);
                         else : $this->content['gtag'] = '0001-01-01'; endif;
@@ -174,7 +164,7 @@
 
                     if (isset($_POST['ttag'])) :
                         if ($_POST['ttag']) :
-                            if (isValid($_POST['ttag'], DATUM)) :
+                            if (isValid($_POST['ttag'], REG_DATUM)) :
 
                                 // Test das Geburt vor Tod liegt ;-)
                                 $born = new DateTime($this->content['gtag']);
@@ -197,7 +187,7 @@
                     endif;
 
                     if (!empty($_POST['strasse'])) :
-                        if (isValid($_POST['strasse'], NAMEN))
+                        if (isValid($_POST['strasse'], REG_NAMEN))
                             $this->content['strasse'] = $_POST['strasse'];
                         else throw new ErrorException(null, 109, E_WARNING);
                     endif;
@@ -208,17 +198,17 @@
                     endif;
 
                     if (!empty($_POST['plz'])) :
-                        if (isValid($_POST['plz'], PLZ)) $this->content['plz'] = $_POST['plz'];
+                        if (isValid($_POST['plz'], REG_PLZ)) $this->content['plz'] = $_POST['plz'];
                         else throw new ErrorException(null, 104, E_WARNING);
                     else : $this->content['plz'] = null; endif;
 
                     if (!empty($_POST['tel'])) :
-                        if (isValid($_POST['tel'], TELNR)) $this->content['tel'] = $_POST['tel'];
+                        if (isValid($_POST['tel'], REG_TELNR)) $this->content['tel'] = $_POST['tel'];
                         else throw new ErrorException(null, 105, E_WARNING);
                     else : $this->content['tel'] = null; endif;
 
                     if (!empty($_POST['mail'])) :
-                        if (isValid($_POST['mail'], EMAIL))
+                        if (isValid($_POST['mail'], REG_EMAIL))
                             $this->content['mail'] = $_POST['mail'];
                         else throw new ErrorException(null, 106, E_WARNING);
                     else : $this->content['mail'] = null; endif;
@@ -288,11 +278,11 @@
         /**
          *  Ermitteln ob gleiche Person schon existiert
          *
-         * @return bool
+         * @return integer
          */
         private function ifDouble() {
             $db   = MDB2::singleton();
-            $data = $db->extended->getOne(self::IFDOUBLE, ['boolean'], [
+            $data = $db->extended->getOne(self::SQL_IF_DOUBLE, ['integer'], [
                 $this->content['gtag'],
                 $this->content['vname'],
                 $this->content['nname']]);
@@ -307,11 +297,11 @@
          */
         public function save() {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if (!$this->content['id']) return 4; // Abbruch weil leerer Datensatz
 
             $db    = MDB2::singleton();
-            $types = list2array(self::TYPEENTITY . self::TYPENAME . self::TYPEPERSON);
+            $types = list2array(self::TYPE_ENTITY . self::TYPENAME . self::TYPEPERSON);
 
             IsDbError($db->extended->autoExecute(
                 'p_person2', $this->content, MDB2_AUTOQUERY_UPDATE,
@@ -331,21 +321,21 @@
          **/
         public function view() {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
 
             $data   = parent::view();
-            $data[] = new d_feld('descr', changetext($this->content['descr']), VIEW, 513); // Biografie
-            $data[] = new d_feld('aliases', $this->getAliases(), VIEW, 515);
-            $data[] = new d_feld('gtag', $this->fiGtag(), VIEW, 502);
-            $data[] = new d_feld('gort', Ort::getOrt($this->content['gort']), VIEW, 4014);
-            $data[] = new d_feld('ttag', $this->content['ttag'], VIEW, 509);
-            $data[] = new d_feld('tort', Ort::getOrt($this->content['tort']), VIEW, 4014);
-            $data[] = new d_feld('strasse', $this->content['strasse'], IVIEW, 510);
-            $data[] = new d_feld('wort', Ort::getOrt($this->content['wort']), IVIEW);
-            $data[] = new d_feld('plz', $this->content['plz'], IVIEW);
-            $data[] = new d_feld('tel', $this->content['tel'], IVIEW, 511);
-            $data[] = new d_feld('mail', $this->content['mail'], IVIEW, 512);
-            $data[] = new d_feld('castLi', $this->getCastList(), VIEW);
+            $data[] = new d_feld('descr', changetext($this->content['descr']), RE_VIEW, 513); // Biografie
+            $data[] = new d_feld('aliases', $this->getAliases(), RE_VIEW, 515);
+            $data[] = new d_feld('gtag', $this->fiGtag(), RE_VIEW, 502);
+            $data[] = new d_feld('gort', Ort::getOrt($this->content['gort']), RE_VIEW, 4014);
+            $data[] = new d_feld('ttag', $this->content['ttag'], RE_VIEW, 509);
+            $data[] = new d_feld('tort', Ort::getOrt($this->content['tort']), RE_VIEW, 4014);
+            $data[] = new d_feld('strasse', $this->content['strasse'], RE_IVIEW, 510);
+            $data[] = new d_feld('wort', Ort::getOrt($this->content['wort']), RE_IVIEW);
+            $data[] = new d_feld('plz', $this->content['plz'], RE_IVIEW);
+            $data[] = new d_feld('tel', $this->content['tel'], RE_IVIEW, 511);
+            $data[] = new d_feld('mail', $this->content['mail'], RE_IVIEW, 512);
+            $data[] = new d_feld('castLi', $this->getCastList(), RE_VIEW);
             return $data;
         }
 
@@ -357,35 +347,6 @@
         private function fiGtag() {
             if (($this->content['gtag'] === '0001-01-01') OR ($this->content['gtag'] === '01.01.0001'))
                 return null; else return $this->content['gtag'];
-        }
-
-        /**
-         *  Aufgabe: gibt die Besetzungsliste für diese Person aus
-         *
-         * @return array [vname, name, tid, pid, job]
-         */
-        final protected function getCastList() {
-            global $str;
-            $db = MDB2::singleton();
-            if (empty($this->content['id'])) return null;
-
-            // Zusammenstellen der Castingliste für diese Person
-            $data = $db->extended->getALL(
-                self::GETCALI, ['integer', 'integer', 'integer'], $this->content['id'], 'integer');
-            IsDbError($data);
-
-            // Übersetzung für die Tätigkeit und Namen holen
-            $f = [];
-            foreach ($data as $wert) :
-                $film = new Film($wert['fid']);
-                if (!$film->isDel()) :
-                    $g           = [];
-                    $g['ftitel'] = $film->getTitel();
-                    $g['job']    = $str->getStr($wert['tid']);
-                    $f[]         = $g;
-                endif;
-            endforeach;
-            return $f;
         }
     }
 } // end Personen-Klasse

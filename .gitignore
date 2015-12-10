@@ -23,6 +23,11 @@
 # Gradle:
 # .idea/gradle.xml
 # .idea/libraries
+/.changelist
+/data/DIFA DB Filmdatenexport.xml
+configs/config.local.php
+/test.php
+/entrypage.html
 
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
@@ -46,9 +51,3 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
-
-# Projektbezogene Ignores
-/Änderung DiafIP
-configs/config.local.php
-configs/dsn
-/test.php

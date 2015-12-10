@@ -53,7 +53,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
         <td class="re">{$dialog['auftraggeber'][2]}:</td>
         <td>{html_options
             name=$dialog['auftraggeber'][0]
-            options=$dialog['persLi'][1]
+            options=$dialog['nameLi'][1]
             selected=$dialog['auftraggeber'][1]
         }</td>
     </tr>{/if}
@@ -260,7 +260,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
         <tr>
             <td><form action='#castlist' method='post'>
                 {html_options name=tid options=$dialog['taetigLi'][1]}</td>
-            <td>{html_options name=pid options=$dialog['persLi'][1]}</td>
+            <td>{html_options name=pid options=$dialog['nameLi'][1]}</td>
             <td>
                     <button
                     class='small'

@@ -20,7 +20,7 @@
                         new d_feld('bereich', $str->getStr(4032)),
                         new d_feld('sstring', $str->getStr(4011)),
                         new d_feld('sektion', 'i_3dobj'),
-                        new d_feld('add', true, EDIT, null)]);
+                        new d_feld('add', true, RE_EDIT, null)]);
     $marty->assign('dialog', $data);
     $marty->assign('darkBG', 0);
     $marty->display('main_bereich.tpl');

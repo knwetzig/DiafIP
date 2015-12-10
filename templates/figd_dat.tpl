@@ -26,7 +26,8 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
 
         <form id="bearbbtn" action='{$dlg['phpself']}' method="post">
             <span class="note">
-	                ID:&nbsp;{$dialog['id'][1]}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;|&nbsp;{$dialog['chname'][1]}&nbsp;
+                ID:&nbsp;{$dialog['id'][1]}{if !empty($dialog['chdatum'][1])}&nbsp;|&nbsp;{$dialog['chdatum'][1]}&nbsp;
+                |&nbsp;{$dialog['chname'][1]}{/if}&nbsp;
             </span>
 
             {if isset($dialog['edit'])}

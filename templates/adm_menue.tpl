@@ -12,33 +12,25 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/adm_menue.tpl $
 
 <div id='bereich'>{$dlg['pref']}</div>
 
-<table><tr>
-    <td class="top">    {*links*}
-        <form method="post">
-            <fieldset><legend>&nbsp;Verwaltung&nbsp;</legend>
-                <button name='site' value='self'>
-                    Password</button><br />
-                <button name='site' value='user'>
-                    Nutzer</button><br />
-                <button name='site' value='string'>
-                    &Uuml;bersetzung</button>
-            </fieldset>
-            <input type='hidden' name='sektion' value='admin' />
-            <input type='hidden' name='aktion' value='' />
-        </form>
-    </td>
+<form method="post">
+    <fieldset><legend>Verwaltung</legend>
+        <button name='site' value='self'>Password</button>
+        <button name='site' value='user'>Nutzer</button>
+        <button name='site' value='string'>&Uuml;bersetzung</button>
+    </fieldset>
+     <fieldset><legend>Listen</legend>
+        <button name="site" value="orte">Orte verwalten</button>
+        <button name="site" value="lort">Lagerorte verwalten</button>
+    </fieldset>
+    <fieldset><legend>Import</legend>
+        <button name='site' value="fgd_imp">Film importieren</button>
+    </fieldset>
+    <input type="hidden" name="sektion" value="admin" />
+    <input type="hidden" name="aktion" value="" />
+</form>
 
-    <td class="top">     {*rechts*}
-        <form method="post">
-            <fieldset><legend>&nbsp;Listen&nbsp;</legend>
-                <button name="site" value="orte">Orte verwalten</button><br />
-                <button name="site" value="lort">Lagerorte verwalten</button>
-                <input type="hidden" name="sektion" value="admin" />
-                <input type="hidden" name="aktion" value="" />
-        </form>
-    </td>
-</tr></table>
-
-<div id='bereich'>&nbsp;</div>
-<a href='https://code.google.com/p/diafip/' target='_new'><img src='https://ssl.gstatic.com/codesite/ph/images/phosting.ico'>&nbsp;Projektseite</a><br /><br />
-<a href='https://github.com/knwetzig/diafip/blob/wiki/Leitfaden.md' target='_new'>Leitfaden zur Handhabung</a>
+<p>
+    <a href='https://github.com/knwetzig/diafip' target='_new'>Projektseite</a><br />
+    <a href='https://github.com/knwetzig/diafip/blob/wiki/Leitfaden.md' target='_new'>Leitfaden zur Handhabung</a><br>
+    <a href='data/DIFA DB Filmdatenexport.xml' target="_new">Originaldaten DEFA-Stiftung</a>
+</p>

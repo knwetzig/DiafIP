@@ -28,16 +28,16 @@
         /**
          * Regex für Namen - Keine Interpunktion, nur runde Klammern
          */
-    NAMEN     = '^[^`*+!-\':-@[-^{-~]+$',
-    ANZAHL    = '([1-9]+[\d]*){1,1}',
+    REG_NAMEN  = '^[^`*+!-\':-@[-^{-~]+$',
+    REG_ANZAHL = '([1-9]+[\d]*){1,1}',
         // Dezimalzahl -1,2e-3
-    DZAHL     = '^[-+]?[\d]*[.,]?[\d]+([eE][-+]?[\d]+)?',
-    PLZ       = '^[\d]{4,7}$',
-    DAUER     = '^(([\d]+[hH])?([\d]+[mM])?([\d]*(([.][\d]+)?|[sS]))?|([\d]+[:][\d]+[:][\d]+)+([.][\d]+)?)$',
-    BOOL      = '(^(true|[1]|false|[0])\b){1,1}',
-    TELNR     = '^[+\d][\d\s]*$', // +49 351 123456
-    EMAIL     = '[\w].*[@].*[.][\w]{2,3}', //xxx@yyy.zzz
-    DATUM     = '[\d]{4,4}[\D\W][\d]{1,2}[\D\W][\d]{1,2}|[\d]{4,4}[0-1][\d][0-3][\d]|[\d]{1,2}[\D\W][\d]{1,2}[\D\W][\d]{2,4}',
+    REG_DZAHL  = '^[-+]?[\d]*[.,]?[\d]+([eE][-+]?[\d]+)?',
+    REG_PLZ    = '^[\d]{4,7}$',
+    REG_DAUER  = '^(([\d]+[hH])?([\d]+[mM])?([\d]*(([.][\d]+)?|[sS]))?|([\d]+[:][\d]+[:][\d]+)+([.][\d]+)?)$',
+    REG_BOOL   = '(^(true|[1]|false|[0])\b){1,1}',
+    REG_TELNR = '^[+\d][\d\s]*$', // +49 351 123456
+    REG_EMAIL = '[\w].*[@].*[.][\w]{2,3}', //xxx@yyy.zzz
+    REG_DATUM = '[\d]{4,4}[\D\W][\d]{1,2}[\D\W][\d]{1,2}|[\d]{4,4}[0-1][\d][0-3][\d]|[\d]{1,2}[\D\W][\d]{1,2}[\D\W][\d]{2,4}',
         /* Vorsicht nicht Narrensicher! Kann nur der groben Prüfung dienen
             1999-2.31 ISO (Trenner kann alles ausser Buchtabe/Ziffer sein)
             19991231  ISO
@@ -45,20 +45,20 @@
         */
 
         // Rechte-Zuweisung
-    VIEW      = 0, // sieht alle allgemein zugängl. Daten
-    IVIEW     = 1, // sieht auch interne Daten
-    EDIT      = 2, // kann allg. Daten editieren
-    IEDIT     = 3, // editieren interner Daten (Personaldaten etc)
-    SEDIT     = 4, // kann Presets bearbeiten
-    DELE      = 5, // Löschberechtigung
-    ARCHIV    = 6, // Depotverwaltung
+    RE_VIEW   = 0, // sieht alle allgemein zugängl. Daten
+    RE_IVIEW  = 1, // sieht auch interne Daten
+    RE_EDIT   = 2, // kann allg. Daten editieren
+    RE_IEDIT  = 3, // editieren interner Daten (Personaldaten etc)
+    RE_SEDIT  = 4, // kann Presets bearbeiten
+    RE_DELE   = 5, // Löschberechtigung
+    RE_ARCHIV = 6, // Depotverwaltung
         /*
         .
         siehe auch configs/adm_user.php */
-    ADMIN     = 15,
-    SU        = 16,
+    RE_ADMIN  = 15,
+    RE_SU     = 16,
 
-    WERT_QUOT = 0.05; // Wertsteigerungsquotient zur Berechnung der Vers.Summe
+    WERT_QUOT = 0.03; // Wertsteigerungsquotient zur Berechnung der Vers.Summe
 
     // Sektion für 'sektion'
     $datei = [
@@ -69,7 +69,8 @@
         'Y'     => 'inc/ev_item_planar.php', // Eventhandler Plangegenstände
         'Z'     => 'inc/ev_item_3dobj.php',
         'K'     => 'inc/ev_item_fkop.php',
-        'news'  => 'inc/news.php'];
+        'news'  => 'inc/news.php',
+        'impr'  => 'inc/impressum.php'];
 
     // Admin-Array
     $adm_site = [
@@ -77,7 +78,8 @@
         'string' => 'adm_strings.php',
         'orte'   => 'adm_orte.php',
         'lort'   => 'adm_lort.php',
-        'user'   => 'adm_user.php'];
+        'user'   => 'adm_user.php',
+        'fgd_imp' => 'film_import.php'];
 
     /** Erzeugt ein Anmeldeformular für Auth und wertet es aus
      *

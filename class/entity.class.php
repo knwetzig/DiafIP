@@ -21,14 +21,20 @@
         /**
          * Objektkonstante
          *
-         * @var array TYPEENTITY <Typenliste für content>
-         * @var string GETDATA <SQL-Statement für Initialisierung>
-         * @var string GETMUELL <SQL-Statement für Indizierung Papierkorb>
+         * @var array TYPE_ENTITY <Typenliste für content>
+         * @var string SQL_GET_DATA <SQL-Statement für Initialisierung>
+         * @var string SQL_GET_MUELL <SQL-Statement für Indizierung Papierkorb>
          */
         const
-            TYPEENTITY = 'integer,text,text,text,text,boolean,boolean,integer,text,',
-            GETDATA    = 'SELECT * FROM entity WHERE id = ?;',
-            GETMUELL   = 'SELECT id, bereich FROM entity WHERE del = TRUE;';
+            SQL_GET_DATA    = 'SELECT *
+                               FROM entity
+                               WHERE id = ?;',
+
+            SQL_GET_MUELL   = 'SELECT id, bereich
+                               FROM entity
+                               WHERE del = TRUE;',
+
+            TYPE_ENTITY     = 'integer,text,text,text,text,boolean,boolean,integer,text,';
 
         /**
          * @var array Der Container für die Daten
@@ -51,20 +57,22 @@
          * @param int $nr
          */
         function __construct($nr = null) {
-            if (isset($nr) AND is_numeric($nr)) :
+            global $counter; $counter++;        // Profiler
+            if (self::existId($nr)) :
                 $db   = MDB2::singleton();
-                $result = $db->extended->getRow(self::GETDATA, list2array(self::TYPEENTITY), $nr, 'integer');
+                $result = $db->extended->getRow(self::SQL_GET_DATA, list2array(self::TYPE_ENTITY), $nr, 'integer');
+                IsDbError($result);
                 self::WertZuwCont($result);
             endif;
         }
 
         protected function WertZuwCont($data){
-            IsDbError($data);
             // Ergebnis -> Objekt schreiben
             if (!empty($data)) :
                 foreach ($data as $key => $val) $this->content[$key] = $val;
             else :
-                feedback(4, 'error');
+                // Siehe Eintrag "App" in struktur.html" zum Fehler #4
+                feedback("Fehler bei der Initialisierung im Objekt \"Entity\"", 'error');
                 exit(4);
             endif;
         }
@@ -135,10 +143,10 @@
          */
         public static function getTrash() {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_DELE)) return 2;
 
             $db   = MDB2::singleton();
-            $data = $db->extended->getAll(self::GETMUELL, ['integer', 'text']);
+            $data = $db->extended->getAll(self::SQL_GET_MUELL, ['integer', 'text']);
             IsDbError($data);
             return $data;
         }
@@ -187,7 +195,7 @@
          */
         public function del() {
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), DELE)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_DELE)) return 2;
             if (!$this->content['id']) return 4; // Abbruch weil leerer Datensatz
 
             // Aufgabe: Löschflag setzen (Kippschalter)
@@ -214,7 +222,7 @@
         abstract function save();
 
         /**
-         * Übergibt die Datenkollektion an Smarty
+         * Übergibt die Datenkollektion an Smarty und startet die Ausgabe
          *
          * @param string $vorlage Der Templatename (ohne Pfad)
          * @return void
@@ -233,15 +241,15 @@
         protected function view() {
             $data = [
                 // name,inhalt optional-> $rechte,$label,$tooltip,valString
-                new d_feld('id', $this->content['id'], VIEW),
-                new d_feld('bereich', $this->content['bereich'], VIEW),
-                new d_feld('bilder', $this->content['bilder'], VIEW),
-                new d_feld('notiz', changetext($this->content['notiz']), IVIEW, 514),
-                new d_feld('isVal', $this->content['isvalid'], IVIEW, 10009),
-                new d_feld('chdatum', $this->content['editdate'], EDIT),
-                new d_feld('chname', $this->getBearbeiter(), EDIT),
-                new d_feld('edit', null, EDIT, null, 4013), // edit-Button
-                new d_feld('del', null, DELE, null, 4020), // Lösch-Button
+                new d_feld('id', $this->content['id'], RE_VIEW),
+                new d_feld('bereich', $this->content['bereich'], RE_VIEW),
+                new d_feld('bilder', $this->content['bilder'], RE_VIEW),
+                new d_feld('notiz', changetext($this->content['notiz']), RE_IVIEW, 514),
+                new d_feld('isVal', $this->content['isvalid'], RE_IVIEW, 10009),
+                new d_feld('chdatum', $this->content['editdate'], RE_EDIT),
+                new d_feld('chname', $this->getBearbeiter(), RE_EDIT),
+                new d_feld('edit', null, RE_EDIT, null, 4013), // edit-Button
+                new d_feld('del', null, RE_DELE, null, 4020), // Lösch-Button
             ];
             return $data;
         }
@@ -256,7 +264,7 @@
             $db = MDB2::singleton();
             if (empty($this->content['editfrom'])) exit; // kein Bearbeiter im Objekt
             $bearbeiter = $db->extended->getOne(
-                'SELECT realname FROM s_auth WHERE uid = ' . $this->content['editfrom'] . ';');
+                "SELECT realname FROM s_auth WHERE uid = {$this->content['editfrom']};");
             IsDbError($bearbeiter);
             return $bearbeiter;
         }

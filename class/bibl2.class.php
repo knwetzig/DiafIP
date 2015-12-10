@@ -31,7 +31,7 @@
              * Return: Fehlercode
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             // ...
             return null;
         }
@@ -43,7 +43,7 @@
              * Return: Fehlercode
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             // ..
             return null;
         }
@@ -54,7 +54,7 @@
              * Return: Fehlercode
              */
             global $myauth;
-            if (!isBit($myauth->getAuthData('rechte'), EDIT)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             // ...
             return null;
         }
@@ -66,7 +66,7 @@
              * Return: Fehlercode
              */
             global $myauth, $marty;
-            if (!isBit($myauth->getAuthData('rechte'), VIEW)) return 2;
+            if (!isBit($myauth->getAuthData('rechte'), RE_VIEW)) return 2;
             // ....
             return null;
         }

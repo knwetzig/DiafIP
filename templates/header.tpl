@@ -59,5 +59,7 @@
 			    <button name='aktion' value='logout'>{$dlg['logout']}</button>{/if}
 		    {if !empty($dlg['login'])}
 			    <button name='aktion' value='login'>{$dlg['login']}</button>{/if}
+			{if !empty($dlg['impr'])}
+				<button  class='noBG' name="sektion" value="impr">{$dlg['impr']}</button>{/if}
 	    </form>
     </div>

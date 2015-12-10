@@ -2,7 +2,6 @@
     /**
      * Eventhandler für Aktionen der Personenverwaltung
      *
-     * $Rev: 50 $
      * $Author: knwetzig $
      * $Date: 2014-05-16 15:21:27 +0200 (Fri, 16. May 2014) $
      * $URL: https://diafip.googlecode.com/svn/branches/v2/inc/ev_pers.php $
@@ -22,8 +21,8 @@
                           new d_feld('bereich', $str->getStr(4012)),
                           new d_feld('sstring', $str->getStr(4011)),
                           new d_feld('sektion', 'P'),
-                          new d_feld('add', true, EDIT, null, 10001), // Person::add
-                          new d_feld('extra', '<img src="images/addName.png" alt="addname" />', EDIT, null, 10011)
+                          new d_feld('add', true, RE_EDIT, null, 10001), // Person::add
+                          new d_feld('extra', '<img src="images/addName.png" alt="addname" />', RE_EDIT, null, 10011)
                           // PName::add
                       ]);
     $marty->assign('dialog', $data);
@@ -73,21 +72,21 @@
             case "search" :
                 if (isset($_POST['sstring'])) :
                     $myauth->setAuthData('search', $_POST['sstring']);
-                    $PersonList = Person::search($myauth->getAuthData('search'));
-                    if (!empty($PersonList) AND is_array($PersonList)) :
+                    $PersonList = PName::search($myauth->getAuthData('search'));
+                    if (is_array($PersonList)) :
                         // Ausgabe
                         $bg = 1;
-                        foreach (($PersonList) as $val) :
+                        foreach (($PersonList) as $key => $val) :
                             ++$bg;
                             $marty->assign('darkBG', $bg % 2);
-                            switch ($val['bereich']) :
+                            switch ($val) :
                                 case 'N' :
-                                    $nam = new PName($val['id']);
+                                    $nam = new PName($key);
                                     $nam->display('pers_ldat.tpl');
                                     unset($nam);
                                     break;
                                 case 'P' :
-                                    $pers = new Person($val['id']);
+                                    $pers = new Person($key);
                                     $pers->display('pers_ldat.tpl');
                                     unset($pers);
                             endswitch;

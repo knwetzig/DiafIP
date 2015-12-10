@@ -23,7 +23,7 @@
         exit();
     }
 
-    if (!isBit($myauth->getAuthData('rechte'), SEDIT )) {
+    if (!isBit($myauth->getAuthData('rechte'), RE_SEDIT )) {
         feedback(2, 'error');
         exit(2);
     }

@@ -47,8 +47,6 @@ RICHTLINIEN:
     Funktionalität. Diese wird durch die Templates für alle angemeldeten Nutzer bereit
     gestellt.
 
-TODO:
-    Class Film - Revision aller Elemente
-    Class Fibikern - Feinkorrekturen/Test und Korrektur View()
 FIXES:
-    Typenübergabe aus DB funktioniert nicht
+    Typenübergabe aus DB funktioniert nicht mit MDB2-pg_driver 1.5.0b4
+    Boolsche Werte werden als 'f' und 't' wiedergegeben statt als 'true' und 'null'.
