@@ -2,8 +2,8 @@
 
  Smarty-Template für alle räumlichen Gegenstände (Detailansicht)
 
- call:   item.class.php
- class:  Obj3d
+ call:   item.lib.php
+ lib:  Obj3d
  proc:   view
  param:	dialog[???][0] feldname
                    [1] inhalt (evt. weitere arrays)

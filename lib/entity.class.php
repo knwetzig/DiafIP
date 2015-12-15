@@ -71,7 +71,7 @@
             if (!empty($data)) :
                 foreach ($data as $key => $val) $this->content[$key] = $val;
             else :
-                // Siehe Eintrag "App" in struktur.html" zum Fehler #4
+                // Siehe Eintrag "App" in struktur.md" zum Fehler #4
                 feedback("Fehler bei der Initialisierung im Objekt \"Entity\"", 'error');
                 exit(4);
             endif;

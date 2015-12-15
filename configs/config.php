@@ -14,6 +14,7 @@
      */
 
     require_once "service.php";
+    require_once "service.class.php"; // soll schrittweise die service.php ablösen
     require_once "Auth.php";
     require_once "MDB2.php";
     require_once "Smarty.class.php";

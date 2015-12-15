@@ -1,7 +1,7 @@
-$Id$
+#DiafIP
+###ist ein Frontend zur Eingabe in ein Datenbanksystem und Auswertung der Daten aus demselben.
 
-HINWEISE:
-==========================================================================================
+##HINWEISE:
 
     Vorausgesetzt ist, das eine lauffähige HTTP/PHP5 Umgebung installiert ist. In diese
     Umgebung ist das PHP-Modul 'php5-pgsql' zu integrieren. In den meisten Distrubutionen
@@ -25,8 +25,7 @@ HINWEISE:
     Die Dumps sind nach Reihenfolge nummeriert.
 
 
-RICHTLINIEN:
-=========================================================================================
+##RICHTLINIEN:
 
     Es gibt keine Verlinkung zu fremden Inhalten (Serverautonomie). Fremder Inhalt ist
     OpenSource und local abgelegt. Die einzelnen Elemente stehen in nachfolg. Tabelle:
@@ -47,6 +46,6 @@ RICHTLINIEN:
     Funktionalität. Diese wird durch die Templates für alle angemeldeten Nutzer bereit
     gestellt.
 
-FIXES:
-    Typenübergabe aus DB funktioniert nicht mit MDB2-pg_driver 1.5.0b4
-    Boolsche Werte werden als 'f' und 't' wiedergegeben statt als 'true' und 'null'.
+##FIXES:
+Typenübergabe aus DB funktioniert nicht mit MDB2-pg_driver 1.5.0b4
+Boolsche Werte werden als 'f' und 't' wiedergegeben statt als 'true' und 'null'.

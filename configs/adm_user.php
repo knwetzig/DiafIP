@@ -124,8 +124,8 @@
             if ($_POST['username'] != "" AND $_POST['pwd'] != "") :
                 $erg = $myauth->addUser($_POST['username'], $_POST['pwd']);
                 IsDbError($erg);
-                feedback('Ein neuer Account wurde angelegt.<br />Bitte passen sie die Daten an<br />Ihre Bed&uuml;
-                rfnisse an.', 'erfolg');
+                feedback('Ein neuer Account wurde angelegt.
+Bitte passen sie die Daten an<br />Ihre Bed&uuml;rfnisse an.', 'erfolg');
             endif;
     endswitch;
 

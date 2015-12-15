@@ -57,7 +57,7 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dat.tpl $
     <colgroup><col width="200px"><col><col width="200px"></colgroup>
 
 {* --Bild--
-	<tr class="row-picture">
+	<tr lib="row-picture">
 		<td colspan="2">
 		{if !empty($dialog['bild_id'][1])}
 			<img src="{$dialog['bild_id'][1]}" width="250" height="250" border="1" />

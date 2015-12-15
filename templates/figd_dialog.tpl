@@ -68,8 +68,8 @@ $URL: https://diafip.googlecode.com/svn/trunk/templates/figd_dialog.tpl $
     {if isset($dialog['thema'])}<tr>
         <td class="re">{$dialog['thema'][2]}:</td>
         <td>
-            <input type="text" name={$dialog['thema'][0]} value='{foreach from=$dialog['thema'][1]
-            item=wert}{$wert}{if !$wert@last},&nbsp;{/if}{/foreach}' >
+            <input type="text" label="{$dialog['thema'][0]}" name={$dialog['thema'][0]} value='{foreach from=$dialog['thema'][1]
+            item=wert}{$wert}{if !$wert@last}, {/if}{/foreach}' >
         </td>
     </tr>{/if}
 

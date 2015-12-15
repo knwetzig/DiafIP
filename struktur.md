@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Übersicht über den Aufbau der Applikation</title>
-    <style>
-        ul.first {list-style-type: none}
-        .descr {color: #666666; font-size: smaller }
-    </style>
-</head>
-<body>
-<h3>Bereitstellung</h3>
+#Übersicht über den Aufbau der Applikation
+##Bereitstellung
 <ul class="first">
-    <li><h4>Ladereihenfolge:</h4>
+###Ladereihenfolge:
         <ol>
             <li>index.php
             </li>
@@ -34,8 +24,8 @@
             </li>
         </ol>
     </li>
-    <li><h4>Initialisierung</h4>
-        erfolgt in der "index.php"
+###Initialisierung 
+    erfolgt in der "index.php"
         <ol>
             <li>Authentifizierung<div class="descr">&nbsp;Automatisch als User "Gast". Abmelden erzeugt ein neues
                 Loginfenster. Im Moment noch etwas Baustelle ;(</div></li>
@@ -51,8 +41,8 @@
     </li>
     damit ist die Initialisierung abgeschlossen und der Mainframe wird geladen
 </ul>
-<h3>Applikation</h3>
-<div class="descr">Als eine der Hauptursachen für fehlerhafte Initialisierung von Objekten, konnte die
+###Applikation
+    Als eine der Hauptursachen für fehlerhafte Initialisierung von Objekten, konnte die
     Casting-Tabelle ausgemacht werden. Filme/Bücher und Namen/Personen sind nicht via Fremdschlüssel verbunden.
     Wenn also nun ein Eintrag für eine Person mit einem Film vorliegt, der in der DB nicht existiert, dann wird
     die Initialierungsprozedur über die Casting-Tabelle versuchen das Objekt Film zu initialisieren - was mit
@@ -60,6 +50,4 @@
     viel Ressourcen verschlingt (vor allem mit anwachsender Casting-Liste). Ressourcen, die z.B. bei der
     Listenansicht überhaupt nicht benötigt werden. Hier wäre über eine "schmalere" Initialisierungsprozedur
     nachzudenken. Eventuell muss man ja nicht das Film-/Personenobjekt initialisieren, wenn man Einträge aus der
-    Castingliste benötigt!</div>
-</body>
-</html>
+    Castingliste benötigt!

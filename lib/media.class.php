@@ -6,7 +6,7 @@
  * $Rev: 98 $
  * $Author: knwetzig $
  * $Date: 2014-08-27 00:55:16 +0200 (Wed, 27. Aug 2014) $
- * $URL: https://diafip.googlecode.com/svn/trunk/inc/media.class.php $
+ * $URL: https://diafip.googlecode.com/svn/trunk/inc/media.lib.php $
  */
 // DB->BLOB's http://pear.php.net/manual/en/package.database.mdb2.intro-fetch.php
 

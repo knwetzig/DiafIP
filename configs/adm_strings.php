@@ -14,7 +14,7 @@
      * @license     BSD-3 License http://opensource.org/licenses/BSD-3-Clause
      * @requirement PHP Version >= 5.4
      *
-     * ToDo: Integration in class String
+     * ToDo: Integration in lib String
      *
      */
 

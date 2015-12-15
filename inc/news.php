@@ -132,19 +132,19 @@ FORMEDIT;
     IsDbError($data);
 
     foreach ($data as $wert) :
-        echo "<form id='news' method='post'><span style='float:right' class='note'>\n"
+        echo "<form id='news' method='post'><span style='float:right' lib='note'>\n"
             . $wert['chdatum'] . "&nbsp;|&nbsp;" . $wert['realname'] . "&nbsp;\n";
         // Nutzer berechtigt zu editieren?
         if ($myauth->getAuthdata('uid') === $wert['autor'] OR
             isbit($myauth->getAuthData('rechte'), RE_SU)) :
-               echo "<button class='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n" .
-                    "<button class='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
+               echo "<button lib='small' name='aktion' value='edit'><img src='images/edit.png' /></button>\n" .
+                    "<button lib='small' name='aktion' value='del'><img src='images/del.png' /></button>\n";
         endif;
         echo "<input type='hidden' name='sektion' value='news' />
             <input type='hidden' name='news' value='{$wert['nid']}' /></span>\n";
 
         // Der eigtl. Inhalt
-        echo "<div class=newstitel>".$wert['titel']."</div><div class=newstext>".nl2br(changetext($wert['inhalt'])).
+        echo "<div lib=newstitel>".$wert['titel']."</div><div lib=newstext>".nl2br(changetext($wert['inhalt'])).
              "</div>\n</form>\n";
     endforeach;
 }

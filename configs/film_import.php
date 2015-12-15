@@ -187,7 +187,7 @@
             $db->commit('newFilm');
             IsDbError($db);            // ende Transaktion
 
-            echo "Der Film <span class='fett'>{$inhalt['titel']}</span> wurde erfolgreich unter der Id: $Id angelegt.<br>";
+            echo "Der Film <span lib='fett'>{$inhalt['titel']}</span> wurde erfolgreich unter der Id: $Id angelegt.<br>";
             foreach ($castLi as $var) :
                 Film::addCast($var);
             endforeach;

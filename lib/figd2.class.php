@@ -55,20 +55,6 @@
         }
 
         /**
-         * @return array
-         */
-        public function getContent() {
-            return $this->content;
-        }
-
-        /**
-         * @param array $content
-         */
-        public function setContent($content) {
-            $this->content = $content;
-        }
-
-        /**
          * Legt neuen (leeren) Datensatz an (INSERT)
          * @param null $status
          * @return int|null
@@ -110,6 +96,7 @@
          */
         public function edit($status = null) {
             global $myauth, $marty;
+
             if (!isBit($myauth->getAuthData('rechte'), RE_EDIT)) return 2;
             if ($status == false) : // Formular anzeigen
                 $data = [];
@@ -202,9 +189,10 @@
                     endif;
 
                     if (isset($_POST['thema'])) :
-                        // todo: Leerzeichen und Aufzählung korrigieren
-                        if ($_POST['thema']) $this->content['thema'] = preg_split("/[\s,]+/", $_POST['thema'], null, PREG_SPLIT_NO_EMPTY);
-                        else $this->content['thema'] = null;
+                        if ($_POST['thema']) :
+                            $this->content['thema'] = preg_split("/[\s,]+/", $_POST['thema']);
+                        else : $this->content['thema'] = null;
+                        endif;
                     endif;
 
                     if (isset($_POST['gattung'])) :

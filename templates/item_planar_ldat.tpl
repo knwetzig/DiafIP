@@ -3,8 +3,8 @@
  Smarty-Template für Dokumente/Phasen Urkunden und alle planaren Gegenstände
  (Listenansicht)
 
- call:   item.class.php
- class:  Planar
+ call:   item.lib.php
+ lib:  Planar
  proc:   view
  param:	dialog[???][0] feldname
                    [1] inhalt (evt. weitere arrays)

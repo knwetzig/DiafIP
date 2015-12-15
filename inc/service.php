@@ -21,7 +21,7 @@
         if (MDB2::isError($obj)) :
             $db = MDB2::singleton();
             if ($db->inTransaction()) $db->rollback();
-            echo "<div class='error'>";
+            echo "<div lib='error'>";
             print_r($obj->getMessage());
             print_r($obj->getUserInfo());
             echo '</div>';
@@ -168,7 +168,7 @@
      */
     function _v($text, $titel = null) {
         if ($text) {
-            echo "<fieldset class='visor'>";
+            echo "<fieldset lib='visor'>";
             if ($titel) echo "<legend>&nbsp;" . $titel . "&nbsp;</legend>";
             print_r($text);
             echo "</fieldset>\n";
@@ -209,8 +209,8 @@ VIS;
     function feedback($msg, $form = null) {
         global $str;
         if (is_numeric($msg))
-            echo "<div class=$form>" . $str->getStr((int)$msg) . "</div>";
-        else echo "<div class=$form>" . $msg . '</div>';
+            echo "<div lib=$form>" . $str->getStr((int)$msg) . "</div>";
+        else echo "<div lib=$form>" . $msg . '</div>';
     }
 
 

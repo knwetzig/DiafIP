@@ -1,16 +1,16 @@
 <?php namespace DiafIP {
+
     use Auth, MDB2, Smarty;
+
     global $dsn, $smartyConf;
 
     /**
      * DIAFIP - HAUPTPROGRAMM
      *
      * @author      Knut Wetzig <knwetzig@gmail.com>
-     * @copyright   2014 Deutsches Institut für Animationsfilm e.V.
+     * @copyright   2010-2015 Deutsches Institut für Animationsfilm e.V.
      * @license     http://opensource.org/licenses/BSD-3-Clause BSD-3 License
      * @package     DiafIP
-     * @version     $Id: $
-     * @since       r1 Erstellung
      * @requirement PHP Version >= 5.4
      */
 
@@ -22,11 +22,11 @@
     require_once 'configs/config.local.php';
     require_once 'configs/config.php';
     $_POST = normtext($_POST);              // Filter für htmlentities
-    $_GET = normtext($_GET);
+    $_GET  = normtext($_GET);
 
     // Authentifizierung
-    $params = ['dsn' => $dsn,
-               'table' => 's_auth',
+    $params = ['dsn'       => $dsn,
+               'table'     => 's_auth',
                'db_fields' => 'rechte,lang,uid,realname,notiz,profil'];
     $myauth = new Auth('MDB2', $params, 'DiafIP\loginFunction');   // alternativ: DiafIP\loginFunction
     $myauth->start();
@@ -54,7 +54,7 @@
                     's_auth',
                     ['lang' => $_GET['aktion']],
                     MDB2_AUTOQUERY_UPDATE,
-                    'uid = '.$db->quote($myauth->getAuthData('uid'), 'integer'), 'text'
+                    'uid = ' . $db->quote($myauth->getAuthData('uid'), 'integer'), 'text'
                 ));
             endif;
     endswitch;
@@ -80,12 +80,12 @@
     require_once 'pname.class.php';        // Aliasnamen
     require_once 'person.class.php';        // Personenklasse
     require_once 'fibimain.class.php';      // Basisklasse für Biblio-/Filmogr. Daten
-//    require_once 'bibl2.class.php';         // Bibliografische Daten
+//    require_once 'bibl2.lib.php';         // Bibliografische Daten
     require_once 'figd2.class.php';         // Filmografische Daten
     require_once 'view.class.php';
     require_once 's_location.class.php';
-//    require_once 'media.class.php';
-//    require_once 'item.class.php';
+//    require_once 'media.lib.php';
+//    require_once 'item.lib.php';
     require_once 'statistik.class.php';
 
     // Initialisierung String-Objekt
@@ -119,7 +119,7 @@
     $marty->setConfigDir($smartyConf['config_dir']);
     $marty->setCacheDir($smartyConf['cache_dir']);
     $marty->force_compile = $smartyConf['force_compile'];
-    $marty->debugging = $smartyConf['debugging'];
+    $marty->debugging     = $smartyConf['debugging'];
 
     $marty->assign('dlg', $menue);
     $marty->display('header.tpl');
